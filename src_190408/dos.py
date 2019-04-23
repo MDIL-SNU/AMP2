@@ -18,6 +18,7 @@ src_path = inp_yaml['directory']['src_path']
 vasp_std = inp_yaml['program']['vasp_std']
 vasp_gam = inp_yaml['program']['vasp_gam']
 vasp_ncl = inp_yaml['program']['vasp_ncl']
+mpi_type = inp_yaml['program']['mpi_type']
 gnuplot = inp_yaml['program']['gnuplot']
 npar = inp_yaml['vasp_parallel']['npar']
 kpar = inp_yaml['vasp_parallel']['kpar']
@@ -96,7 +97,7 @@ else:
 	wincar(dir_dos+'/INCAR',dir_dos+'/INCAR',[['NSW','0'],['LCHARG','.T.']],[])
 
 	# VASP calculation for CHGCAR
-	out = run_vasp(dir_dos,nproc,vasprun)
+	out = run_vasp(dir_dos,nproc,vasprun,mpi_type)
 	if out == 1:  # error in vasp calculation
 		print 0
 		sys.exit() 
@@ -108,7 +109,7 @@ incar_from_yaml(dir_dos,inp_dos['INCAR'])
 wincar(dir_dos+'/INCAR',dir_dos+'/INCAR',[['NSW','0'],['ISTART','1'],['ICHARG','11'],['LCHARG','.F.'],['NEDOS','3001']],[])
 vasprun = vasp_std
 # VASP calculation
-out = run_vasp(dir_dos,nproc,vasprun)
+out = run_vasp(dir_dos,nproc,vasprun,mpi_type)
 if out == 1:  # error in vasp calculation
 	print 0
 	sys.exit() 
@@ -119,7 +120,7 @@ if out == 2:  # electronic step is not converged. (algo = normal)
 	sys.exit()
 elif out == 1:  # elctronic step is not converged. (algo = fast) Algo changes to normal and rerun.
 	make_amp2_log(dir_dos,'Electronic step is not converged. ALGO changes to Normal.')
-	out = run_vasp(dir_dos,nproc,vasprun)
+	out = run_vasp(dir_dos,nproc,vasprun,mpi_type)
 	if out == 1:  # error in vasp calculation
 		print 0
 		sys.exit()

@@ -20,6 +20,7 @@ ERROR_path = inp_yaml['directory']['error']
 src_path = inp_yaml['directory']['src_path']
 vasp_std = inp_yaml['program']['vasp_std']
 vasp_gam = inp_yaml['program']['vasp_gam']
+mpi_type = inp_yaml['program']['mpi_type']
 gnuplot = inp_yaml['program']['gnuplot']
 npar = inp_yaml['vasp_parallel']['npar']
 kpar = inp_yaml['vasp_parallel']['kpar']
@@ -131,7 +132,7 @@ for i in range(len(tot_mag_list)):
 		else:
 			vasprun = vasp_std
 		wincar(targ_dir+'/INCAR',targ_dir+'/INCAR',[['NSW','0'],['ISYM','0'],['LCHARG','F'],['LWAVE','F'],['ALGO','Normal'],['NELM','200']],[])
-		out = run_vasp(targ_dir,nproc,vasprun)
+		out = run_vasp(targ_dir,nproc,vasprun,mpi_type)
 		if out == 1:  # error in vasp calculation
 			print 0
 			sys.exit() 
@@ -143,7 +144,7 @@ for i in range(len(tot_mag_list)):
 			sys.exit()
 		elif out == 1:  # elctronic step is not converged. (algo = fast) Algo changes to normal and rerun.
 			make_amp2_log(targ_dir,'Electronic step is not converged. Mixing parameters change.')
-			out = run_vasp(targ_dir,nproc,vasprun)
+			out = run_vasp(targ_dir,nproc,vasprun,mpi_type)
 			if out == 1:  # error in vasp calculation
 				print 0
 				sys.exit()
@@ -229,7 +230,7 @@ for i in range(len(POSCARs)):
 			else:
 				vasprun = vasp_std
 
-			out = run_vasp(calc_path,nproc,vasprun)
+			out = run_vasp(calc_path,nproc,vasprun,mpi_type)
 			if out == 1:  # error in vasp calculation
 				print 0
 				sys.exit() 
@@ -240,7 +241,7 @@ for i in range(len(POSCARs)):
 				sys.exit()
 			elif out == 1:  # elctronic step is not converged. (algo = fast) Algo changes to normal and rerun.
 				make_amp2_log(calc_path,'Electronic step is not converged. ALGO changes to Normal.')
-				out = run_vasp(calc_path,nproc,vasprun)
+				out = run_vasp(calc_path,nproc,vasprun,mpi_type)
 				if out == 1:  # error in vasp calculation
 					print 0
 					sys.exit()
@@ -261,7 +262,7 @@ for i in range(len(POSCARs)):
 					make_amp2_log(calc_path,'Relaxation is done.')
 					break
 				shutil.copyfile(calc_path+'/CONTCAR',calc_path+'/POSCAR')
-				out = run_vasp(calc_path,nproc,vasprun)
+				out = run_vasp(calc_path,nproc,vasprun,mpi_type)
 				if out == 1:  # error in vasp calculation
 					print 0
 					sys.exit() 

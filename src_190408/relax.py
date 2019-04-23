@@ -17,6 +17,7 @@ ERROR_path = inp_yaml['directory']['error']
 src_path = inp_yaml['directory']['src_path']
 vasp_std = inp_yaml['program']['vasp_std']
 vasp_gam = inp_yaml['program']['vasp_gam']
+mpi_type = inp_yaml['program']['mpi_type']
 gnuplot = inp_yaml['program']['gnuplot']
 npar = inp_yaml['vasp_parallel']['npar']
 kpar = inp_yaml['vasp_parallel']['kpar']
@@ -67,7 +68,7 @@ if gam == 1:
 else:
 	vasprun = vasp_std
 
-out = run_vasp(dir_relax,nproc,vasprun)
+out = run_vasp(dir_relax,nproc,vasprun,mpi_type)
 if out == 1:  # error in vasp calculation
 	print 0
 	sys.exit() 
@@ -79,7 +80,7 @@ if out == 2:  # electronic step is not converged. (algo = normal)
 	sys.exit()
 elif out == 1:  # elctronic step is not converged. (algo = fast) Algo changes to normal and rerun.
 	make_amp2_log(dir_relax,'Electronic step is not converged. ALGO changes to Normal.')
-	out = run_vasp(dir_relax,nproc,vasprun)
+	out = run_vasp(dir_relax,nproc,vasprun,mpi_type)
 	if out == 1:  # error in vasp calculation
 		print 0
 		sys.exit()
@@ -100,7 +101,7 @@ while iteration < inp_rlx['max_iteration']:
 		make_amp2_log(dir_relax,'Relaxation is done.')
 		break
 	shutil.copyfile(dir_relax+'/CONTCAR',dir_relax+'/POSCAR')
-	out = run_vasp(dir_relax,nproc,vasprun)
+	out = run_vasp(dir_relax,nproc,vasprun,mpi_type)
 	if out == 1:  # error in vasp calculation
 		print 0
 		sys.exit() 
@@ -110,6 +111,11 @@ while iteration < inp_rlx['max_iteration']:
 
 if ionic_converge == 0:
 	make_amp2_log(dir_relax,'The iteration reach the max iteration number. You need to increase the max iteration number')
+
+## Check the magnetic moment in relaxed cell
+mag_on = check_magnet(dir_relax)
+if mag_on == 0 :
+	wincar(dir+'/INPUT0/INCAR',dir+'/INPUT0/INCAR',[['MAGMOM',''],['ISPIN','1']],[])
 
 with open('free','w') as fr_file:
 	fr_file.write(subprocess.check_output(['grep','free  ','OUTCAR']).splitlines()[-1])

@@ -19,6 +19,7 @@ src_path = inp_yaml['directory']['src_path']
 vasp_std = inp_yaml['program']['vasp_std']
 vasp_gam = inp_yaml['program']['vasp_gam']
 vasp_ncl = inp_yaml['program']['vasp_ncl']
+mpi_type = inp_yaml['program']['mpi_type']
 npar = inp_yaml['vasp_parallel']['npar']
 kpar = inp_yaml['vasp_parallel']['kpar']
 inp_hse = inp_yaml['Hybrid_oneshot']
@@ -78,7 +79,7 @@ if os.path.isfile(dir+'/band_GGA/KPT') and os.path.getsize(dir+'/band_GGA/KPT') 
 	vasprun = make_incar_for_ncl(dir_hse,mag_on,kpar,npar,vasp_std,vasp_gam,vasp_ncl)
 	make_amp2_log(dir_hse,'Run VASP calculation.')
 	# VASP calculation for HSE
-	out = run_vasp(dir_hse,nproc,vasprun)
+	out = run_vasp(dir_hse,nproc,vasprun,mpi_type)
 	if out == 1:  # error in vasp calculation
 		print 0
 		sys.exit() 

@@ -83,9 +83,9 @@ def set_parallel(kpoints,incar,npar,kpar):
 			return 0
 
 # run vasp	
-def run_vasp(target,nproc,vasprun):
+def run_vasp(target,nproc,vasprun,mpi_type):
 	os.chdir(target)
-	out = subprocess.call(['mpirun -np '+nproc+' '+vasprun+' >& stdout.x'], stdout=subprocess.PIPE, shell=True)
+	out = subprocess.call([mpi_type+' -np '+nproc+' '+vasprun+' >& stdout.x'], stdout=subprocess.PIPE, shell=True)
 	if out == 0:
 		make_amp2_log(target,'VASP calculation is performed successfully.')
 		subprocess.call(['rm',target+'/vasprun.xml'])

@@ -19,6 +19,7 @@ ERROR_path = inp_yaml['directory']['error']
 src_path = inp_yaml['directory']['src_path']
 vasp_std = inp_yaml['program']['vasp_std']
 vasp_gam = inp_yaml['program']['vasp_gam']
+mpi_type = inp_yaml['program']['mpi_type']
 gnuplot = inp_yaml['program']['gnuplot']
 npar = inp_yaml['vasp_parallel']['npar']
 kpar = inp_yaml['vasp_parallel']['kpar']
@@ -95,7 +96,7 @@ while convergence == 1 :
 
 		wincar(now_path+'/INCAR',now_path+'/INCAR',[['ENCUT',str(ENCUT)],['NSW','0'],['LWAVE','F'],['LCHARG','F']],[])
 		# Running vasp
-		out = run_vasp(now_path,nproc,vasprun)
+		out = run_vasp(now_path,nproc,vasprun,mpi_type)
 		if out == 1:  # error in vasp calculation
 			print 0
 			sys.exit() 
@@ -107,7 +108,7 @@ while convergence == 1 :
 			sys.exit()
 		elif out == 1:  # elctronic step is not converged. (algo = fast) Algo changes to normal and rerun.
 			make_amp2_log(dir+'/cutoff','Electronic step is not converged. ALGO changes to normal.')
-			out = run_vasp(now_path,nproc,vasprun)
+			out = run_vasp(now_path,nproc,vasprun,mpi_type)
 			if out == 1:  # error in vasp calculation
 				print 0
 				sys.exit()

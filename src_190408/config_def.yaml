@@ -12,6 +12,7 @@ program:
   vasp_gam: /data/vasp4us/vasp_gam
   vasp_ncl: /data/vasp4us/vasp_ncl
   gnuplot: /gnuplot
+  mpi_type: mpirun
 
 calculation:
   kp_test: 1

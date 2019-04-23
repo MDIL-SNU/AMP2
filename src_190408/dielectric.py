@@ -16,6 +16,7 @@ with open(inp_file,'r') as f:
 ERROR_path = inp_yaml['directory']['error']
 src_path = inp_yaml['directory']['src_path']
 vasp_std = inp_yaml['program']['vasp_std']
+mpi_type = inp_yaml['program']['mpi_type']
 gnuplot = inp_yaml['program']['gnuplot']
 kpar = inp_yaml['vasp_parallel']['kpar']
 inp_diel = inp_yaml['dielectric']
@@ -88,7 +89,7 @@ else:
 	wincar(dir_diel+'/INCAR',dir_diel+'/INCAR',[['NSW','#'],['IBRION','8'],['NPAR','#'],['KPAR',kpar],['LEPSILON','.T.']],[])
 	vasprun = vasp_std
 	# VASP calculation
-	out = run_vasp(dir_diel,nproc,vasprun)
+	out = run_vasp(dir_diel,nproc,vasprun,mpi_type)
 	if out == 1:  # error in vasp calculation
 		print 0
 		sys.exit() 
@@ -99,7 +100,7 @@ else:
 		sys.exit()
 	elif out == 1:  # elctronic step is not converged. (algo = fast) Algo changes to normal and rerun.
 		make_amp2_log(dir_diel,'Electronic step is not converged. ALGO changes to Normal.')
-		out = run_vasp(dir_diel,nproc,vasprun)
+		out = run_vasp(dir_diel,nproc,vasprun,mpi_type)
 		if out == 1:  # error in vasp calculation
 			print 0
 			sys.exit()

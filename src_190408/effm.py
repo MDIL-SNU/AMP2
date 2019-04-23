@@ -18,6 +18,7 @@ src_path = inp_yaml['directory']['src_path']
 vasp_std = inp_yaml['program']['vasp_std']
 vasp_gam = inp_yaml['program']['vasp_gam']
 vasp_ncl = inp_yaml['program']['vasp_ncl']
+mpi_type = inp_yaml['program']['mpi_type']
 gnuplot = inp_yaml['program']['gnuplot']
 npar = inp_yaml['vasp_parallel']['npar']
 kpar = inp_yaml['vasp_parallel']['kpar']
@@ -101,7 +102,7 @@ else:
 		wincar(dir_effm+'/INCAR',dir_effm+'/INCAR',[['NSW','0'],['LCHARG','.T.']],[])
 
 		# VASP calculation for CHGCAR
-		out = run_vasp(dir_effm,nproc,vasprun)
+		out = run_vasp(dir_effm,nproc,vasprun,mpi_type)
 		if out == 1:  # error in vasp calculation
 			print 0
 			sys.exit() 
@@ -135,7 +136,7 @@ else:
 
 			incar_from_yaml(dir_effm,inp_effm['INCAR'])
 			wincar(dir_effm+'/INCAR',dir_effm+'/INCAR',[['ISTART','1'],['ICHARG','11'],['LCHARG','.F.']],[])
-			out = run_vasp(dir_effm,nproc,vasprun)
+			out = run_vasp(dir_effm,nproc,vasprun,mpi_type)
 			if out == 1:  # error in vasp calculation
 				print 0
 				sys.exit() 
@@ -152,7 +153,7 @@ else:
 		else:
 			mag_on = 2
 		vasprun = make_incar_for_ncl(dir_effm,mag_on,kpar,npar,vasp_std,vasp_gam,vasp_ncl)
-		out = run_vasp(dir_effm,nproc,vasprun)
+		out = run_vasp(dir_effm,nproc,vasprun,mpi_type)
 		if out == 1:  # error in vasp calculation
 			print 0
 			sys.exit() 
