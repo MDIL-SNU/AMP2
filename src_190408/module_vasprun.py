@@ -255,7 +255,10 @@ def make_multiple_kpts(kp_log,kpt_file,pos_file,kp_multi):
 		KP_ori = khead[3].split()
 		KP=[]
 		for i in range(3) :
-			KP.append(str(int(KP_ori[i])*kp_multi))
+			if sym == 5:
+				KP.append(str(max([int(x) for x in KP_ori[i]])*kp_multi))
+			else:
+				KP.append(str(int(KP_ori[i])*kp_multi))
 	
 	with open(kpt_file,'w') as kpt:
 		kpt.write(khead[0]+khead[1]+khead[2]+"  "+KP[0]+"  "+KP[1]+"  "+KP[2]+"\n  0  0  0\n")
