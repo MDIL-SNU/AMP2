@@ -111,6 +111,11 @@ while iteration < inp_rlx['max_iteration']:
 if ionic_converge == 0:
 	make_amp2_log(dir_relax,'The iteration reach the max iteration number. You need to increase the max iteration number')
 
+## Check the magnetic moment in relaxed cell
+mag_on = check_magnet(dir_relax)
+if mag_on == 0 :
+	wincar(dir+'/INPUT0/INCAR',dir+'/INPUT0/INCAR',[['MAGMOM',''],['ISPIN','1']],[])
+
 with open('free','w') as fr_file:
 	fr_file.write(subprocess.check_output(['grep','free  ','OUTCAR']).splitlines()[-1])
 warn = set_pos_compare(dir_relax+'/CONTCAR',dir+'/INPUT0/POSCAR',dir_relax,inp_rlx['pos_warning_percent'])
