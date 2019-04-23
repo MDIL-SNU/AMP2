@@ -1,0 +1,123 @@
+directory:
+  submit: ./Submit
+  output: ./Output2
+  done: ./Done
+  error: ./ERROR
+  src_path: ./src_new
+  pot_path_GGA: /data/vasp4us/pot/PBE52
+  pot_path_LDA: /data/vasp4us/pot/LDA52
+
+program:
+  vasp_std: ~/vasp_std
+  vasp_gam: ~/vasp_gam
+  vasp_ncl: /data/vasp4us/vasp_ncl
+  gnuplot: /gnuplot
+
+calculation:
+  kp_test: 1
+  encut_test: 1
+  relaxation: 1
+  magnetic_ordering: 1
+  band: 1
+  density_of_states: 1
+  hse_oneshot: 1
+  dielectric: 1
+  effective_mass: 1
+  plot: 1
+  large_off: 40
+
+cif2vasp:
+  POT_name:
+    GGA:
+#      Ge: Ge
+    LDA: 
+#      Ge: Ge
+  SOC_target:
+#    - Bi
+  U_value:
+#    All: 0.0
+    La: 7.5
+    Ce: 4.5
+  magmom: 3
+  max_nelm: 100
+  INCAR:
+
+vasp_parallel:
+  npar: 2
+  kpar: 2
+
+converge_test:
+  ENCONV: 0.01
+  PRCONV: 10
+  FOCONV: -1
+  initial_kpl: 1
+  max_kpl: 20
+  ENSTART: 200
+  ENSTEP: 50
+  ENMAX: 1000
+
+relaxation:
+  potential_type:
+    - GGA
+    - LDA
+  max_iteration: 10
+  converged_ionic_step: 5
+  pos_warning_percent: 1
+  INCAR:
+#    EDIFF: 1e-08
+
+magnetic_ordering:
+  cutoff_for_parameter: 5.0
+  Tolerance: 0.01
+  from_relax: 1
+
+band_calculation:
+  kspacing_for_band: 0.01
+  type_of_kpt: all              # band (only for band structure plot)
+  y_min: 3                      # set plot region, downward from VBM
+  y_max: 2                      # set plot region, upward from CBM
+  potential_type:
+    - GGA
+#    - LDA
+  relax_check: 1
+  INCAR:
+
+Hybrid_oneshot:
+  alpha: 0.25
+  INCAR:
+
+density_of_states:
+  potential_type:
+    - GGA
+#    - LDA
+  relax_check: 1
+  KP_multiplier: 2
+  y_min: 3                      # set plot region, downward from VBM
+  y_max: 2                      # set plot region, upward from CBM
+  INCAR:
+
+dielectric:
+  KP_multiplier: 2
+  potential_type:
+    - GGA
+    - LDA
+  INCAR:
+    EDIFF: 1e-08
+#    EDIFFG: 1e-04
+  metal_check: 1
+  relax_check: 1
+
+effective_mass:
+  carrier_type:
+    - hole
+    - electron
+  pocket_search_dist: 0.1
+  grid_size_for_searching: 0.02
+  grid_size_for_calculation: 0.02
+  temperature_for_Fermi: 300
+  Fermi_for_cutoff: 0.9
+  potential_type:
+    - GGA
+#    - LDA
+  INCAR:
+
