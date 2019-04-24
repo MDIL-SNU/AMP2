@@ -61,7 +61,7 @@ while len_check:
 #    print len(rot), len(rot_sort)
     
     # Check length criterion
-    new_list = z_subr.check_length(rot_sort, lat_prim, len_min, len_crit)
+    [new_list,min_sw] = z_subr.check_length(rot_sort, lat_prim, len_min, len_crit)
 #    print "Check length criterion"
 #    print len(rot_sort), len(new_list)
 #    print len(bf_list), len(new_list)
@@ -69,6 +69,10 @@ while len_check:
     if (len(bf_list) !=0) and (len(new_list) == 0):
         len_check = 0
     else:
+        if min_sw == 0:
+#            If all lattice parameters are larger than critical length, finding should be finished.
+            print 1
+            sys.exit()
         m = m+1
 
     tmp = tmp+new_list

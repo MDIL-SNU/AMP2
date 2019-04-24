@@ -84,6 +84,7 @@ def mk_new_basis(lat_prim, mat):
 
 def check_length(rot_sort, lat_prim, len_min, len_crit):
     new_list = []
+    min_sw = 0
     for i in range(len(rot_sort)):
         # produce new basis using linear combination
         new_basis = mk_new_basis(lat_prim,rot_sort[i])
@@ -91,8 +92,9 @@ def check_length(rot_sort, lat_prim, len_min, len_crit):
         lat_length=np.sqrt(sum([x**2 for x in new_basis]))
         if lat_length > len_min and lat_length < len_crit:
             new_list.append([lat_length, rot_sort[i], new_basis])
-
-    return new_list
+        elif min_sw == 0 and lat_length < len_crit:
+            min_sw = 1
+    return [new_list,min_sw]
 
 def mk_rot_matrix(new_list):
     # Sort new_list
