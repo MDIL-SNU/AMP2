@@ -110,8 +110,19 @@ if not os.path.isfile(target+'/POSCAR_param'):
 			break
 		else:
 			min_cell_length = min_cell_length + 2
-	
+
+[axis_param,pos_param] = read_poscar(target+'/POSCAR_param')
+if inp_af['Maximum_atoms_number'] > 0 and len(pos_param) > inp_af['Maximum_atoms_number']:
+	make_amp2_log(target,'The number of atoms in supercell is larger than the criteria.')
+	print 0
+	sys.exit()
+
 [pair_list,sole_list,mag_list] = find_pair(target+'/POSCAR_param',cutoff_length,mag_atom_list,mag_val,inp_af['Tolerance'])
+if inp_af['Maximum_pair_type'] > 0 and len(pair_list) > inp_af['Maximum_pair_type']:
+	make_amp2_log(target,'The number of pairs is larger than the criteria.')
+	print 0
+	sys.exit()
+
 tot_mag_list = write_pair_list(pair_list,sole_list,mag_list,target)
 
 for i in range(len(tot_mag_list)):

@@ -121,6 +121,8 @@ magnetic_ordering:
   from_relax: 0
   cutoff_for_parameter: 5.0
   Tolerance: 0.01
+  Maximum_atoms_number: -1
+  Maximum_pair_type: -1
   Genetic_algorithm:
     min_iteration: 0
     max_iteration: -1
