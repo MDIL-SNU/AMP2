@@ -92,7 +92,7 @@ def check_length(rot_sort, lat_prim, len_min, len_crit):
         lat_length=np.sqrt(sum([x**2 for x in new_basis]))
         if lat_length > len_min and lat_length < len_crit:
             new_list.append([lat_length, rot_sort[i], new_basis])
-        elif min_sw == 0 and lat_length < len_crit:
+        if min_sw == 0 and lat_length < len_crit:
             min_sw = 1
     return [new_list,min_sw]
 
