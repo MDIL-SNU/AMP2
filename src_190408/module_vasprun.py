@@ -87,12 +87,17 @@ def run_vasp(target,nproc,vasprun):
 	os.chdir(target)
 	out = subprocess.call(['mpirun -np '+nproc+' '+vasprun+' >& stdout.x'], stdout=subprocess.PIPE, shell=True)
 	if out == 0:
-		make_amp2_log(target,'VASP calculation is performed successfully.')
-		subprocess.call(['rm',target+'/vasprun.xml'])
-		write_log_in_outcar(target+'/OUTCAR',target+'/amp2.log')
-		return 0
+		out_res = subprocess.check_output(['tail','-1',target+'/OUTCAR']).split()[0]
+		if out_res == 'Voluntary':
+			make_amp2_log(target,'VASP calculation is performed successfully.')
+			subprocess.call(['rm',target+'/vasprun.xml'])
+			write_log_in_outcar(target+'/OUTCAR',target+'/amp2.log')
+			return 0
+		else:
+		make_amp2_log(target,'ERROR occurs during vasp calculation. Check the calculation.')
+		return 1
 	else:
-		make_amp2_log(target,'ERROR occurs. Check the calculation.')
+		make_amp2_log(target,'ERROR occurs. vasp calculation may be not started. Check the calculation.')
 		return 1
 
 # check electronic step convergence
@@ -255,7 +260,7 @@ def make_multiple_kpts(kp_log,kpt_file,pos_file,kp_multi):
 		KP_ori = khead[3].split()
 		KP=[]
 		for i in range(3) :
-			if sym == 5:
+			if sym == '5':
 				KP.append(str(max([int(x) for x in KP_ori[i]])*kp_multi))
 			else:
 				KP.append(str(int(KP_ori[i])*kp_multi))
