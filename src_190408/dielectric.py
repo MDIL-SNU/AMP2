@@ -83,7 +83,9 @@ else:
 		copy_input(dir+'/INPUT0',dir_diel,POT)
 	else:
 		copy_input_cont(dir+'/relax_'+POT,dir_diel)
-	make_multiple_kpts(dir+'/kptest/kpoint.log',dir_diel+'/KPOINTS',dir_diel+'/POSCAR',inp_diel['KP_multiplier'])
+	with open(dir+'/INPUT0/sym','r') as symf:
+		sym = int(symf.readline().split()[0])
+	make_multiple_kpts(dir+'/kptest/kpoint.log',dir_diel+'/KPOINTS',dir_diel+'/POSCAR',inp_diel['KP_multiplier'],sym)
 	incar_from_yaml(dir_diel,inp_diel['INCAR'])
 	wincar(dir_diel+'/INCAR',dir_diel+'/INCAR',[['NSW','#'],['IBRION','8'],['NPAR','#'],['KPAR',kpar],['LEPSILON','.T.']],[])
 	vasprun = vasp_std

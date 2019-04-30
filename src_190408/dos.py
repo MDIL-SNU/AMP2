@@ -102,7 +102,9 @@ else:
 		sys.exit() 
 	make_amp2_log(dir_dos,'CHGCAR file is generated successfully.')
 
-make_multiple_kpts(dir+'/kptest/kpoint.log',dir_dos+'/KPOINTS',dir_dos+'/POSCAR',inp_dos['KP_multiplier'])
+with open(dir+'/INPUT0/sym','r') as symf:
+	sym = int(symf.readline().split()[0])
+make_multiple_kpts(dir+'/kptest/kpoint.log',dir_dos+'/KPOINTS',dir_dos+'/POSCAR',inp_dos['KP_multiplier'],sym)
 incar_from_yaml(dir_dos,inp_dos['INCAR'])
 
 wincar(dir_dos+'/INCAR',dir_dos+'/INCAR',[['NSW','0'],['ISTART','1'],['ICHARG','11'],['LCHARG','.F.'],['NEDOS','3001']],[])
