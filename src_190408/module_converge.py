@@ -18,12 +18,19 @@ def convergence_check(target,be1,be2,ENCONV,PRCONV,FOCONV):
 		if ENCONV > 0:
 			ENERGY.append(float(subprocess.check_output(['grep','free  ',path+'/OUTCAR']).splitlines()[-1].split()[4]))
 		if PRCONV > 0:
-			PRESS.append([float(x) for x in subprocess.check_output(['grep','in kB',path+'/OUTCAR']).splitlines()[-1].split()[2:]])
+			line = subprocess.check_output(['grep','in kB',path+'/OUTCAR']).splitlines()[-1].split()
+			if len(line) == 8:
+				PRESS.append([float(x) for x in line[2:]])
+			else:
+				PRESS.append([99999.,99999.,99999.,99999.,99999.,99999.])
 		if FOCONV > 0:
 			force_lines = subprocess.check_output(['grep','TOTAL-F',path+'/OUTCAR','-A',str(nion+1)]).splitlines()[2:nion+2]
 			FORCE_one_sample = []
 			for line in force_lines:
-				FORCE_one_sample.append([float(x) for x in line.split()[3:6]])
+				if len(line.split()) == 6:
+					FORCE_one_sample.append([float(x) for x in line.split()[3:6]])
+				else:
+					FORCE_one_sample.append([999.,999.,999.])
 			FORCE.append(FORCE_one_sample)
 	converge = 0
 	# Convergence check for energy/atom

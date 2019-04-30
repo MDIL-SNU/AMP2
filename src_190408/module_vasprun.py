@@ -251,9 +251,12 @@ def make_multiple_kpts(kp_log,kpt_file,pos_file,kp_multi,sym):
 		idx = l.index(max(l))
 		KP=[]
 		for i in range(3) :
-			KP[i:] = [str(int(round(l[i]/(l[idx]/KPL))))]
-			if KP[i] == '0' :
-				KP[i] = '1'
+			if sym == 5:
+				KP.append(str(KPL))
+			else:
+				KP[i:] = [str(int(round(l[i]/(l[idx]/KPL))))]
+				if KP[i] == '0' :
+					KP[i] = '1'
 	else:
 		with open(kpt_file,'r') as kpt:
 			khead = kpt.readlines()

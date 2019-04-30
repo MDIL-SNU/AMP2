@@ -18,8 +18,9 @@ from module_amp2_input import *
 #[axis,atom_pos] = read_poscar(target+'/INPUT0/POSCAR_conv')
 #[prim_axis,prim_atom_pos,sym] = get_primitive_cell(axis,atom_pos)
 #write_poscar(prim_axis,prim_atom_pos,target+'/INPUT0/POSCAR_prim_pp','Primitive Cell')
+dir = sys.argv[1]
+dir_dos = dir+'/dos_GGA'
 
-
-[A,B,C] = find_pair(sys.argv[1],5,['V1','V2','V3','V4','V5','V6'],{'V1':3,'V2':3,'V3':3,'V4':3,'V5':3,'V6':3},0.01)
-for line in A:
-	print line
+with open(dir+'/INPUT0/sym','r') as symf:
+	sym = int(symf.readline().split()[0])
+make_multiple_kpts(dir+'/kptest/kpoint.log',dir_dos+'/KPOINTS',dir_dos+'/POSCAR',2,sym)
