@@ -36,7 +36,10 @@ if os.path.isdir(dir_band) and os.path.isfile(dir_band+'/Band_gap.log') :
 	make_amp2_log_default(dir,src_path,'Band calculation',node,code_data)
 	gap = subprocess.check_output(['head','-n','1',dir_band+'/Band_gap.log']).split()[2]
 #	print('Success! Band gap: '+gap)
-	make_amp2_log(dir,'Band calculation is already done.\nBand gap is '+gap)
+	if gap == 'is':
+		make_amp2_log(dir,'Band calculation is already done.\nIt is metallic.')
+	else:
+		make_amp2_log(dir,'Band calculation is already done.\nBand gap is '+gap)
 	print 1
 	sys.exit()
 
@@ -122,7 +125,10 @@ warn = band_warning(Band,dir_band)
 # Band gap calculation
 gap = gap_estimation(dir_band,fermi,spin,ncl,KPT,Band,nelect) # gap is string
 
-make_amp2_log(dir_band,'Band calculaton is done.\nBand gap is '+gap)
+if float(gap) < 0.00001:
+	make_amp2_log(dir,'Band calculation is already done.\nIt is metallic.')
+else:
+	make_amp2_log(dir_band,'Band calculaton is done.\nBand gap is '+gap)
 
 # Drawing band structure
 plot_band_structure(spin,Band,fermi,dir_band+'/xtic.dat',dir_band+'/xlabel.dat',[inp_band['y_min'],inp_band['y_max']],dir_band)
