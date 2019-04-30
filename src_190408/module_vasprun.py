@@ -94,8 +94,8 @@ def run_vasp(target,nproc,vasprun):
 			write_log_in_outcar(target+'/OUTCAR',target+'/amp2.log')
 			return 0
 		else:
-		make_amp2_log(target,'ERROR occurs during vasp calculation. Check the calculation.')
-		return 1
+			make_amp2_log(target,'ERROR occurs during vasp calculation. Check the calculation.')
+			return 1
 	else:
 		make_amp2_log(target,'ERROR occurs. vasp calculation may be not started. Check the calculation.')
 		return 1
