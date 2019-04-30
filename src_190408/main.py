@@ -23,8 +23,10 @@ Done_path = inp_yaml['directory']['done']
 large_off = inp_yaml['calculation']['large_off']
 
 calc_list = make_list(inp_file)
+calc_out = 0
 
-for target_mat in calc_list:
+while len(make_list(inp_file)) > 0:
+	target_mat = make_list(inp_file)[0]
 	target = subprocess.check_output(['python',src_path+'/amp2_input.py',inp_file,node,target_mat[0],target_mat[1]]).splitlines()[0]
 	if target == '0':
 		shutil.move(target,ERROR_path+'/'+target.split('/')[-1])
@@ -89,8 +91,12 @@ for target_mat in calc_list:
 				continue
 			notice = subprocess.check_output(['python',src_path+'/band.py',target,inp_file,node,nproc,pot_type])
 			if not notice.splitlines()[-1][0] == '1':
-				shutil.move(target,ERROR_path+'/'+target.split('/')[-1])
-				continue
+				calc_out = 1
+				break
+		if calc_out == 1:
+			calc_out = 0
+			shutil.move(target,ERROR_path+'/'+target.split('/')[-1])
+			continue
 	if cal_dic['density_of_states'] == 1:
 		for pot_type in inp_yaml['density_of_states']['potential_type']:
 			if not os.path.isfile(target+'/INPUT0/POTCAR_'+pot_type):
@@ -98,8 +104,12 @@ for target_mat in calc_list:
 				continue
 			notice = subprocess.check_output(['python',src_path+'/dos.py',target,inp_file,node,nproc,pot_type])
 			if not notice.splitlines()[-1][0] == '1':
-				shutil.move(target,ERROR_path+'/'+target.split('/')[-1])
-				continue
+				calc_out = 1
+				break
+		if calc_out == 1:
+			calc_out = 0
+			shutil.move(target,ERROR_path+'/'+target.split('/')[-1])
+			continue
 	if cal_dic['hse_oneshot'] == 1:
 		notice = subprocess.check_output(['python',src_path+'/hse_gap.py',target,inp_file,node,nproc])
 		if not notice.splitlines()[-1][0] == '1':
@@ -113,9 +123,12 @@ for target_mat in calc_list:
 #			subprocess.call(['python',src_path+'/dielectric.py',target,inp_file,node,nproc,pot_type])
 			notice = subprocess.check_output(['python',src_path+'/dielectric.py',target,inp_file,node,nproc,pot_type])
 			if not notice.splitlines()[-1][0] == '1':
-				shutil.move(target,ERROR_path+'/'+target.split('/')[-1])
-				continue
-
+				calc_out = 1
+				break
+		if calc_out == 1:
+			calc_out = 0
+			shutil.move(target,ERROR_path+'/'+target.split('/')[-1])
+			continue
 	if cal_dic['effective_mass'] == 1:
 		for pot_type in inp_yaml['effective_mass']['potential_type']:
 			if not os.path.isfile(target+'/INPUT0/POTCAR_'+pot_type):
@@ -125,7 +138,13 @@ for target_mat in calc_list:
 #				subprocess.call(['python',src_path+'/effm.py',target,inp_file,node,nproc,pot_type,carrier_type])
 				notice = subprocess.check_output(['python',src_path+'/effm.py',target,inp_file,node,nproc,pot_type,carrier_type])
 				if not notice.splitlines()[-1][0] == '1':
-					shutil.move(target,ERROR_path+'/'+target.split('/')[-1])
-					continue
+					calc_out = 1
+					break
+			if calc_out == 1:
+				break
+		if calc_out == 1:
+			calc_out = 0
+			shutil.move(target,ERROR_path+'/'+target.split('/')[-1])
+			continue
 
 	shutil.move(target,Done_path+'/'+target.split('/')[-1])
