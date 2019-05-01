@@ -125,7 +125,7 @@ warn = band_warning(Band,dir_band)
 # Band gap calculation
 gap = gap_estimation(dir_band,fermi,spin,ncl,KPT,Band,nelect) # gap is string
 
-if float(gap) < 0.00001:
+if gap == 'metal':
 	make_amp2_log(dir,'Band calculation is already done.\nIt is metallic.')
 else:
 	make_amp2_log(dir_band,'Band calculaton is done.\nBand gap is '+gap)
