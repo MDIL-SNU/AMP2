@@ -87,8 +87,8 @@ def run_vasp(target,nproc,vasprun):
 	os.chdir(target)
 	out = subprocess.call(['mpirun -np '+nproc+' '+vasprun+' >& stdout.x'], stdout=subprocess.PIPE, shell=True)
 	if out == 0:
-		out_res = subprocess.check_output(['tail','-1',target+'/OUTCAR']).split()[0]
-		if out_res == 'Voluntary':
+		out_res = subprocess.check_output(['tail','-1',target+'/OUTCAR']).split()
+		if len(out_res) > 0 and out_res[0] == 'Voluntary':
 			make_amp2_log(target,'VASP calculation is performed successfully.')
 			subprocess.call(['rm',target+'/vasprun.xml'])
 			write_log_in_outcar(target+'/OUTCAR',target+'/amp2.log')
@@ -189,7 +189,7 @@ def wincar(SOURCE,OUT,option,add) :
 		check = 0
 		option[i] = [str(x) for x in option[i]]
 		for j in range(len(incar)) :
-			if option[i][0] in incar[j] :
+			if option[i][0] in incar[j].split() :
 				check = 1
 				# Off the line
 				if option[i][1] == '#' :

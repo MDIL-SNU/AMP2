@@ -59,7 +59,11 @@ def convergence_check(target,be1,be2,ENCONV,PRCONV,FOCONV):
 def write_conv_result(target,logfile):
 	head = target.split('/')[-1]
 	energy = float(subprocess.check_output(['grep','free  ',target+'/OUTCAR']).splitlines()[-1].split()[4])
-	press = [float(x) for x in subprocess.check_output(['grep','in kB',target+'/OUTCAR']).splitlines()[-1].split()[2:]]
+	line = subprocess.check_output(['grep','in kB',target+'/OUTCAR']).splitlines()[-1].split()
+	if len(line) == 8:
+		press = [float(x) for x in line[2:]]
+	else:
+		press = [99999.,99999.,99999.,99999.,99999.,99999.]
 	with open(logfile,'a') as log:
 		log.write(head+': '+str(energy)+' eV')
 		log.write('\t/ ')
@@ -140,7 +144,10 @@ def max_force(outcar_path):
 	force_list = subprocess.check_output(['grep','-A'+str(nion+1),'TOTAL-FORCE',outcar_path]).splitlines()
 	max_f = [0,[0,0,0]]
 	for line in force_list[2:]:
-		force = [float(x) for x in line.split()[3:6]]
+		if len(line.split()) == 6:
+			force = [float(x) for x in line.split()[3:6]]
+		else:
+			force = [999.,999.,999.]
 		if dist_point(force,[0,0,0]) > max_f[0]:
 			max_f = [dist_point(force,[0,0,0]),force]
 	return max_f

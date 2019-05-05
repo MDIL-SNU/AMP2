@@ -79,6 +79,7 @@ if out == 2:  # electronic step is not converged. (algo = normal)
 	sys.exit()
 elif out == 1:  # elctronic step is not converged. (algo = fast) Algo changes to normal and rerun.
 	make_amp2_log(dir_relax,'Electronic step is not converged. ALGO changes to Normal.')
+	wincar(dir+'/INPUT0/INCAR',dir+'/INPUT0/INCAR',[['ALGO','Normal']],[])
 	out = run_vasp(dir_relax,nproc,vasprun)
 	if out == 1:  # error in vasp calculation
 		print 0

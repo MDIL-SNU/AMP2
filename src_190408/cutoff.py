@@ -107,6 +107,7 @@ while convergence == 1 :
 			sys.exit()
 		elif out == 1:  # elctronic step is not converged. (algo = fast) Algo changes to normal and rerun.
 			make_amp2_log(dir+'/cutoff','Electronic step is not converged. ALGO changes to normal.')
+			wincar(dir+'/INPUT0/INCAR',dir+'/INPUT0/INCAR',[['ALGO','Normal']],[])
 			out = run_vasp(now_path,nproc,vasprun)
 			if out == 1:  # error in vasp calculation
 				print 0

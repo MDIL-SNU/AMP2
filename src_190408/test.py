@@ -18,9 +18,15 @@ from module_amp2_input import *
 #[axis,atom_pos] = read_poscar(target+'/INPUT0/POSCAR_conv')
 #[prim_axis,prim_atom_pos,sym] = get_primitive_cell(axis,atom_pos)
 #write_poscar(prim_axis,prim_atom_pos,target+'/INPUT0/POSCAR_prim_pp','Primitive Cell')
-dir = sys.argv[1]
-dir_dos = dir+'/dos_GGA'
+path1 = sys.argv[1]
+path2 = sys.argv[2]
 
-with open(dir+'/INPUT0/sym','r') as symf:
-	sym = int(symf.readline().split()[0])
-make_multiple_kpts(dir+'/kptest/kpoint.log',dir_dos+'/KPOINTS',dir_dos+'/POSCAR',2,sym)
+option = [['EDIFF','1e-8']]
+
+wincar(path1,path2,option,[])
+
+#dir_dos = dir+'/dos_GGA'
+
+#with open(dir+'/INPUT0/sym','r') as symf:
+#	sym = int(symf.readline().split()[0])
+#make_multiple_kpts(dir+'/kptest/kpoint.log',dir_dos+'/KPOINTS',dir_dos+'/POSCAR',2,sym)
