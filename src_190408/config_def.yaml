@@ -39,6 +39,7 @@ cif2vasp:
   U_value:
 #    La: 7.5
 #    Ce: 4.5
+#    All: 0.0
   magmom: 3
   max_nelm: 100
   INCAR:
@@ -107,11 +108,11 @@ effective_mass:
   carrier_type:
     - hole
     - electron
-  pocket_search_dist: 0.1
+  pocket_search_dist: 0.02
   grid_size_for_searching: 0.02
   grid_size_for_calculation: 0.02
   temperature_for_Fermi: 300
-  Fermi_for_cutoff: 0.9
+  Fermi_for_cutoff: 0.99
   potential_type:
     - GGA
 #    - LDA

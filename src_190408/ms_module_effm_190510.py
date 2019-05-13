@@ -148,7 +148,7 @@ def make_kpts_for_searching_space(target,search_grid_size):
 		for i in range(len(KPT)):
 			kpt_out.write('\t'.join([str(KPT[i][x]) for x in range(3)])+'\t 1 \n')
 
-def make_kpts_for_calculation(target,grid_size,max_E_diff):
+def ms_make_kpts_for_calculation(target,grid_size,max_E_diff):
 	with open(target+'/NKPT','r') as inp:
 		nkpt = inp.readlines()
 		number_of_pocket = int(nkpt[0])
@@ -184,30 +184,30 @@ def make_kpts_for_calculation(target,grid_size,max_E_diff):
 
 		num_kp_for_effm.append([]) # num_kp_for_effm[pocket_idx][kpt_idx][min or max]
 		for k_id in range(3):
-			num_kp_for_effm[-1].append([int(np.ceil((pocket_kpt[k][k_id]-kp_min[k_id])/grid_size))+1,int(np.ceil((kp_max[k_id]-pocket_kpt[k][k_id])/grid_size))+1])
+			num_kp_for_effm[k].append([int(np.ceil((pocket_kpt[k][k_id]-kp_min[k_id])/grid_size))+1,int(np.ceil((kp_max[k_id]-pocket_kpt[k][k_id])/grid_size))+1])
 		for x_id in range(num_kp_for_effm[k][0][0]+num_kp_for_effm[k][0][1]+1):
 			for y_id in range(num_kp_for_effm[k][1][0]+num_kp_for_effm[k][1][1]+1):
 				for z_id in range(num_kp_for_effm[k][2][0]+num_kp_for_effm[k][2][1]+1):
 					id_list = [x_id,y_id,z_id]
 					KPT_for_effm.append([pocket_kpt[k][x]+float(id_list[x]-num_kp_for_effm[k][x][0])*grid_size for x in range(3)])
 
-	with open(target+'/KPOINTS','w') as kpt_out:
-		kpt_out.write('K-pts to calculate effective mass\n')
-		kpt_out.write('\t\t'+str(len(KPT_for_effm))+'\n')
-		kpt_out.write('car\n')
-		for i in range(len(KPT_for_effm)):
-			kpt_out.write('\t'.join([str(KPT_for_effm[i][x]) for x in range(3)])+'\t 1 \n')
+#	with open(target+'/KPOINTS','w') as kpt_out:
+#		kpt_out.write('K-pts to calculate effective mass\n')
+##		kpt_out.write('\t\t'+str(len(KPT_for_effm))+'\n')
+#		kpt_out.write('car\n')
+#		for i in range(len(KPT_for_effm)):
+#			kpt_out.write('\t'.join([str(KPT_for_effm[i][x]) for x in range(3)])+'\t 1 \n')
 
-	with open(target+'/inp_grid','w') as inp_effm:
-		inp_effm.write(str(number_of_pocket)+'\n')
-		inp_effm.write(str(grid_size)+'\n')
-		inp_effm.write(str(max_E_diff)+'\n')
-		for k in range(number_of_pocket):
-			inp_effm.write('\t'.join([str(pocket_kpt[k][x]) for x in range(3)])+'\n')
-			for i in range(3):
-				inp_effm.write('\t'.join([str(num_kp_for_effm[k][i][x]) for x in range(2)])+'\n')
-			inp_effm.write('\t'.join([str(pocket_inform[k][x]) for x in range(2)])+'\n')
-		inp_effm.write(str(extreme_E))
+#	with open(target+'/inp_grid','w') as inp_effm:
+#		inp_effm.write(str(number_of_pocket)+'\n')
+#		inp_effm.write(str(grid_size)+'\n')
+#		inp_effm.write(str(max_E_diff)+'\n')
+	for k in range(number_of_pocket):
+		print ('\t'.join([str(pocket_kpt[k][x]) for x in range(3)])+'\n')
+#			for i in range(3):
+#				inp_effm.write('\t'.join([str(num_kp_for_effm[k][i][x]) for x in range(2)])+'\n')
+#			inp_effm.write('\t'.join([str(pocket_inform[k][x]) for x in range(2)])+'\n')
+#		inp_effm.write(str(extreme_E))
 
 def calc_effm(target,carrier_type,Temp):
 	import scipy.constants as sc

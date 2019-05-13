@@ -104,6 +104,8 @@ if no_rlx == 1:
 	mag_on = 2
 else:
 	mag_on = check_magnet(dir+'/relax_'+POT)
+
+incar_from_yaml(dir_band,inp_band['INCAR'])
 vasprun = make_incar_for_ncl(dir_band,mag_on,kpar,npar,vasp_std,vasp_gam,vasp_ncl)
 wincar(dir_band+'/INCAR',dir_band+'/INCAR',[['ISTART','1'],['ICHARG','11'],['LCHARG','.F.']],[])
 

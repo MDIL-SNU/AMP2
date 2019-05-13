@@ -41,7 +41,7 @@ def kpt_generation_for_relax(target,KPL,sym):
 		l.append((recipro_latt[i][0]**2.+recipro_latt[i][1]**2.+recipro_latt[i][2]**2.)**0.5)
 	KP = []
 	for i in range(3) :
-		if sym == 5: # symmetry BCT
+		if sym == 5 or sym == 6:  # symmetry BCT
 			KP.append(str(KPL))
 		else:
 			KP.append(str(int(round(l[i]/(max(l)/KPL)))))
@@ -251,7 +251,7 @@ def make_multiple_kpts(kp_log,kpt_file,pos_file,kp_multi,sym):
 		idx = l.index(max(l))
 		KP=[]
 		for i in range(3) :
-			if sym == 5:
+			if sym == 5 or sym == 6:
 				KP.append(str(KPL))
 			else:
 				KP[i:] = [str(int(round(l[i]/(l[idx]/KPL))))]
@@ -263,7 +263,7 @@ def make_multiple_kpts(kp_log,kpt_file,pos_file,kp_multi,sym):
 		KP_ori = khead[3].split()
 		KP=[]
 		for i in range(3) :
-			if sym == 5:
+			if sym == 5 or sym == 6:
 				KP.append(str(max([int(x) for x in KP_ori[i]])*kp_multi))
 			else:
 				KP.append(str(int(KP_ori[i])*kp_multi))

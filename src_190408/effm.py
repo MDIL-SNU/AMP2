@@ -97,7 +97,7 @@ else:
 		else:
 			mag_on = 2
 		vasprun = make_incar_for_ncl(dir_effm,mag_on,kpar,npar,vasp_std,vasp_gam,vasp_ncl)
-
+		incar_from_yaml(dir_effm,inp_effm['INCAR'])
 		wincar(dir_effm+'/INCAR',dir_effm+'/INCAR',[['NSW','0'],['LCHARG','.T.']],[])
 
 		# VASP calculation for CHGCAR
@@ -152,6 +152,8 @@ else:
 		else:
 			mag_on = 2
 		vasprun = make_incar_for_ncl(dir_effm,mag_on,kpar,npar,vasp_std,vasp_gam,vasp_ncl)
+		incar_from_yaml(dir_effm,inp_effm['INCAR'])
+		wincar(dir_effm+'/INCAR',dir_effm+'/INCAR',[['ISTART','1'],['ICHARG','11'],['LCHARG','.F.']],[])
 		out = run_vasp(dir_effm,nproc,vasprun)
 		if out == 1:  # error in vasp calculation
 			print 0

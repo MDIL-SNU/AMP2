@@ -521,6 +521,8 @@ def read_cif_position(line):
 		for i in range(3):
 			if '(' in tmp[i+4] :
 				tmp[i+4] = tmp[i+4][:tmp[i+4].index('(')]
+			if tmp[i+4] == '.':
+				tmp[i+4] = '0.0'
 			pos.append(float(tmp[i+4]))
 	elif len(tmp) == 8:
 		atom_charge = '0'
@@ -531,6 +533,8 @@ def read_cif_position(line):
 		for i in range(3):
 			if '(' in tmp[i+2] :
 				tmp[i+2] = tmp[i+2][:tmp[i+2].index('(')]
+			if tmp[i+4] == '.':
+				tmp[i+4] = '0.0'
 			pos.append(float(tmp[i+2]))
 	out = [atom_name,atom_name+atom_index,atom_charge,occupancy,pos]
 	return out
