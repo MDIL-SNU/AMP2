@@ -330,7 +330,7 @@ def make_incar_note(poscar,target,soc_target,u_value,magmom_def,src_path):
 	else:
 		SOC = soc_target
 
-	TMd = ['Sc', 'Ti', 'V', 'Cr', 'Mn', 'Fe', 'Co', 'Ni', 'Cu', 'Zn', 'Y', 'Zr', 'Nb', 'Mo', 'Tc', 'Ru', 'Rh', 'Pd', 'Ag', 'Cd', 'La', 'Hf', 'Ta', 'W', 'Re', 'Os', 'Ir', 'Pt', 'Au', 'Hg']
+	TMd = ['Sc', 'Ti', 'V', 'Cr', 'Mn', 'Fe', 'Co', 'Ni', 'Cu', 'Zn', 'Y', 'Zr', 'Nb', 'Mo', 'Tc', 'Ru', 'Rh', 'Pd', 'Ag', 'Cd', 'Hf', 'Ta', 'W', 'Re', 'Os', 'Ir', 'Pt', 'Au', 'Hg']
 	TMf = ['La', 'Ce', 'Pr', 'Nd', 'Pm', 'Sm', 'Eu', 'Gd', 'Tb', 'Dy', 'Ho', 'Er', 'Tm', 'Yb', 'Lu']
 
 	NVAL = {'H':1, 'He':0, 'Li':1, 'Be':2, 'B':3, 'C':4, 'N':5, 'O':6, 'F':7, 'Ne':0, 'Na':1, 'Mg':2, 'Al':3,
@@ -360,7 +360,8 @@ def make_incar_note(poscar,target,soc_target,u_value,magmom_def,src_path):
 		nelect = nelect + int(atom_cnt[j])*int(float(pot_line))
 		if atom_z[j] in TMd :
 			if atom_z[j] in TMU :
-				u_on = 1
+				if u_on == 0:
+					u_on = 1
 				u_note = u_note + ' 2'
 				u_val1 = u_val1 + ' ' + str(TMU[atom_z[j]]+1.0)
 				u_val2 = u_val2 + ' 1.0'
@@ -369,10 +370,9 @@ def make_incar_note(poscar,target,soc_target,u_value,magmom_def,src_path):
 				u_val1 = u_val1 + ' 0.0'
 				u_val2 = u_val2 + ' 0.0'
 			mag_on = 1
-			maxmix = '4'
 		elif atom_z[j] in TMf :
 			if atom_z[j] in TMU :
-				u_on = 1
+				u_on = 2
 				u_note = u_note + ' 3'
 				u_val1 = u_val1 + ' ' + str(TMU[atom_z[j]]+1.0)
 				u_val2 = u_val2 + ' 1.0'
@@ -381,20 +381,20 @@ def make_incar_note(poscar,target,soc_target,u_value,magmom_def,src_path):
 				u_val1 = u_val1 + ' 0.0'
 				u_val2 = u_val2 + ' 0.0'
 			mag_on = 1
-			maxmix = '6'
 		else :
 			u_note = u_note + ' -1'
 			u_val1 = u_val1 + ' 0.0'
 			u_val2 = u_val2 + ' 0.0'
 		if atom_z[j] in SOC :
 			soc_on = 1
+	maxmix = str(2+2*u_on)
 	with open(target+'/INPUT0/U_note', 'w') as out:
-		if u_on == 1 :
+		if not u_on == 0 :
 			out.write('\n LDA+U calculation:\n   LDAU      = .TRUE. !Treat L(S)DA+U\n   LDAUTYPE  = 2\n')
 			out.write('   LDAUL   ='+u_note+'\n')
 			out.write('   LDAUU   ='+u_val1+'\n')
 			out.write('   LDAUJ   ='+u_val2+'\n')
-			out.write('   LDAUPRINT = 0\n   LMAXMIX = '+str(2+2*u_on)+'\n\n')
+			out.write('   LDAUPRINT = 0\n   LMAXMIX = '+maxmix+'\n\n')
 
 
 	oxi_check = 0	# 0: no spin-polarizaton, 1: use MAGMOM, 2: no MAGMOM
@@ -639,25 +639,24 @@ def axis_rotation(axis,pos,sym):
 
 	# sort axis order a < b < c for orthorhombic
 	elif brava_sym == 7:
-		tol = [0.,0.1e-7,0.2e-7]
-		dic = {axis[0][0]+tol[0]:0,axis[1][1]+tol[1]:1,axis[2][2]+tol[2]:2}
+		dic = [[axis[0][0],0],[axis[1][1],1],[axis[2][2],2]]
 		order = sorted(dic)
-		axis_order = [dic[x] for x in order]
+		axis_order = [order[x][1] for x in range(3)]
 
 	# Determine brava sym of ORCF
 	elif brava_sym in [8,9]:
-		dic = {abs(axis[1][0]):0,abs(axis[0][1]):1,abs(axis[0][2]):2}
+		dic = [[axis[0][0],0],[axis[1][1],1],[axis[2][2],2]]
 		order = sorted(dic)
-		axis_order = [dic[x] for x in order]
+		axis_order = [order[x][1] for x in range(3)]
 		if 1./(sum([axis[x][axis_order[0]] for x in range(3)])**2.0) < 1./(sum([axis[x][axis_order[1]] for x in range(3)])**2.0) + 1./(sum([axis[x][axis_order[2]] for x in range(3)])**2.0):
 			brava_sym = 9
 		else:
 			brava_sym = 8
 
 	elif brava_sym == 10:
-		dic = {abs(axis[0][0]):0,abs(axis[0][1]):1,abs(axis[0][2]):2}
+		dic = [[axis[0][0],0],[axis[1][1],1],[axis[2][2],2]]
 		order = sorted(dic)
-		axis_order = [dic[x] for x in order]
+		axis_order = [order[x][1] for x in range(3)]
 
 	# sort axis order a < b for c-centered orthorhombic
 	elif brava_sym == 11:
