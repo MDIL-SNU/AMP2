@@ -141,7 +141,6 @@ else:
 				sys.exit() 
 		else:
 			make_amp2_log(dir_effm,'VASP calculation is already done.')
-
 		make_kpts_for_calculation(dir_effm,inp_effm['grid_size_for_calculation'],max_E_diff)
 		make_amp2_log(dir_effm,'Generate new inp_grid')
 

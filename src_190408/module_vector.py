@@ -32,6 +32,14 @@ def dir_to_cart(vec,axis):
 		cart_vec.append(vec[0]*axis[0][i]+vec[1]*axis[1][i]+vec[2]*axis[2][i])
 	return cart_vec
 
+def cart_to_dir(vec,axis):
+	import numpy as np
+	vec_array = np.array(vec)
+	axis_array = np.array(axis)
+	dir_vec_array = np.dot(vec_array,np.linalg.inv(axis_array))
+	dir_vec = dir_vec_array.tolist()
+	return dir_vec
+
 def calc_angle(vec1,vec2):
 	from math import acos
 	dot = sum([float(vec1[x])*float(vec2[x]) for x in range(len(vec1))])

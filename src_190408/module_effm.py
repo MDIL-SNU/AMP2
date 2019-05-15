@@ -167,29 +167,81 @@ def make_kpts_for_calculation(target,grid_size,max_E_diff):
 	shift = 0 
 	KPT_for_effm = []
 	num_kp_for_effm = []
+	kp_max_tot = []
+	kp_min_tot = []
+	final_pocket_kpt = []
+	final_pocket_inform = []
 	for k in range(number_of_pocket):
-		kp_max = [x for x in pocket_kpt[k]]
-		kp_min = [x for x in pocket_kpt[k]]
-		for i in range(len(num_kp_for_test)):
-			for j in range(num_kp_for_test[i]):
-				if abs(extreme_E - Band[pocket_inform[k][0]][shift+j][pocket_inform[k][1]]) < max_E_diff:
-					for k_id in range(3):
-						if KPT[shift+j][k_id] > KPT[shift+(num_kp_for_test[i]-1)/2][k_id]:
-							if kp_max[k_id] < KPT[shift+j][k_id]:
-								kp_max[k_id] = KPT[shift+j][k_id]
-						else:
-							if kp_min[k_id] > KPT[shift+j][k_id]:
-								kp_min[k_id] = KPT[shift+j][k_id]
-			shift = shift + num_kp_for_test[i]
+		sw_for_overlap = 0
+		if not k == 0:
+			for poc_id in range(len(kp_max_tot)):
+				sw_for_overlap_single = 0
+				for k_id in range(3):
+					if pocket_kpt[k][k_id] > kp_max_tot[poc_id][k_id] or pocket_kpt[k][k_id] < kp_min_tot[poc_id][k_id]:
+						sw_for_overlap_single = 1
+						break
+				if sw_for_overlap_single == 0:
+					sw_for_overlap = 1
+			
+		if sw_for_overlap == 0:
+			kp_max = [x for x in pocket_kpt[k]]
+			kp_min = [x for x in pocket_kpt[k]]
+			for i in range(len(num_kp_for_test)):
+				## extreme to -direction
+				for j in range((num_kp_for_test[i]-1)/2):
+					kpj_idx = shift-j+(num_kp_for_test[i]-1)/2-1 # (shift + exterme point index - j), Ex> if num kp = 15; 6,5,4,...,0
+					if abs(extreme_E - Band[pocket_inform[k][0]][kpj_idx][pocket_inform[k][1]]) < max_E_diff:
+						for k_id in range(3):
+							if KPT[kpj_idx][k_id] > KPT[shift+(num_kp_for_test[i]-1)/2][k_id]:
+								if kp_max[k_id] < KPT[kpj_idx][k_id]:
+									kp_max[k_id] = KPT[kpj_idx][k_id]
+							else:
+								if kp_min[k_id] > KPT[kpj_idx][k_id]:
+									kp_min[k_id] = KPT[kpj_idx][k_id]
+					else:
+						break
+				## extreme to +direction
+				for j in range((num_kp_for_test[i]-1)/2):
+					kpj_idx = shift+j+(num_kp_for_test[i]-1)/2+1 # (shift + exterme point index - j), Ex> if num kp = 15; 8,9,10,11
+					if abs(extreme_E - Band[pocket_inform[k][0]][kpj_idx][pocket_inform[k][1]]) < max_E_diff:
+						for k_id in range(3):
+							if KPT[kpj_idx][k_id] > KPT[shift+(num_kp_for_test[i]-1)/2][k_id]:
+								if kp_max[k_id] < KPT[kpj_idx][k_id]:
+									kp_max[k_id] = KPT[kpj_idx][k_id]
+							else:
+								if kp_min[k_id] > KPT[kpj_idx][k_id]:
+									kp_min[k_id] = KPT[kpj_idx][k_id]
+					else:
+						break
 
-		num_kp_for_effm.append([]) # num_kp_for_effm[pocket_idx][kpt_idx][min or max]
-		for k_id in range(3):
-			num_kp_for_effm[-1].append([int(np.ceil((pocket_kpt[k][k_id]-kp_min[k_id])/grid_size))+1,int(np.ceil((kp_max[k_id]-pocket_kpt[k][k_id])/grid_size))+1])
-		for x_id in range(num_kp_for_effm[k][0][0]+num_kp_for_effm[k][0][1]+1):
-			for y_id in range(num_kp_for_effm[k][1][0]+num_kp_for_effm[k][1][1]+1):
-				for z_id in range(num_kp_for_effm[k][2][0]+num_kp_for_effm[k][2][1]+1):
-					id_list = [x_id,y_id,z_id]
-					KPT_for_effm.append([pocket_kpt[k][x]+float(id_list[x]-num_kp_for_effm[k][x][0])*grid_size for x in range(3)])
+				shift = shift + num_kp_for_test[i]
+
+			kp_max_tot.append(kp_max)
+			kp_min_tot.append(kp_min)
+
+			num_kp_for_effm.append([]) # num_kp_for_effm[pocket_idx][kpt_idx][min or max]
+			final_pocket_kpt.append(pocket_kpt[k])
+			final_pocket_inform.append(pocket_inform[k])
+			for k_id in range(3):
+				num_kp_for_effm[-1].append([int(np.ceil((pocket_kpt[k][k_id]-kp_min[k_id])/grid_size))+1,int(np.ceil((kp_max[k_id]-pocket_kpt[k][k_id])/grid_size))+1])
+			for k_id in range(3):
+				num_kp_max = int(np.ceil((kp_max[k_id]-pocket_kpt[k][k_id])/grid_size))+1
+				num_kp_min = int(np.ceil((pocket_kpt[k][k_id]-kp_min[k_id])/grid_size))+1
+#				if num_kp_max < (num_kp_for_test[i]-1)/2:
+#					num_kp_max = num_kp_max+1
+#				else:
+#					num_kp_max = (num_kp_for_test[i]-1)/2
+#				if num_kp_min < (num_kp_for_test[i]-1)/2:
+#					num_kp_min = num_kp_min+1
+				num_kp_for_effm[k].append([num_kp_min,num_kp_max])
+
+			for x_id in range(num_kp_for_effm[-1][0][0]+num_kp_for_effm[-1][0][1]+1):
+				for y_id in range(num_kp_for_effm[-1][1][0]+num_kp_for_effm[-1][1][1]+1):
+					for z_id in range(num_kp_for_effm[-1][2][0]+num_kp_for_effm[-1][2][1]+1):
+						id_list = [x_id,y_id,z_id]
+						KPT_for_effm.append([pocket_kpt[k][x]+float(id_list[x]-num_kp_for_effm[-1][x][0])*grid_size for x in range(3)])
+
+	number_of_pocket = len(num_kp_for_effm)
 
 	with open(target+'/KPOINTS','w') as kpt_out:
 		kpt_out.write('K-pts to calculate effective mass\n')
@@ -203,11 +255,23 @@ def make_kpts_for_calculation(target,grid_size,max_E_diff):
 		inp_effm.write(str(grid_size)+'\n')
 		inp_effm.write(str(max_E_diff)+'\n')
 		for k in range(number_of_pocket):
-			inp_effm.write('\t'.join([str(pocket_kpt[k][x]) for x in range(3)])+'\n')
+			inp_effm.write('\t'.join([str(final_pocket_kpt[k][x]) for x in range(3)])+'\n')
 			for i in range(3):
 				inp_effm.write('\t'.join([str(num_kp_for_effm[k][i][x]) for x in range(2)])+'\n')
-			inp_effm.write('\t'.join([str(pocket_inform[k][x]) for x in range(2)])+'\n')
+			inp_effm.write('\t'.join([str(final_pocket_inform[k][x]) for x in range(2)])+'\n')
 		inp_effm.write(str(extreme_E))
+
+def kpt_frac_in_cell(pocket_kpt,x_id_mod,y_id_mod,z_id_mod,grid_size,axis):
+	new_kpt_cart = [pocket_kpt[0]+float(x_id_mod)*grid_size,pocket_kpt[1]+float(y_id_mod)*grid_size,pocket_kpt[2]+float(z_id_mod)*grid_size]
+	new_kpt_frac = cart_to_dir(new_kpt_cart,axis)
+	sw = 0
+	for i in range(3):
+		if new_kpt_frac[i] < -0.5 or new_kpt_frac[i] >= 0.5:
+			sw = 1
+	if sw == 1:
+		return 0 # out
+	else:
+		return 1 # in
 
 def calc_effm(target,carrier_type,Temp):
 	import scipy.constants as sc
@@ -219,11 +283,14 @@ def calc_effm(target,carrier_type,Temp):
 		pocket_kpt = []
 		pocket_inform = []
 		num_kp = []
+		num_kp_sep = []
 		for k in range(number_of_pocket):
 			pocket_kpt.append([float(x) for x in inp.readline().split()])
 			num_kp.append([])
+			num_kp_sep.append([])
 			for i in range(3):
-				num_kp[k].append(sum([int(x) for x in inp.readline().split()],1)) # num_negative_direction + num_positive_direction + 1
+				num_kp_sep[k].append([int(x) for x in inp.readline().split()])
+				num_kp[k].append(1+num_kp_sep[k][i][0]+num_kp_sep[k][i][1]) # num_negative_direction + num_positive_direction + 1
 			pocket_inform.append([int(x) for x in inp.readline().split()])
 		extreme_E = float(inp.readline())
 
@@ -248,7 +315,8 @@ def calc_effm(target,carrier_type,Temp):
 				for y_id in range(1,num_kp[k][1]-1):
 					for z_id in range(1,num_kp[k][2]-1):
 						energy = Band[n][idx_change(x_id,y_id,z_id,num_kp[k],shift)][spin_idx]
-						if abs(energy-extreme_E) < max_E_diff:
+						sw_for_kp_in_cell = kpt_frac_in_cell(pocket_kpt[k],x_id-num_kp_sep[k][0][0],y_id-num_kp_sep[k][1][0],z_id-num_kp_sep[k][2][0],grid_size,rec_axis)
+						if abs(energy-extreme_E) < max_E_diff and sw_for_kp_in_cell == 1:
 							EN_tot.append(energy)
 							Edk2_tot.append(cal_dk2(Band,n,x_id,y_id,z_id,num_kp[k],shift,spin_idx,diff_K))
 		shift = shift + num_kp[k][0] * num_kp[k][1] * num_kp[k][2]
