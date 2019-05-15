@@ -28,13 +28,12 @@ def make_kpts_for_oneshot(kpt_rlx_file,kpt_band_file,target):
 				overlap_sw = 1
 		if overlap_sw == 0:
 			kpt_total.append(kpt_band[i])
-
 	with open(target+'/KPOINTS','w') as out:
 		out.write('kpt for hse oneshot\n')
 		out.write('             '+str(len(kpt_total))+'\n')
 		out.write('Reciprocal\n')
 		for i in range(len(kpt_total)):
-			out.write('    '+'    '.join(kpt_total[i])+'\n')
+			out.write('    '+'    '.join([str(x) for x in kpt_total[i]])+'\n')
 
 def gap_estimation_hse(target,fermi,spin,ncl,KPT,Band,nelect):
 	VBM = []
@@ -247,11 +246,20 @@ def find_extreme_kpt_for_hse(dir_band,e_width,search_space):
 						extreme_log.append([n,k,i])
 
 	reduced_log = []
+	fin_kpt = []
 	for i in range(len(extreme_log)):
 		if not extreme_log[i][1] in [reduced_log[x][1] for x in range(len(reduced_log))]:
 			reduced_log.append(extreme_log[i])
-
+			overlap_sw = 0
+			kpt_tmp = KPT[reduced_log[-1][1]]
+			for j in range(len(fin_kpt)):
+				print i,j,dist_vec(kpt_tmp,fin_kpt[j],rec_lat)
+				if dist_vec(kpt_tmp,fin_kpt[j],rec_lat) < 0.0000001:
+					overlap_sw = 1
+					break
+			if overlap_sw == 0:
+				fin_kpt.append(KPT[reduced_log[-1][1]])
 	with open(dir_band+'/KPT', 'w') as kpt_out:	# File for VBM & CBM k-point position
 		kpt_out.write("Example file\n               0\nReciprocal\n")
-		for i in range(len(reduced_log)):
-			kpt_out.write('    '+'    '.join(KPT[reduced_log[i][1]])+'\t0\n')
+		for i in range(len(fin_kpt)):
+			kpt_out.write('    '+'    '.join(fin_kpt[i])+'\t0\n')

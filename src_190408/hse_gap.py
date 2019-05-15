@@ -68,7 +68,7 @@ else:
 
 # Identify the candidates of which band gap can open in hse calculation.
 if os.path.isdir(dir+'/dos_GGA') and os.path.isdir(dir+'/dos_GGA/Pdos_dat'):
-	DF_DVB = DOS_ratio_fermi_to_vb(dir+'/dos_GGA/DOSCAR',inp_hse['fermi_width'],[inp_hse['vb_dos_min'],inp_hse['vb_dos_max']])
+	DF_DVB = round(DOS_ratio_fermi_to_vb(dir+'/dos_GGA/DOSCAR',inp_hse['fermi_width'],[inp_hse['vb_dos_min'],inp_hse['vb_dos_max']]),4)
 	if DF_DVB < inp_hse['cutoff_DF_DVB']:
 		make_amp2_log(dir_hse,'DF/DVB is '+str(DF_DVB)+'. Band_gap can open.')
 		find_extreme_kpt_for_hse(dir+'/band_GGA',inp_hse['energy_width_for_extreme'],inp_hse['search_space_for_extreme'])
