@@ -488,7 +488,7 @@ def make_incar(poscar,target,src_path,max_nelm):
 		nelm = nelect*3
 	if nelm < 30:
 		nelm = 30
-	wincar(src_path+'/INCAR0',target+'/INPUT0/INCAR0',[['SYSTEM',target.split('/')[-1]],['NELM ',str(nelm)]],[])
+	wincar(src_path+'/INCAR0',target+'/INPUT0/INCAR0',[['SYSTEM',target.split('/')[-1]],['NELM',str(nelm)]],[])
 	with open(target+'/INPUT0/INCAR','w') as out_inc:
 			subprocess.call(['cat',target+'/INPUT0/INCAR0',target+'/INPUT0/U_note',target+'/INPUT0/spin_note'], stdout=out_inc)
 
