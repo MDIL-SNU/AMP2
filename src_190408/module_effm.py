@@ -5,7 +5,8 @@
 import subprocess,os
 from module_band import EIGEN_to_array
 from module_vector import *
-from module_vasprun import poscar_to_axis
+from module_vasprun import *
+from module_amp2_input import *
 import numpy as np
 
 def calc_max_E_diff(Fermi_cut,temp):
@@ -119,6 +120,10 @@ def make_kpts_for_searching_space(target,search_grid_size):
 	KPTD.append([0.5, 0, -0.5])
 	KPTD.append([0, 0.5, 0.5])
 	KPTD.append([0, 0.5, -0.5])
+#	KPTD.append([0.5, 0.5, 0.5])
+#	KPTD.append([0.5, 0.5, -0.5])
+#	KPTD.append([0.5, -0.5, 0.5])
+#	KPTD.append([-0.5, 0.5, 0.5])
 
 	KPTDC = [] # cartessian KPTD
 	for i in range(len(KPTD)):
@@ -261,8 +266,8 @@ def make_kpts_for_calculation(target,grid_size,max_E_diff):
 			inp_effm.write('\t'.join([str(final_pocket_inform[k][x]) for x in range(2)])+'\n')
 		inp_effm.write(str(extreme_E))
 
-def kpt_frac_in_cell(pocket_kpt,x_id_mod,y_id_mod,z_id_mod,grid_size,axis):
-	new_kpt_cart = [pocket_kpt[0]+float(x_id_mod)*grid_size,pocket_kpt[1]+float(y_id_mod)*grid_size,pocket_kpt[2]+float(z_id_mod)*grid_size]
+def kpt_frac_in_cell(x_id_mod,y_id_mod,z_id_mod,grid_size,axis):
+	new_kpt_cart = [float(x_id_mod)*grid_size,float(y_id_mod)*grid_size,float(z_id_mod)*grid_size]
 	new_kpt_frac = cart_to_dir(new_kpt_cart,axis)
 	sw = 0
 	for i in range(3):
@@ -271,21 +276,25 @@ def kpt_frac_in_cell(pocket_kpt,x_id_mod,y_id_mod,z_id_mod,grid_size,axis):
 	if sw == 1:
 		return 0 # out
 	else:
-		return 1 # in
+		return 1 # in,do calculation
 
-def calc_effm(target,carrier_type,Temp):
+def calc_effm(target,carrier_type,Temp,oper):
 	import scipy.constants as sc
 	scp = sc.physical_constants
+	pos_file = target+'/POSCAR'
+	rec_axis = reciprocal_lattice(poscar_to_axis(pos_file))
 	with open(target+'/inp_grid') as inp:
 		number_of_pocket = int(inp.readline())
 		grid_size = float(inp.readline())
 		max_E_diff = float(inp.readline())
 		pocket_kpt = []
+		frac_pocket_kpt = []
 		pocket_inform = []
 		num_kp = []
 		num_kp_sep = []
 		for k in range(number_of_pocket):
 			pocket_kpt.append([float(x) for x in inp.readline().split()])
+			frac_pocket_kpt.append(cart_to_dir(pocket_kpt[-1],rec_axis))
 			num_kp.append([])
 			num_kp_sep.append([])
 			for i in range(3):
@@ -299,8 +308,9 @@ def calc_effm(target,carrier_type,Temp):
 
 	EN_tot = []
 	Edk2_tot = []
-
+	wei_tot = []
 	shift = 0
+	unique_kpt_idx = []
 	for k in range(number_of_pocket):
 		if carrier_type == 'hole':
 			min_band_idx = 0
@@ -309,24 +319,48 @@ def calc_effm(target,carrier_type,Temp):
 			min_band_idx = pocket_inform[k][0]
 			max_band_idx = len(Band)
 
-		spin_idx = pocket_inform[k][1]
-		for n in range(min_band_idx,max_band_idx):
-			for x_id in range(1,num_kp[k][0]-1):
-				for y_id in range(1,num_kp[k][1]-1):
-					for z_id in range(1,num_kp[k][2]-1):
-						energy = Band[n][idx_change(x_id,y_id,z_id,num_kp[k],shift)][spin_idx]
-						sw_for_kp_in_cell = kpt_frac_in_cell(pocket_kpt[k],x_id-num_kp_sep[k][0][0],y_id-num_kp_sep[k][1][0],z_id-num_kp_sep[k][2][0],grid_size,rec_axis)
-						if abs(energy-extreme_E) < max_E_diff and sw_for_kp_in_cell == 1:
-							EN_tot.append(energy)
-							Edk2_tot.append(cal_dk2(Band,n,x_id,y_id,z_id,num_kp[k],shift,spin_idx,diff_K))
+		# check pocket overlap
+		sw_overlap = 0
+		if not k == 0:
+			sym_kpts = symmetrical_kpts(frac_pocket_kpt[k],oper)
+			for new_kpt in sym_kpts:
+				for i in unique_kpt_idx:
+					if valid_pocket(dir_to_cart(new_kpt,rec_axis),pocket_kpt[i],num_kp_sep[i],grid_size,rec_axis) == 0:
+						sw_overlap = 1
+						break
+				if sw_overlap == 1:
+					break
+	
+		if sw_overlap == 0:
+			unique_kpt_idx.append(k)
+			sym_kpts = symmetrical_kpts(frac_pocket_kpt[k],oper)
+			num_overlap_sym_kpt = 0
+			for new_kpt in sym_kpts:
+				if valid_pocket(dir_to_cart(new_kpt,rec_axis),pocket_kpt[k],num_kp_sep[k],grid_size,rec_axis) == 0:
+					num_overlap_sym_kpt = num_overlap_sym_kpt +1
+			weight = float(len(sym_kpts))/float(num_overlap_sym_kpt)
+
+			spin_idx = pocket_inform[k][1]
+			for n in range(min_band_idx,max_band_idx):
+				for x_id in range(1,num_kp[k][0]-1):
+					for y_id in range(1,num_kp[k][1]-1):
+						for z_id in range(1,num_kp[k][2]-1):
+							energy = Band[n][idx_change(x_id,y_id,z_id,num_kp[k],shift)][spin_idx]
+							sw_for_kp_in_cell = kpt_frac_in_cell(x_id-num_kp_sep[k][0][0],y_id-num_kp_sep[k][1][0],z_id-num_kp_sep[k][2][0],grid_size,rec_axis)
+							if abs(energy-extreme_E) < max_E_diff and sw_for_kp_in_cell == 1:
+								EN_tot.append(energy)
+								Edk2_tot.append(cal_dk2(Band,n,x_id,y_id,z_id,num_kp[k],shift,spin_idx,diff_K))
+								wei_tot.append(weight)
+
 		shift = shift + num_kp[k][0] * num_kp[k][1] * num_kp[k][2]
+
 
 	sum_fermi = 0
 	sum_deriv = [0,0,0,0,0,0]
 	for i in range(len(EN_tot)):
-		sum_fermi = sum_fermi + Fermi_dist(EN_tot[i],extreme_E,carrier_type,Temp)
+		sum_fermi = sum_fermi + Fermi_dist(EN_tot[i],extreme_E,carrier_type,Temp) * wei_tot[i]
 		for j in range(6):
-			sum_deriv[j] = sum_deriv[j] + Edk2_tot[i][j] * Fermi_dist(EN_tot[i],extreme_E,carrier_type,Temp)
+			sum_deriv[j] = sum_deriv[j] + Edk2_tot[i][j] * Fermi_dist(EN_tot[i],extreme_E,carrier_type,Temp) * wei_tot[i]
 
 	deriv_tensor = np.array([[sum_deriv[0],sum_deriv[3],sum_deriv[4]],[sum_deriv[3],sum_deriv[1],sum_deriv[5]],[sum_deriv[4],sum_deriv[5],sum_deriv[2]]])/sum_fermi
 	deriv_mat = np.linalg.inv(deriv_tensor)
@@ -422,7 +456,92 @@ def check_vasp_done(target):
 					return 2
 		return 1
 
-			
+def read_operation(poscar_type):
+	import spglib
+	[axis,atom_pos] = read_poscar(sys.argv[1])
+
+	L = np.mat(axis)
+	pos = []
+	atom_type = []
+	atom_dic = {}
+	type_dic = {}
+	index = 0
+	for line in atom_pos:
+		pos.append(line[0:3])
+		if not line[4] in atom_dic.keys():
+			atom_dic[line[4]] = index
+			type_dic[index] = [line[3],line[4]]
+			index = index+1
+		atom_type.append(atom_dic[line[4]])
+	D = np.mat(pos)
+	Cell = (L,D,atom_type)
+
+	rot_oper = spglib.get_symmetry(Cell)['rotations']
+	oper = np.ndarray.tolist(rot_oper)
+
+	return oper
+
+def valid_pocket(pocket_kpt,ref_kpt,num_kp_sep,grid_size,axis):
+	frac_poc_tmp = cart_to_dir([pocket_kpt[x]-ref_kpt[x] for x in range(3)],axis)
+	frac_poc = [x-np.floor(x+0.5) for x in frac_poc_tmp]
+	cart_poc = dir_to_cart(frac_poc,axis)
+	sw_for_overlap = 0
+	for i in range(3):
+		if cart_poc[i] > grid_size*float(num_kp_sep[i][1]-1) or cart_poc[i] < -grid_size*float(num_kp_sep[i][0]-1) :
+			sw_for_overlap = 1
+			break
+	if sw_for_overlap == 1:
+		return 1 # out,do calculation
+	else :
+		return 0 # in
+
+def symmetrical_kpts(pocket_kpt,oper):
+	poc = []
+	poc.append([x for x in pocket_kpt])
+	prev_poc_len = len(poc)
+	while 1:
+		prev_poc_len = len(poc)
+		poc = dup_pos(poc,oper)
+		if len(poc) == prev_poc_len:
+			break
+		else:
+			prev_poc_len = len(poc)
+	return poc
+
+def vec_mod(vec):
+	new_vec = []
+	for xx in vec:
+		new_vec.append(round(xx-np.floor(xx+0.5),7))
+	return new_vec
+
+def dup_pos(pos,oper):
+	irre_pos = []
+	made_pos = []
+	idx = 0
+	dic = {}
+
+	for i in range(len(pos)):
+		for j in range(len(oper)):
+			made_pos.append(vec_mod(apply_operator(pos[i],oper[j])))
+	for i in range(len(made_pos)):
+		if len(irre_pos) == 0:
+			irre_pos.append(made_pos[i])
+		else:
+			sw = 0
+			for j in range(len(irre_pos)):
+				if dist_point(made_pos[i],irre_pos[j]) < 0.000001:
+					sw = 1
+					break
+			if sw == 0:
+				irre_pos.append(made_pos[i])
+	return irre_pos
+
+def apply_operator(pos,operator):
+	oper_pos = []
+	for i in range(3):
+		oper_pos.append(pos[0]*operator[0][i]+pos[1]*operator[1][i]+pos[2]*operator[2][i])
+	return oper_pos
+
 ############################################################################################
 def pocket_old(target,carrier_type,E_width,kspacing):
 	spin = subprocess.check_output(['grep','ISPIN',target+'/OUTCAR']).split()[2]
