@@ -95,21 +95,18 @@ else:
 		print 0
 		sys.exit() 
 	out = electronic_step_convergence_check(dir_diel)
-	if out == 2:  # electronic step is not converged. (algo = normal)
-		make_amp2_log(dir_diel,'Electronic step is not converged. ALGO is already normal.')
-		print 0
-		sys.exit()
-	elif out == 1:  # elctronic step is not converged. (algo = fast) Algo changes to normal and rerun.
-		make_amp2_log(dir_diel,'Electronic step is not converged. ALGO changes to Normal.')
+	while out == 1:
+		make_amp2_log(dir_diel,'Calculation options are changed. New calculation starts.')
 		out = run_vasp(dir_diel,nproc,vasprun)
 		if out == 1:  # error in vasp calculation
 			print 0
 			sys.exit()
 		out = electronic_step_convergence_check(dir_diel)
-		if out == 2:  # electronic step is not converged. (algo = normal)
-			make_amp2_log(dir_diel,'Electronic step is not converged. ALGO is already normal.')
-			print 0
-			sys.exit()
+
+	if out == 2:  # electronic step is not converged. (algo = normal)
+		make_amp2_log(dir_diel,'The calculation stops but electronic step is not converged.')
+		print 0
+		sys.exit()
 
 	write_diel_log(dir_diel+'/OUTCAR',dir_diel)
 	make_amp2_log(dir_diel,'Dielectric calcuation is done.')

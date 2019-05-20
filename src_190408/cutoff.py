@@ -101,22 +101,19 @@ while convergence == 1 :
 			sys.exit() 
 
 		out = electronic_step_convergence_check(now_path)
-		if out == 2:  # electronic step is not converged. (algo = normal)
-			make_amp2_log(dir+'/cutoff','Electronic step is not converged. ALGO is already normal.')
-			print 0
-			sys.exit()
-		elif out == 1:  # elctronic step is not converged. (algo = fast) Algo changes to normal and rerun.
-			make_amp2_log(dir+'/cutoff','Electronic step is not converged. ALGO changes to normal.')
-			wincar(dir+'/INPUT0/INCAR',dir+'/INPUT0/INCAR',[['ALGO','Normal']],[])
+		while out == 1:
+			make_amp2_log(dir+'/cutoff','Calculation options are changed. New calculation starts.')
 			out = run_vasp(now_path,nproc,vasprun)
 			if out == 1:  # error in vasp calculation
 				print 0
 				sys.exit()
 			out = electronic_step_convergence_check(now_path)
-			if out == 2:  # electronic step is not converged. (algo = normal)
-				make_amp2_log(dir+'/cutoff','Electronic step is not converged. ALGO is already normal.')
-				print 0
-				sys.exit()
+
+		if out == 2:  # electronic step is not converged. (algo = normal)
+			make_amp2_log(dir+'/cutoff','The calculation stops but electronic step is not converged.')
+			print 0
+			sys.exit()
+
 	# electronic step is converged.
 	write_conv_result(now_path,enlog)
 	if loopnum >= 3:

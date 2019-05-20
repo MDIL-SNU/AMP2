@@ -84,6 +84,7 @@ def set_parallel(kpoints,incar,npar,kpar):
 
 # run vasp	
 def run_vasp(target,nproc,vasprun):
+	# 0: well done, 1: error in vasp calculation
 	os.chdir(target)
 	out = subprocess.call(['mpirun -np '+nproc+' '+vasprun+' >& stdout.x'], stdout=subprocess.PIPE, shell=True)
 	if out == 0:
@@ -102,6 +103,7 @@ def run_vasp(target,nproc,vasprun):
 
 # check electronic step convergence
 def electronic_step_convergence_check(target):
+	# 0: well converged, 1: can try to calculation with other setting (retry), 2: cannot be converged (stop)
 	with open(target+'/OSZICAR','r') as inp:
 		fr_log = inp.readlines()[1:]
 	spin = subprocess.check_output(['grep','ISPIN',target+'/OUTCAR']).split()[2]
