@@ -115,21 +115,19 @@ if out == 1:  # error in vasp calculation
 	print 0
 	sys.exit() 
 out = electronic_step_convergence_check(dir_dos)
-if out == 2:  # electronic step is not converged. (algo = normal)
-	make_amp2_log(dir_dos,'Electronic step is not converged. ALGO is already normal.')
-	print 0
-	sys.exit()
-elif out == 1:  # elctronic step is not converged. (algo = fast) Algo changes to normal and rerun.
-	make_amp2_log(dir_dos,'Electronic step is not converged. ALGO changes to Normal.')
+while out == 1:
+	make_amp2_log(dir_dos,'Calculation options are changed. New calculation starts.')
 	out = run_vasp(dir_dos,nproc,vasprun)
 	if out == 1:  # error in vasp calculation
 		print 0
 		sys.exit()
 	out = electronic_step_convergence_check(dir_dos)
-	if out == 2:  # electronic step is not converged. (algo = normal)
-		make_amp2_log(dir_dos,'Electronic step is not converged. ALGO is already normal.')
-		print 0
-		sys.exit()
+
+if out == 2:  # electronic step is not converged. (algo = normal)
+	make_amp2_log(dir_dos,'The calculation stops but electronic step is not converged.')
+	print 0
+	sys.exit()
+
 # set fermi level
 fermi = float(subprocess.check_output(['head',dir_dos+'/DOSCAR','-n','6']).splitlines()[-1].split()[3])
 gap = 0

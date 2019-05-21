@@ -73,22 +73,18 @@ if out == 1:  # error in vasp calculation
 	sys.exit() 
 
 out = electronic_step_convergence_check(dir_relax)
-if out == 2:  # electronic step is not converged. (algo = normal)
-	make_amp2_log(dir_relax,'Electronic step is not converged. ALGO is already normal.')
-	print 0
-	sys.exit()
-elif out == 1:  # elctronic step is not converged. (algo = fast) Algo changes to normal and rerun.
-	make_amp2_log(dir_relax,'Electronic step is not converged. ALGO changes to Normal.')
-	wincar(dir+'/INPUT0/INCAR',dir+'/INPUT0/INCAR',[['ALGO','Normal']],[])
+while out == 1:
+	make_amp2_log(dir_relax,'Calculation options are changed. New calculation starts.')
 	out = run_vasp(dir_relax,nproc,vasprun)
 	if out == 1:  # error in vasp calculation
 		print 0
 		sys.exit()
 	out = electronic_step_convergence_check(dir_relax)
-	if out == 2:  # electronic step is not converged. (algo = normal)
-		make_amp2_log(dir_relax,'Electronic step is not converged. ALGO is already normal.')
-		print 0
-		sys.exit()
+
+if out == 2:  # electronic step is not converged. (algo = normal)
+	make_amp2_log(dir_relax,'The calculation stops but electronic step is not converged.')
+	print 0
+	sys.exit()
 
 ionic_converge = 0
 iteration = 1
@@ -105,6 +101,21 @@ while iteration < inp_rlx['max_iteration']:
 	if out == 1:  # error in vasp calculation
 		print 0
 		sys.exit() 
+
+	out = electronic_step_convergence_check(dir_relax)
+	while out == 1:
+		make_amp2_log(dir_relax,'Calculation options are changed. New calculation starts.')
+		out = run_vasp(dir_relax,nproc,vasprun)
+		if out == 1:  # error in vasp calculation
+			print 0
+			sys.exit()
+		out = electronic_step_convergence_check(dir_relax)
+
+	if out == 2:  # electronic step is not converged. (algo = normal)
+		make_amp2_log(dir_relax,'The calculation stops but electronic step is not converged.')
+		print 0
+		sys.exit()
+
 	energy = subprocess.check_output(['grep','free  ','OUTCAR']).splitlines()
 	iteration = iteration+1
 	make_amp2_log(dir_relax,'Iteration number is '+str(iteration))

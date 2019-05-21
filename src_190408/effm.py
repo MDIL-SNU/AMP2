@@ -141,7 +141,6 @@ else:
 				sys.exit() 
 		else:
 			make_amp2_log(dir_effm,'VASP calculation is already done.')
-
 		make_kpts_for_calculation(dir_effm,inp_effm['grid_size_for_calculation'],max_E_diff)
 		make_amp2_log(dir_effm,'Generate new inp_grid')
 
@@ -161,7 +160,8 @@ else:
 	else:
 		make_amp2_log(dir_effm,'VASP calculation is already done.')
 
-	[effm_dia,effm] = calc_effm(dir_effm,carrier_type,inp_effm['temperature_for_Fermi'])
+	oper = read_operation(dir+'/INPUT0/POSCAR')
+	[effm_dia,effm] = calc_effm(dir_effm,carrier_type,inp_effm['temperature_for_Fermi'],oper)
 	write_effm(effm_dia,effm,dir_effm,carrier_type)
 
 	make_amp2_log(dir_effm,carrier_type+' effective mass calcuation is done.')
