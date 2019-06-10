@@ -20,7 +20,7 @@
  Ionic Relaxation:
    NSW    =     100       max number of geometry steps
    IBRION =     2     ionic relax: 0-MD, 1-quasi-Newton, 2-CG, 3-Damped MD
-   EDIFFG =   -0.002  force (eV/A) stopping-criterion for geometry steps
+   EDIFFG =   -0.02  force (eV/A) stopping-criterion for geometry steps
    ISIF   =     3     (1:force=y stress=trace only ions=y shape=n volume=n)
    ISYM   =     1     (1-use symmetry, 0-no symmetry)
 

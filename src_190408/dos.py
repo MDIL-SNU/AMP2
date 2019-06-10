@@ -105,7 +105,24 @@ else:
 with open(dir+'/INPUT0/sym','r') as symf:
 	sym = int(symf.readline().split()[0])
 make_multiple_kpts(dir+'/kptest/kpoint.log',dir_dos+'/KPOINTS',dir_dos+'/POSCAR',inp_dos['KP_multiplier'],sym)
+wincar(dir_dos+'/INCAR',dir_dos+'/INCAR',[['ISMEAR','-5'],['SIGMA','']],[])
+
 incar_from_yaml(dir_dos,inp_dos['INCAR'])
+
+# Gamma-centered k-mesh for tetrahedron method
+if 'ISMEAR' in inp_dos['INCAR']:
+	if inp_dos['INCAR']['ISMEAR'] in [-4,-5]:
+		with open(dir_dos+'/KPOINTS','r') as kptf:
+			lines = kptf.readlines()
+		lines[2] = 'Gamma-centered\n'
+		with open(dir_dos+'/KPOINTS','w') as kptf:
+			kptf.write(''.join(lines))
+else:
+	with open(dir_dos+'/KPOINTS','r') as kptf:
+		lines = kptf.readlines()
+	lines[2] = 'Gamma-centered\n'
+	with open(dir_dos+'/KPOINTS','w') as kptf:
+		kptf.write(''.join(lines))
 
 wincar(dir_dos+'/INCAR',dir_dos+'/INCAR',[['NSW','0'],['ISTART','1'],['ICHARG','11'],['LCHARG','.F.'],['NEDOS','3001']],[])
 vasprun = vasp_std

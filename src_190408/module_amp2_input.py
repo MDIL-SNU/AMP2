@@ -482,12 +482,13 @@ def make_incar(poscar,target,src_path,max_nelm):
 		nelect = nelect + int(atom_cnt[j])*int(float(pot_line))
 
 	# Set maximum number of electronic steps
-	if nelect > int(max_nelm/3) :
-		nelm = max_nelm
-	else :
-		nelm = nelect*3
-	if nelm < 30:
-		nelm = 30
+	nelm = max_nelm
+#	if nelect > int(max_nelm/3) :
+#		nelm = max_nelm
+#	else :
+#		nelm = nelect*3
+#	if nelm < 30:
+#		nelm = 30
 	wincar(src_path+'/INCAR0',target+'/INPUT0/INCAR0',[['SYSTEM',target.split('/')[-1]],['NELM',str(nelm)]],[])
 	with open(target+'/INPUT0/INCAR','w') as out_inc:
 			subprocess.call(['cat',target+'/INPUT0/INCAR0',target+'/INPUT0/U_note',target+'/INPUT0/spin_note'], stdout=out_inc)
