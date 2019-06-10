@@ -110,7 +110,7 @@ wincar(dir_dos+'/INCAR',dir_dos+'/INCAR',[['ISMEAR','-5'],['SIGMA','']],[])
 incar_from_yaml(dir_dos,inp_dos['INCAR'])
 
 # Gamma-centered k-mesh for tetrahedron method
-if 'ISMEAR' in inp_dos['INCAR']:
+if bool(inp_dos['INCAR']) and 'ISMEAR' in inp_dos['INCAR']:
 	if inp_dos['INCAR']['ISMEAR'] in [-4,-5]:
 		with open(dir_dos+'/KPOINTS','r') as kptf:
 			lines = kptf.readlines()

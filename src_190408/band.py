@@ -129,6 +129,10 @@ gap = gap_estimation(dir_band,fermi,spin,ncl,KPT,Band,nelect) # gap is string
 
 if gap == 'metal':
 	make_amp2_log(dir,'Band calculation is already done.\nIt is metallic.')
+	if os.path.isdir(dir+'/dos_'+POT):
+		fermi = float(subprocess.check_output(['head',dir+'/dos_'+POT+'/DOSCAR','-n','6']).splitlines()[-1].split()[3])
+	elif os.path.isdir(dir+'/relax_'+POT):
+		fermi = float(subprocess.check_output(['head',dir+'/relax_'+POT+'/DOSCAR','-n','6']).splitlines()[-1].split()[3])
 else:
 	make_amp2_log(dir_band,'Band calculaton is done.\nBand gap is '+gap)
 
