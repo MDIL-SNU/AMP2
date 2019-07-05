@@ -39,6 +39,19 @@ if os.path.isdir(dir_hse) and os.path.isfile(dir_hse+'/Band_gap.log') :
 if not os.path.isdir(dir_hse):
 	os.mkdir(dir_hse,0755)
 
+# Alpha auto setting (From dielectric constant)
+PBE0_on = 0
+if inp_hse['alpha'] in ['Auto','auto'] or inp_hse['alpha'] == 0:
+	if os.path.isdir(dir+'/dielectric_GGA'):
+		PBE0_on = 1
+		diel_path = dir+'/dielectric_GGA'
+	elif os.path.isdir(dir+'/dielectric_LDA'):
+		PBE0_on = 1
+		diel_path = dir+'/dielectric_LDA'
+	else:
+		inp_hse['alpha'] = 0.25
+	
+
 os.chdir(dir_hse)
 
 make_amp2_log_default(dir_hse,src_path,'Hybrid oneshot calculation',node,code_data)
@@ -82,7 +95,11 @@ if os.path.isfile(dir+'/band_GGA/KPT') and os.path.getsize(dir+'/band_GGA/KPT') 
 	# make KPOINTS
 	make_kpts_for_oneshot(dir+'/relax_GGA/IBZKPT',dir+'/band_GGA/KPT',dir_hse)
 	# make INCAR
-	wincar(dir_hse+'/INCAR',dir_hse+'/INCAR',[['NSW','0'],['ALGO',''],['LDA',''],['LMAXMIX','']],['\n\nHybrid calculation:\n   LHFCALC= .T.\n   HFSCREEN = 0.2\n   PRECFOCK = Normal\n   ALGO = ALL\n   AEXX = '+str(inp_hse['alpha'])+'\n'])
+	if PBE0_on == 1:
+		inp_hse['alpha'] = calc_alpha_auto(diel_path+'/dielectric.log')
+		wincar(dir_hse+'/INCAR',dir_hse+'/INCAR',[['NSW','0'],['ALGO',''],['LDA',''],['LMAXMIX','']],['\n\nHybrid calculation:\n   LHFCALC= .T.\n   HFSCREEN = 0.0\n   PRECFOCK = Normal\n   ALGO = ALL\n   AEXX = '+str(inp_hse['alpha'])+'\n'])
+	else:
+		wincar(dir_hse+'/INCAR',dir_hse+'/INCAR',[['NSW','0'],['ALGO',''],['LDA',''],['LMAXMIX','']],['\n\nHybrid calculation:\n   LHFCALC= .T.\n   HFSCREEN = 0.2\n   PRECFOCK = Normal\n   ALGO = ALL\n   AEXX = '+str(inp_hse['alpha'])+'\n'])
 	incar_from_yaml(dir_hse,inp_hse['INCAR'])
 	mag_on = check_magnet(dir+'/relax_GGA')
 	vasprun = make_incar_for_ncl(dir_hse,mag_on,kpar,npar,vasp_std,vasp_gam,vasp_ncl)

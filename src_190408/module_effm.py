@@ -311,7 +311,7 @@ def calc_effm(target,carrier_type,Temp,oper):
 	wei_tot = []
 	shift = 0
 	unique_kpt_idx = []
-	for k in range(number_of_pocket):
+	for k in range(number_of_pocket): # loop for pockets
 		if carrier_type == 'hole':
 			min_band_idx = 0
 			max_band_idx = pocket_inform[k][0]+1
@@ -321,8 +321,8 @@ def calc_effm(target,carrier_type,Temp,oper):
 
 		# check pocket overlap
 		sw_overlap = 0
-		if not k == 0:
-			sym_kpts = symmetrical_kpts(frac_pocket_kpt[k],oper)
+		if not k == 0: # if the point is not first
+			sym_kpts = symmetrical_kpts(frac_pocket_kpt[k],oper) # find duplicated kpts applying symmetry operator.
 			for new_kpt in sym_kpts:
 				for i in unique_kpt_idx:
 					if valid_pocket(dir_to_cart(new_kpt,rec_axis),pocket_kpt[i],num_kp_sep[i],grid_size,rec_axis) == 0:
@@ -330,11 +330,11 @@ def calc_effm(target,carrier_type,Temp,oper):
 						break
 				if sw_overlap == 1:
 					break
-	
+		# if sw_overlap is 0, the kpoint is unduplicated point.
 		if sw_overlap == 0:
 			unique_kpt_idx.append(k)
 			sym_kpts = symmetrical_kpts(frac_pocket_kpt[k],oper)
-			num_overlap_sym_kpt = 0
+			num_overlap_sym_kpt = 0 # number of pockets that are placed in the mesh grid from another pocket.
 			for new_kpt in sym_kpts:
 				if valid_pocket(dir_to_cart(new_kpt,rec_axis),pocket_kpt[k],num_kp_sep[k],grid_size,rec_axis) == 0:
 					num_overlap_sym_kpt = num_overlap_sym_kpt +1
@@ -456,9 +456,9 @@ def check_vasp_done(target):
 					return 2
 		return 1
 
-def read_operation(poscar_type):
+def read_operation(poscar):
 	import spglib
-	[axis,atom_pos] = read_poscar(sys.argv[1])
+	[axis,atom_pos] = read_poscar(poscar)
 
 	L = np.mat(axis)
 	pos = []
@@ -485,9 +485,9 @@ def valid_pocket(pocket_kpt,ref_kpt,num_kp_sep,grid_size,axis):
 	frac_poc_tmp = cart_to_dir([pocket_kpt[x]-ref_kpt[x] for x in range(3)],axis)
 	frac_poc = [x-np.floor(x+0.5) for x in frac_poc_tmp]
 	cart_poc = dir_to_cart(frac_poc,axis)
-	sw_for_overlap = 0
+	sw_for_overlap = 0 # 0 indicate overlapped k-points.
 	for i in range(3):
-		if cart_poc[i] > grid_size*float(num_kp_sep[i][1]-1) or cart_poc[i] < -grid_size*float(num_kp_sep[i][0]-1) :
+		if cart_poc[i] > grid_size*float(num_kp_sep[i][1]) or cart_poc[i] < -grid_size*float(num_kp_sep[i][0]) :
 			sw_for_overlap = 1
 			break
 	if sw_for_overlap == 1:

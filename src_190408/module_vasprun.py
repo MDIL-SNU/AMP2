@@ -29,8 +29,9 @@ def copy_input_no_kp(source,target,pot_type):
 # generate kpoints file from kpl and symmetry
 def kpt_generation_for_relax(target,KPL,sym):
 	kpoint = open(target+'/KPOINTS','w')
-	# Gamma-centred mesh for hexagoanl symmetry
-	if sym==6 or sym==12 or sym==13 or sym==14 or sym==10 or sym==15:
+	# Gamma-centred mesh for hexagoanl and rhombohedral symmetry
+	if sym==12 or sym==13 or sym==14:
+#	if sym==6 or sym==12 or sym==13 or sym==14 or sym==10 or sym==15:
 		KPset = 'Gamma-centred'
 	else :
 		KPset = 'Monk-horst'
@@ -41,8 +42,9 @@ def kpt_generation_for_relax(target,KPL,sym):
 		l.append((recipro_latt[i][0]**2.+recipro_latt[i][1]**2.+recipro_latt[i][2]**2.)**0.5)
 	KP = []
 	for i in range(3) :
-		if sym == 5 or sym == 6:  # symmetry BCT
+		if sym in [5,6,10]:  # symmetry BCT and ORCI
 			KP.append(str(KPL))
+#			KP.append(str(int(round(l[i]/(max(l)/KPL)))))
 		else:
 			KP.append(str(int(round(l[i]/(max(l)/KPL)))))
 		if KP[-1] == '0' :
@@ -253,7 +255,7 @@ def make_multiple_kpts(kp_log,kpt_file,pos_file,kp_multi,sym):
 		idx = l.index(max(l))
 		KP=[]
 		for i in range(3) :
-			if sym == 5 or sym == 6:
+			if sym in [5,6,10]: # for BCT and ORCI
 				KP.append(str(KPL))
 			else:
 				KP[i:] = [str(int(round(l[i]/(l[idx]/KPL))))]

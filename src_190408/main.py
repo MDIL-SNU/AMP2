@@ -110,11 +110,6 @@ while len(make_list(inp_file)) > 0:
 			calc_out = 0
 			shutil.move(target,ERROR_path+'/'+target.split('/')[-1])
 			continue
-	if cal_dic['hse_oneshot'] == 1:
-		notice = subprocess.check_output(['python',src_path+'/hse_gap.py',target,inp_file,node,nproc])
-		if not notice.splitlines()[-1][0] == '1':
-			shutil.move(target,ERROR_path+'/'+target.split('/')[-1])
-			continue
 	if cal_dic['dielectric'] == 1:
 		for pot_type in inp_yaml['dielectric']['potential_type']:
 			if not os.path.isfile(target+'/INPUT0/POTCAR_'+pot_type):
@@ -127,6 +122,11 @@ while len(make_list(inp_file)) > 0:
 				break
 		if calc_out == 1:
 			calc_out = 0
+			shutil.move(target,ERROR_path+'/'+target.split('/')[-1])
+			continue
+	if cal_dic['hse_oneshot'] == 1:
+		notice = subprocess.check_output(['python',src_path+'/hse_gap.py',target,inp_file,node,nproc])
+		if not notice.splitlines()[-1][0] == '1':
 			shutil.move(target,ERROR_path+'/'+target.split('/')[-1])
 			continue
 	if cal_dic['effective_mass'] == 1:

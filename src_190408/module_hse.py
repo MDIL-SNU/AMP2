@@ -263,3 +263,14 @@ def find_extreme_kpt_for_hse(dir_band,e_width,search_space):
 		kpt_out.write("Example file\n               0\nReciprocal\n")
 		for i in range(len(fin_kpt)):
 			kpt_out.write('    '+'    '.join(fin_kpt[i])+'\t0\n')
+
+def calc_alpha_auto(diel_path):
+	# alpha is defined as 1/e_inf
+#	import numpy as np
+	with open(diel_path,'r') as f:
+		lines = f.readlines()[1:4]
+	diel_e  = []
+	for line in lines:
+		diel_e.append([float(x) for x in line.split()])
+	avg_diel = (diel_e[0][0]+diel_e[1][1]+diel_e[2][2])/3.0
+	return 1.0/avg_diel
