@@ -336,7 +336,7 @@ with open(target+'/amp2.log','r') as amp2_log:
 ## check magnetic ordering (ferro or not)
 stable_path = ground_path+'/Stable'+str(stable_ene[0])
 shutil.copy(stable_path+'/POSCAR',target+'/POSCAR_spin')
-[new_mag_atom_list,new_mag_val] = check_spin(stable_path,stable_path+'/POSCAR',inp_af['Minimum_moment'])
+[new_mag_atom_list,new_mag_val] = check_spin(stable_path,ground_path+'/POSCAR_spin'+str(stable_ene[0]),inp_af['Minimum_moment'])
 ferro = 0
 for i in new_mag_val:
 	if new_mag_val[i] < 0:
