@@ -582,7 +582,7 @@ def read_poscar(poscar):
 				sym_info = 1
 			atom_pos_line = [float(x) for x in lines[atom_idx].split()[0:3]]
 			if cart_type == 'C' or cart_type == 'c':
-				atom_pos_line = dir_to_cart(atom_pos_line,axis)
+				atom_pos_line = cart_to_dir(atom_pos_line,axis)
 			atom_pos.append([float(x) for x in lines[atom_idx].split()[0:3]]+[type_name[i],typ_idx])
 	# atom_pos = [[x,y,z,type_name,detail_type_name]*# of atoms]
 	if sym_info == 1:
