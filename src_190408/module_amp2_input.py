@@ -5,7 +5,6 @@
 import os, sys, yaml, shutil, glob, math, subprocess
 from operator import itemgetter
 from module_log import *
-from module_vasprun import wincar
 from module_vector import *
 
 def make_list(inp_file):
@@ -14,20 +13,33 @@ def make_list(inp_file):
 		inp_yaml = yaml.load(f)
 	Submit_path = inp_yaml['directory']['submit']
 	ERROR_path = inp_yaml['directory']['error']
-
-	cifs = glob.glob(Submit_path+'/*.cif')
-	POSCARs = glob.glob(Submit_path+'/POSCAR_*')
-
-	dir_list = glob.glob(Submit_path+'/*')
+	# Submit_path is file (cif or POSCAR)
+	cifs = []
+	POSCARs = []
 	dirs = []
-	for ll in dir_list:
-		title = ll.split('/')[-1]
-		if os.path.isdir(ll) and len(title.split('_')) >= 2:
-			if os.path.isdir(ll+'/INPUT0'):
-				dirs.append(Submit_path+'/'+title)
-			else:
-				make_amp2_log(ll,'ERROR: There is no INPUT0.')
-				shutil.move(ll,ERROR_path+'/'+title)
+	if os.path.isfile(Submit_path):
+		if '.cif' in Submit_path[-4:]:
+			cifs = [Submit_path]
+		elif 'POSCAR_' in Submit_path.split('/')[-1][:7]:
+			POSCARs = [Submit_path]
+	# Submit_path is directory for a single material.
+	elif os.path.isdir(Submit_path+'/INPUT0'):
+		dirs = [Submit_path]
+	
+	elif os.path.isdir(Submit_path):
+		cifs = glob.glob(Submit_path+'/*.cif')
+		POSCARs = glob.glob(Submit_path+'/POSCAR_*')
+
+		dir_list = glob.glob(Submit_path+'/*')
+		dirs = []
+		for ll in dir_list:
+			title = ll.split('/')[-1]
+			if os.path.isdir(ll) and len(title.split('_')) >= 2:
+				if os.path.isdir(ll+'/INPUT0'):
+					dirs.append(Submit_path+'/'+title)
+				else:
+					make_amp2_log(ll,'ERROR: There is no INPUT0.')
+					shutil.move(ll,ERROR_path+'/'+title)
 	calc_list = []
 	for i in range(len(dirs)):
 		calc_list.append([dirs[i],'0'])
@@ -77,7 +89,6 @@ def make_poscar_from_cif(cif,target):
 	line = f.readline()
 	check_error = 0
 	while line :
-		line = f.readline()
 		### read lattice parameters
 		if "_cell_length_a " in line :
 			a = read_cif_lattice(line)
@@ -117,12 +128,10 @@ def make_poscar_from_cif(cif,target):
 			while True :
 				tmp = f.readline()
 				tmp = tmp.replace('\n','').replace('\r','')
-				if not len(tmp.split()) > 1:
+				if not "'" in tmp:
 					break
-				if not tmp.split()[1][0] == "'":
-					break
-				tmp = ''.join(tmp.split()[1:])
-				tmp = tmp.replace("'","")
+				tmp = tmp.split("'")[1]
+				tmp = tmp.replace(" ","")
 				tmp = tmp.replace("/",".0/")
 				sym.append(tmp.split(','))
 
@@ -143,55 +152,50 @@ def make_poscar_from_cif(cif,target):
 
 
 		### read atom information
-		# from ICSD cif
-		if "_atom_site_attached_hydrogens" in line :
-			atoms = []	# Atom postition lines
+		if "loop_" in line:
 			tmp = f.readline()
-			while len(tmp.split()) == 10 :
-				# atom_info = [name,index,charge,occupancy,pos_vector]
-				atom_info = read_cif_position(tmp) 
+			if "_atom_site_" in tmp:
+				atom_info_idx_cif = [-1,-1,-1,-1,-1,-1] # label, frac_pos_x, frac_pos_y, frac_pos_z, occupancy, type_symbol
+				atom_info_idx_num = 0
+				while len(tmp.split()) == 1:
+					val = atom_inform_idx(tmp)
+					if not val == -1:
+						atom_info_idx_cif[val] = atom_info_idx_num
+					atom_info_idx_num = atom_info_idx_num+1
 
-				# Partial occupation case (not used) 
-				check = 0
-				if atom_info[3] != 1.0 :
-					make_amp2_log(target,'Warning. Partially occufied structure. Check '+atom_info[0]+atom_info[1])
-					for atom_list in atoms:
-						if atom_list[4] == atom_info[4]:
-							if not atom_list[0] == atom_info[0]:
-								make_amp2_log(target,'ERROR. Two different type atoms cannot be placed at the same position.')
-								sys.exit()
-							else:
-								make_amp2_log(target,'Warning. Same type but different index atoms are placed at the same position.')
-								make_amp2_log(target,'One is '+atom_list[0]+atom_list[1]+'. The other is '+atom_info[0]+atom_info[1]+'.')
-								check = 1
-				if not check == 1:
-					atoms.append(atom_info)
-				tmp = f.readline()
+					tmp = f.readline()
 
-		# from VESTA cif
-		if "_atom_site_type_symbol" in line :
-			atoms = []	# Atom postition lines
-			tmp = f.readline()
-			while len(tmp.split()) == 8 :
-				# atom_info = [name,index,charge,occupancy,pos_vector]
-				atom_info = read_cif_position(tmp) 
+				if sum(atom_info_idx_cif) == -6:
+					break
+				elif -1 in atom_info_idx_cif[0:5]:
+					make_amp2_log(target,'ERROR. There is not enough information if cif file.')
+					sys.exit()
 
-				# Partial occupation case (not used) 
-				check = 0
-				if atom_info[3] != 1.0 :
-					make_amp2_log(target,'Warning. Partially occufied structure. Check '+atom_info[0]+atom_info[1])
-					for atom_list in atoms:
-						if atom_list[4] == atom_info[4]:
-							if not atom_list[0] == atom_info[0]:
-								make_amp2_log(target,'ERROR. Two different type atoms cannot be placed at the same position.')
-								sys.exit()
-							else:
-								make_amp2_log(target,'Warning. Same type but different index atoms are placed at the same position.')
-								make_amp2_log(target,'One is '+atom_list[0]+atom_list[1]+'. The other is '+atom_info[0]+atom_info[1]+'.')
-								check = 1
-				if not check == 1:
-					atoms.append(atom_info)
-				tmp = f.readline()
+				atoms = []	# Atom postition lines
+				while len(tmp.split()) == atom_info_idx_num:
+					# atom_info = [name,index,charge,occupancy,pos_vector]
+					atom_info = read_cif_position(tmp,atom_info_idx_cif)
+
+					# Partial occupation case (not used) 
+					check = 0
+					if atom_info[3] != 1.0 :
+						make_amp2_log(target,'Warning. Partially occufied structure. Check '+atom_info[0]+atom_info[1])
+						for atom_list in atoms:
+							if atom_list[4] == atom_info[4]:
+								if not atom_list[0] == atom_info[0]:
+									make_amp2_log(target,'ERROR. Two different type atoms cannot be placed at the same position.')
+									sys.exit()
+								else:
+									make_amp2_log(target,'Warning. Same type but different index atoms are placed at the same position.')
+									make_amp2_log(target,'One is '+atom_list[0]+atom_list[1]+'. The other is '+atom_info[0]+atom_info[1]+'.')
+									check = 1
+					if not check == 1:
+						atoms.append(atom_info)
+					tmp = f.readline()
+			else:
+				line = tmp
+		else:
+			line = f.readline()
 
 	### make poscar from atomic information
 	# lattice parameter	
@@ -270,7 +274,7 @@ def make_potcar(poscar,pot_path_gga,pot_path_lda,target,src_path,pot_name):
 	if not pot_name['GGA'] is None:
 		for pot_key in pot_name['GGA'].keys() :
 			POT_GGA[pot_key] = pot_name['GGA'][pot_key]
-	if not pot_name['GGA'] is None:
+	if not pot_name['LDA'] is None:
 		for pot_key in pot_name['LDA'].keys() :
 			POT_GGA[pot_key] = pot_name['LDA'][pot_key]
 
@@ -472,6 +476,7 @@ def make_incar_note(poscar,target,soc_target,u_value,magmom_def,src_path):
 
 # make incar file in INCAR0 directory. (reference incar for target meterial)
 def make_incar(poscar,target,src_path,max_nelm):
+	from module_vasprun import wincar
 	pos = open(poscar,'r').readlines()
 	atom_z = pos[5].split()
 	atom_cnt = pos[6].split()
@@ -482,12 +487,13 @@ def make_incar(poscar,target,src_path,max_nelm):
 		nelect = nelect + int(atom_cnt[j])*int(float(pot_line))
 
 	# Set maximum number of electronic steps
-	if nelect > int(max_nelm/3) :
-		nelm = max_nelm
-	else :
-		nelm = nelect*3
-	if nelm < 30:
-		nelm = 30
+	nelm = max_nelm
+#	if nelect > int(max_nelm/3) :
+#		nelm = max_nelm
+#	else :
+#		nelm = nelect*3
+#	if nelm < 30:
+#		nelm = 30
 	wincar(src_path+'/INCAR0',target+'/INPUT0/INCAR0',[['SYSTEM',target.split('/')[-1]],['NELM',str(nelm)]],[])
 	with open(target+'/INPUT0/INCAR','w') as out_inc:
 			subprocess.call(['cat',target+'/INPUT0/INCAR0',target+'/INPUT0/U_note',target+'/INPUT0/spin_note'], stdout=out_inc)
@@ -503,39 +509,48 @@ def read_cif_lattice(line):
 	else :
 		return -1
 
-def read_cif_position(line):
+def atom_inform_idx(line):
+	if '_atom_site_label' in line:
+		return 0
+	elif '_atom_site_fract_x' in line:
+		return 1
+	elif '_atom_site_fract_y' in line:
+		return 2
+	elif '_atom_site_fract_z' in line:
+		return 3
+	elif '_atom_site_occupancy' in line:
+		return 4
+	elif '_atom_site_type_symbol' in line:
+		return 5
+	else:
+		return -1
+
+def read_cif_position(line,inform):
 	tmp = line.split()
-	if tmp[0][1].isdigit():
+	if tmp[inform[0]][1].isdigit():
 		atom_name_length = 1
 	else:
 		atom_name_length = 2
-	atom_name = tmp[0][0:atom_name_length]
-	atom_index = tmp[0][atom_name_length:]
+	atom_name = tmp[inform[0]][0:atom_name_length]
+	atom_index = tmp[inform[0]][atom_name_length:]
 
-	if len(tmp) == 10:
-		atom_charge = tmp[1][atom_name_length:]
-		if '(' in tmp[8] :
-			tmp[8] = tmp[8][:tmp[8].index('(')]
-		occupancy = float(tmp[8])
-		pos = []
-		for i in range(3):
-			if '(' in tmp[i+4] :
-				tmp[i+4] = tmp[i+4][:tmp[i+4].index('(')]
-			if tmp[i+4] == '.':
-				tmp[i+4] = '0.0'
-			pos.append(float(tmp[i+4]))
-	elif len(tmp) == 8:
-		atom_charge = '0'
-		if '(' in tmp[1] :
-			tmp[1] = tmp[1][:tmp[1].index('(')]
-		occupancy = float(tmp[1])
-		pos = []
-		for i in range(3):
-			if '(' in tmp[i+2] :
-				tmp[i+2] = tmp[i+2][:tmp[i+2].index('(')]
-			if tmp[i+4] == '.':
-				tmp[i+4] = '0.0'
-			pos.append(float(tmp[i+2]))
+	pos = []
+	for i in range(3):
+		if '(' in tmp[inform[1+i]] :
+			tmp[inform[1+i]] = tmp[inform[1+i]][:tmp[inform[1+i]].index('(')]
+		if tmp[inform[1+i]] == '.':
+			tmp[inform[1+i]] = '0.0'
+		pos.append(float(tmp[inform[1+i]]))
+
+	if '(' in tmp[inform[4]] :
+		tmp[inform[4]] = tmp[inform[4]][:tmp[inform[4]].index('(')]
+	occupancy = float(tmp[inform[4]])
+
+	if not inform[5] == -1:
+		atom_charge = tmp[inform[5]][atom_name_length:]
+	else:
+		atom_charge = 0
+
 	out = [atom_name,atom_name+atom_index,atom_charge,occupancy,pos]
 	return out
 
@@ -556,6 +571,7 @@ def read_poscar(poscar):
 		cart_idx = 7
 	atom_pos = []
 	atom_idx = cart_idx
+	sym_info = 0
 	for i in range(len(type_num)):
 		for j in range(type_num[i]):
 			atom_idx = atom_idx+1
@@ -563,10 +579,45 @@ def read_poscar(poscar):
 				typ_idx = lines[atom_idx].split('!')[-1].split()[0]
 			else:
 				# symmetry check should be included
-				typ_idx = type_name[i]+str(j)
+				typ_idx = type_name[i]+'1'
+				sym_info = 1
+			atom_pos_line = [float(x) for x in lines[atom_idx].split()[0:3]]
+			if cart_type == 'C' or cart_type == 'c':
+				atom_pos_line = dir_to_cart(atom_pos_line,axis)
 			atom_pos.append([float(x) for x in lines[atom_idx].split()[0:3]]+[type_name[i],typ_idx])
 	# atom_pos = [[x,y,z,type_name,detail_type_name]*# of atoms]
+	if sym_info == 1:
+		atom_pos = impose_atom_type_index(axis,atom_pos)
 	return [axis,atom_pos]
+
+def impose_atom_type_index(axis,atom_pos):
+	import spglib
+	import numpy as np
+	L = np.mat(axis)
+	pos = []
+	atom_type = []
+	atom_dic = {}
+	type_dic = {}
+	index = 0
+	for line in atom_pos:
+		pos.append(line[0:3])
+		if not line[4] in atom_dic.keys():
+			atom_dic[line[4]] = index
+			type_dic[index] = [line[3],line[4]]
+			index = index+1
+		atom_type.append(atom_dic[line[4]])
+	D = np.mat(pos)
+	Cell = (L,D,atom_type)
+	equ_atoms = spglib.get_symmetry_dataset(Cell,symprec=2e-3)['equivalent_atoms']
+	new_type_dic = {}
+	new_index = [1 for x in range(index)]
+	new_atom_pos = []
+	for i in range(len(atom_pos)):
+		if not str(atom_type[i])+'_'+str(equ_atoms[i]) in new_type_dic.keys():
+			new_type_dic[str(atom_type[i])+'_'+str(equ_atoms[i])] = [atom_pos[i][3],atom_pos[i][3]+str(new_index[atom_type[i]])]
+			new_index[atom_type[i]] = new_index[atom_type[i]]+1
+		new_atom_pos.append(atom_pos[i][0:3]+new_type_dic[str(atom_type[i])+'_'+str(equ_atoms[i])])
+	return new_atom_pos
 
 def write_poscar(axis,atom_pos,out_pos,title):
 	atom_type = []
@@ -610,7 +661,8 @@ def get_primitive_cell(axis,atom_pos):
 		atom_type.append(atom_dic[line[4]])
 	D = np.mat(pos)
 	Cell = (L,D,atom_type)
-	prim_cell = spglib.find_primitive(Cell)
+	prim_cell = spglib.find_primitive(Cell,symprec=2e-3)
+	equ_atoms = spglib.get_symmetry_dataset(prim_cell,symprec=2e-3)['equivalent_atoms']
 	prim_axis = prim_cell[0].tolist()
 	prim_pos = prim_cell[1].tolist()
 	prim_type = prim_cell[2].tolist()
@@ -619,7 +671,7 @@ def get_primitive_cell(axis,atom_pos):
 	for i in range(len(prim_pos)):
 		prim_atom_pos.append(prim_pos[i]+type_dic[prim_type[i]])
 
-	sym = spglib.get_spacegroup(Cell).split('(')[1].split(')')[0]
+	sym = spglib.get_spacegroup(Cell,symprec=2e-3).split('(')[1].split(')')[0]
 
 	[new_axis,new_pos,sym_typ] = axis_rotation(prim_axis,prim_atom_pos,sym)
 	return [new_axis,new_pos,sym_typ]
@@ -645,7 +697,7 @@ def axis_rotation(axis,pos,sym):
 
 	# Determine brava sym of ORCF
 	elif brava_sym in [8,9]:
-		dic = [[axis[0][0],0],[axis[1][1],1],[axis[2][2],2]]
+		dic = [[axis[1][0],0],[axis[0][1],1],[axis[0][2],2]]
 		order = sorted(dic)
 		axis_order = [order[x][1] for x in range(3)]
 		if 1./(sum([axis[x][axis_order[0]] for x in range(3)])**2.0) < 1./(sum([axis[x][axis_order[1]] for x in range(3)])**2.0) + 1./(sum([axis[x][axis_order[2]] for x in range(3)])**2.0):
@@ -654,7 +706,7 @@ def axis_rotation(axis,pos,sym):
 			brava_sym = 8
 
 	elif brava_sym == 10:
-		dic = [[axis[0][0],0],[axis[1][1],1],[axis[2][2],2]]
+		dic = [[abs(axis[0][0]),0],[abs(axis[1][1]),1],[abs(axis[2][2]),2]]
 		order = sorted(dic)
 		axis_order = [order[x][1] for x in range(3)]
 

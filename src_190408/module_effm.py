@@ -146,7 +146,7 @@ def make_kpts_for_searching_space(target,search_grid_size):
 
 		out.write(' '.join([str(2*num_kp_for_test[x]+1) for x in range(len(num_kp_for_test))]))
 
-	with open(target+'/KPOINTS','w') as kpt_out:
+	with open(target+'/KPOINTS_searching','w') as kpt_out:
 		kpt_out.write('K-pts for searching space\n')
 		kpt_out.write('\t\t'+str(len(KPT))+'\n')
 		kpt_out.write('car\n')
@@ -476,7 +476,7 @@ def read_operation(poscar):
 	D = np.mat(pos)
 	Cell = (L,D,atom_type)
 
-	rot_oper = spglib.get_symmetry(Cell)['rotations']
+	rot_oper = spglib.get_symmetry(Cell,symprec=1e-5)['rotations']
 	oper = np.ndarray.tolist(rot_oper)
 
 	return oper
@@ -638,4 +638,6 @@ def pocket_old(target,carrier_type,E_width,kspacing):
 		for i in range(len(pocket)) :
 			out.write(' '.join([str(x) for x in pocket[i][0]])+' :\t'+' '.join([str(x) for x in pocket[i][1:4]])+'\n')
 
-
+def mod_kpt_from_rec_to_car(kpt_file,pos_file):
+	with open(kpt_file,'r') as kpt_inp:
+		lines = kpt_inp.readlines()

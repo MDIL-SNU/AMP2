@@ -1,15 +1,15 @@
 directory:
   submit: ./Submit
-  output: ./Output2
+  output: ./Output
   done: ./Done
   error: ./ERROR
-  src_path: ./src_new
+  src_path: ./src
   pot_path_GGA: /data/vasp4us/pot/PBE52
   pot_path_LDA: /data/vasp4us/pot/LDA52
 
 program:
-  vasp_std: ~/vasp_std
-  vasp_gam: ~/vasp_gam
+  vasp_std: /data/vasp4us/vasp_std
+  vasp_gam: /data/vasp4us/vasp_gam
   vasp_ncl: /data/vasp4us/vasp_ncl
   gnuplot: /gnuplot
 
@@ -17,14 +17,14 @@ calculation:
   kp_test: 1
   encut_test: 1
   relaxation: 1
-  magnetic_ordering: 1
   band: 1
   density_of_states: 1
   hse_oneshot: 1
   dielectric: 1
   effective_mass: 1
   plot: 1
-  large_off: 40
+  magnetic_ordering: 1
+  large_off: -1
 
 cif2vasp:
   POT_name:
@@ -34,10 +34,12 @@ cif2vasp:
 #      Ge: Ge
   SOC_target:
 #    - Bi
+#    - Tl
+#    - Pb
   U_value:
+#    La: 7.5
+#    Ce: 4.5
 #    All: 0.0
-    La: 7.5
-    Ce: 4.5
   magmom: 3
   max_nelm: 100
   INCAR:
@@ -55,21 +57,23 @@ converge_test:
   ENSTART: 200
   ENSTEP: 50
   ENMAX: 1000
+  potential_type: GGA # Choose on potential in GGA, LDA, HSE
+  INCAR:
 
 relaxation:
   potential_type:
     - GGA
-    - LDA
+#    - LDA
+#    - HSE
   max_iteration: 10
   converged_ionic_step: 5
   pos_warning_percent: 1
+  energy: -1
+  pressure: 10
+  force: 0.02
+#  SOC_on: 1
   INCAR:
 #    EDIFF: 1e-08
-
-magnetic_ordering:
-  cutoff_for_parameter: 5.0
-  Tolerance: 0.01
-  from_relax: 1
 
 band_calculation:
   kspacing_for_band: 0.01
@@ -79,17 +83,29 @@ band_calculation:
   potential_type:
     - GGA
 #    - LDA
+#    - HSE
   relax_check: 1
   INCAR:
 
 Hybrid_oneshot:
   alpha: 0.25
+  potential_type: # The potential used for lattice parameter optimization
+    - GGA # If one variable is inserted, we use the lattice parameter and the points of VBM and CBM with that potential.
+#   - - HSE # If two variables are inserted, we use the lattice parameter with above potential and the points of VBM and CBM with below potential.
+#     - GGA
+  fermi_width: 0.3
+  vb_dos_min: 1
+  vb_dos_max: 3
+  energy_width_for_extreme: 0.5
+  search_space_for_extreme: 0.05
+  cutoff_DF_DVB: 0.3
   INCAR:
 
 density_of_states:
   potential_type:
     - GGA
 #    - LDA
+#    - HSE
   relax_check: 1
   KP_multiplier: 2
   y_min: 3                      # set plot region, downward from VBM
@@ -100,7 +116,7 @@ dielectric:
   KP_multiplier: 2
   potential_type:
     - GGA
-    - LDA
+#    - LDA
   INCAR:
     EDIFF: 1e-08
 #    EDIFFG: 1e-04
@@ -111,13 +127,33 @@ effective_mass:
   carrier_type:
     - hole
     - electron
-  pocket_search_dist: 0.1
+  pocket_search_dist: 0.02
   grid_size_for_searching: 0.02
   grid_size_for_calculation: 0.02
   temperature_for_Fermi: 300
-  Fermi_for_cutoff: 0.9
+  Fermi_for_cutoff: 0.99
   potential_type:
     - GGA
 #    - LDA
+#    - HSE
   INCAR:
 
+magnetic_ordering:
+  potential_type: GGA # Choose on potential in GGA, LDA, HSE (If from relax:0, it must be same to potential_type in convergence.)
+  Minimum_moment: 0.2
+  from_relax: 1
+  cutoff_for_parameter: 5.0
+  Tolerance: 0.01 # Tolerance to define identical pair for Ising coefficient
+  energy_tolerance: 0.00001 # Tolerance to find lowest energy spin ordering candidates
+  Maximum_atoms_number: -1
+  Maximum_pair_type: -1
+  Genetic_algorithm:
+    min_iteration: 0
+    max_iteration: -1
+    selection_coeff: 2
+    population:
+      best: 15
+      crossover: 30
+      mutation: 30
+      random: 15
+  INCAR:

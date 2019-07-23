@@ -487,7 +487,24 @@ def EIGEN_to_array(eigen_file,spin):
 					Band[n].append([float(eig.readline().split()[1])])
 	return [KPT,Band,nelect] # KPT[kpts_idx,axis_idx],Band[band_idx,kpts_idx,spin_idx]
 
-def gap_estimation(target,fermi,spin,ncl,KPT,Band,nelect):
+def get_fermi_level(Band,nelect,ncl):
+	import numpy as np
+	num_kpt = len(Band[0])
+	spin = len(Band[0][0])
+	Band_reshape = np.array(Band).reshape([-1])
+	Band_reshape = np.sort(Band_reshape)
+	if ncl == 'T':
+		occupied_index = nelect*num_kpt
+		fermi =  (Band_reshape[occupied_index-1] + Band_reshape[occupied_index])/2.0
+	elif nelect%2 == 1 and spin == 1 and num_kpt%2 == 1:
+		occupied_index = (nelect*num_kpt+1)/2
+		fermi = Band_reshape[occupied_index-1]
+	else:
+		occupied_index = nelect*num_kpt/(3-spin)
+		fermi =  (Band_reshape[occupied_index-1] + Band_reshape[occupied_index])/2.0
+	return fermi
+
+def calc_gap(fermi,spin,ncl,KPT,Band,nelect):
 	VBM = []
 	CBM = []
 	nVBM = []
@@ -500,49 +517,37 @@ def gap_estimation(target,fermi,spin,ncl,KPT,Band,nelect):
 	metal = 0
 	# VBM & CBM search for spin-polarized calculation
 	nVB = -1
-	if spin == '1' and nelect%2 == 0 and ncl != 'T' :
-		nVBM.append(nelect/2)
-		nCBM.append(nelect/2+1)
-		single_band = [Band[nVBM[0]-1][x][0] for x in range(len(KPT))]
-		VBM[0] = max(single_band)
-		VBM_k.append(KPT[single_band.index(VBM[0])])
-		single_band = [Band[nCBM[0]-1][x][0] for x in range(len(KPT))]
-		CBM[0] = min(single_band)
-		CBM_k.append(KPT[single_band.index(CBM[0])])
-		if CBM[0]-VBM[0] < 0.01:
-			metal = 1
-	else :
-		for i in range(int(spin)) :
-			for n in range(len(Band)) :
-				if n == 0 :
-					nVBM.append(n)
-					nCBM.append(n)
-					VBM_k.append(KPT[n][0][i])
-					CBM_k.append(KPT[n][0][i])
+	for i in range(int(spin)) :
+		for n in range(len(Band)) :
+			if n == 0 :
+				nVBM.append(n)
+				nCBM.append(n)
+				VBM_k.append(KPT[n][0][i])
+				CBM_k.append(KPT[n][0][i])
 
-				single_band = [Band[n][x][i] for x in range(len(KPT))]
-				band_max = max(single_band)
-				band_min = min(single_band)
+			single_band = [Band[n][x][i] for x in range(len(KPT))]
+			band_max = max(single_band)
+			band_min = min(single_band)
 
-				if band_max < fermi :
-					if band_max >= VBM[i] :
-						VBM[i] = band_max
-						VBM_k[i] = KPT[single_band.index(band_max)]
-						nVBM[i] = n+1
-				elif band_min > fermi :
-					if band_min < CBM[i] :
-						CBM[i] = band_min
-						CBM_k[i] = KPT[single_band.index(band_min)]
-						nCBM[i] = n+1
-				else :
-					metal = 1
+			if band_max < fermi :
+				if band_max >= VBM[i] :
 					VBM[i] = band_max
 					VBM_k[i] = KPT[single_band.index(band_max)]
 					nVBM[i] = n+1
+			elif band_min > fermi :
+				if band_min < CBM[i] :
 					CBM[i] = band_min
 					CBM_k[i] = KPT[single_band.index(band_min)]
 					nCBM[i] = n+1
-					break
+			else :
+				metal = 1
+				VBM[i] = band_max
+				VBM_k[i] = KPT[single_band.index(band_max)]
+				nVBM[i] = n+1
+				CBM[i] = band_min
+				CBM_k[i] = KPT[single_band.index(band_min)]
+				nCBM[i] = n+1
+				break
 
 	if metal == 1:
 		VB_max = []
@@ -560,7 +565,83 @@ def gap_estimation(target,fermi,spin,ncl,KPT,Band,nelect):
 					CB_min[i] = Band[nVBM[1]][i][1]
 #					spin_index[i][1] = 1
 			if CB_min[i] - VB_max[i] < 0.01:
-				metal == 2
+				metal = 2
+				break
+
+	if metal == 0:
+		total_VBM = max(VBM)
+		total_CBM = min(CBM)
+		gap = total_CBM-total_VBM
+
+	elif metal == 1:
+		gap = 0
+	else:
+		gap = 0
+
+	return gap
+
+def gap_estimation(target,fermi,spin,ncl,KPT,Band,nelect):
+	VBM = []
+	CBM = []
+	nVBM = []
+	nCBM = []
+	VBM_k = []
+	CBM_k = []
+	for i in range(int(spin)):
+		VBM.append(-10.0**6.0)
+		CBM.append(10.0**6.0)
+	metal = 0
+	# VBM & CBM search for spin-polarized calculation
+	nVB = -1
+	for i in range(int(spin)) :
+		for n in range(len(Band)) :
+			if n == 0 :
+				nVBM.append(n)
+				nCBM.append(n)
+				VBM_k.append(KPT[n][0][i])
+				CBM_k.append(KPT[n][0][i])
+
+			single_band = [Band[n][x][i] for x in range(len(KPT))]
+			band_max = max(single_band)
+			band_min = min(single_band)
+
+			if band_max < fermi :
+				if band_max >= VBM[i] :
+					VBM[i] = band_max
+					VBM_k[i] = KPT[single_band.index(band_max)]
+					nVBM[i] = n+1
+			elif band_min > fermi :
+				if band_min < CBM[i] :
+					CBM[i] = band_min
+					CBM_k[i] = KPT[single_band.index(band_min)]
+					nCBM[i] = n+1
+			else :
+				metal = 1
+				VBM[i] = band_max
+				VBM_k[i] = KPT[single_band.index(band_max)]
+				nVBM[i] = n+1
+				CBM[i] = band_min
+				CBM_k[i] = KPT[single_band.index(band_min)]
+				nCBM[i] = n+1
+				break
+
+	if metal == 1:
+		VB_max = []
+		CB_min = []
+		spin_index = []
+		for i in range(len(KPT)):
+			VB_max.append(Band[nVBM[0]-1][i][0])
+			CB_min.append(Band[nVBM[0]][i][0])
+#			spin_index.append([0,0])
+			if not spin == '1':
+				if VB_max[i] < Band[nVBM[1]-1][i][1]:
+					VB_max[i] = Band[nVBM[1]-1][i][1]
+#					spin_index[i][0] = 1
+				if CB_min[i] > Band[nVBM[1]][i][1]:
+					CB_min[i] = Band[nVBM[1]][i][1]
+#					spin_index[i][1] = 1
+			if CB_min[i] - VB_max[i] < 0.01:
+				metal = 2
 				break
 
 	if metal == 0:
@@ -580,6 +661,7 @@ def gap_estimation(target,fermi,spin,ncl,KPT,Band,nelect):
 		gap = 0
 	else:
 		gap = 0
+
 	gap_log = open(target+'/Band_gap.log', 'w')
 	gap_simple = open(target+'/Band_gap', 'w')	# For auto_bin
 	kpt_out = open(target+'/KPT', 'w')	# File for VBM & CBM k-point position
@@ -635,11 +717,11 @@ def make_band_dat(xtic_file,Band,spin,target):
 
 def make_band_in(title,xlabel_file,fermi,gap,nband,spin,plot_range,target):
 	with open(target+'/band.in','w') as out:
-		out.write("set terminal postscript enhanced color font 'Arial, 14' size 7.2,5.4\n")
+		out.write("set terminal pdfcairo enhanced color font 'Arial, 14' size 7.2,5.4\n")
 #		out.write("set output '"+target+'/'+title+".eps'\n")
-		out.write("set output '"+title+".eps'\n")
-		title2 = title.split('_')
-		out.write("set title '"+title2[0]+', ICSD#'+title2[1]+"' font 'Arial, 16'\n")
+		out.write("set output '"+title+".pdf'\n")
+		title2 = '-'.join(title.split('_'))
+		out.write("set title '"+title2+"' font 'Arial, 16'\n")
 		if not spin == '2':
 			out.write("set nokey\n")
 		out.write('e = ' +fermi+'\n')

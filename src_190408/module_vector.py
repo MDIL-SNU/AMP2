@@ -60,3 +60,9 @@ def short_dist(v1,v2,lat) :
 				if short_length > length and length > 0.1:
 					short_length = length
 	return short_length
+
+def calc_volume(axis):
+	import numpy as np
+	axis = np.array(axis)
+	volume = np.dot(axis[0],np.cross(axis[1],axis[2]))
+	return volume

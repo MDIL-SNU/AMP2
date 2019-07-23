@@ -6,7 +6,7 @@ import shutil, os, sys, subprocess, yaml
 from module_log import *
 from module_vasprun import *
 from module_relax import *
-code_data = 'Date: 2018-12-06'
+code_data = 'Version xx. Modified at 2019-07-17'
 
 dir = sys.argv[1]
 
@@ -25,27 +25,31 @@ inp_rlx = inp_yaml['relaxation']
 node = node_simple(sys.argv[3])
 nproc = sys.argv[4]
 
-POT = sys.argv[5]
+pot_type = sys.argv[5]
+if pot_type == 'LDA':
+	POT = 'LDA'
+else:
+	POT = 'GGA'
 
-dir_relax = dir+'/relax_'+POT
+dir_relax = dir+'/relax_'+pot_type
 # Check existing data
 run_cont = 0
 if os.path.isdir(dir_relax) and os.path.isfile(dir_relax+'/CONTCAR') and os.path.isfile(dir_relax+'/free') :
 	if len(subprocess.check_output(['grep','free  ',dir_relax+'/free']).splitlines()) > 0 :
-		make_amp2_log_default(dir,src_path,'Relaxation with '+POT+' potential',node,code_data)
+		make_amp2_log_default(dir,src_path,'Relaxation with '+pot_type+' potential',node,code_data)
 #		print('Success!')
 		make_amp2_log(dir,'Already done')
 		print 1
 		sys.exit()
 elif os.path.isdir(dir_relax):
 	if os.path.isfile(dir_relax+'/CONTCAR') and count_line(dir_relax+'/CONTCAR') > 9:
-		make_amp2_log_default(dir_relax,src_path,'Relaxation with '+POT+' potential',node,code_data)
+		make_amp2_log_default(dir_relax,src_path,'Relaxation with '+pot_type+' potential',node,code_data)
 		make_amp2_log(dir_relax,'Calculation continue.')
 		subprocess.call(['cp',dir_relax+'/CONTCAR',dir_relax+'/POSCAR'])
 		run_cont = 1
 		os.chdir(dir_relax)
 	elif os.path.isfile(dir_relax+'/POSCAR') and count_line(dir_relax+'/POSCAR') > 9:
-		make_amp2_log_default(dir_relax,src_path,'Relaxation with '+POT+' potential',node,code_data)
+		make_amp2_log_default(dir_relax,src_path,'Relaxation with '+pot_type+' potential',node,code_data)
 		make_amp2_log(dir_relax,'Calculation continue.')
 		run_cont = 1
 		os.chdir(dir_relax)
@@ -54,12 +58,18 @@ elif os.path.isdir(dir_relax):
 if run_cont == 0:
 	os.mkdir(dir_relax,0755)
 	os.chdir(dir_relax)
-	make_amp2_log_default(dir_relax,src_path,'Relaxation with '+POT+' potential',node,code_data)
+	make_amp2_log_default(dir_relax,src_path,'Relaxation with '+pot_type+' potential',node,code_data)
 	make_amp2_log(dir_relax,'New calculation')
 	copy_input(dir+'/INPUT0',dir_relax,POT)
 	nsw = set_nsw(dir_relax+'/POSCAR',dir_relax+'/INCAR')
-	incar_from_yaml(dir_relax,inp_rlx['INCAR'])
 	wincar(dir_relax+'/INCAR',dir_relax+'/INCAR',[['LCHARG','.F.']],[])
+	converge_condition = set_ediffg(dir_relax+'/POSCAR',inp_rlx['force'],inp_rlx['pressure'],inp_rlx['force'])
+	if not converge_condition == 0:
+		wincar(dir_relax+'/INCAR',dir_relax+'/INCAR',[['EDIFFG',str(converge_condition)]],[])
+	if pot_type == 'HSE':
+		incar_for_hse(dir_relax+'/INCAR')
+
+	incar_from_yaml(dir_relax,inp_rlx['INCAR'])
 
 gam = set_parallel(dir_relax+'/KPOINTS',dir_relax+'/INCAR',npar,kpar)
 if gam == 1:
@@ -97,6 +107,11 @@ while iteration < inp_rlx['max_iteration']:
 		make_amp2_log(dir_relax,'Relaxation is done.')
 		break
 	shutil.copyfile(dir_relax+'/CONTCAR',dir_relax+'/POSCAR')
+	if bool(inp_rlx['INCAR']) and not 'EDIFFG' in inp_rlx['INCAR'].keys():
+		converge_condition = set_ediffg(dir_relax+'/POSCAR',inp_rlx['force'],inp_rlx['pressure'],inp_rlx['force'])
+		if not converge_condition == 0:
+			wincar(dir_relax+'/INCAR',dir_relax+'/INCAR',[['EDIFFG',str(converge_condition)]],[])
+
 	out = run_vasp(dir_relax,nproc,vasprun)
 	if out == 1:  # error in vasp calculation
 		print 0
@@ -120,11 +135,17 @@ while iteration < inp_rlx['max_iteration']:
 	iteration = iteration+1
 	make_amp2_log(dir_relax,'Iteration number is '+str(iteration))
 
+if ionic_converge == 0 and len(energy) <= inp_rlx['converged_ionic_step']:
+	ionic_converge = 1
+	make_amp2_log(dir_relax,'Relaxation is done.')
+
 if ionic_converge == 0:
 	make_amp2_log(dir_relax,'The iteration reach the max iteration number. You need to increase the max iteration number')
+else:
+	write_relaxed_poscar(dir,pot_type)
 
 ## Check the magnetic moment in relaxed cell
-mag_on = check_magnet(dir_relax)
+mag_on = check_magnet(dir_relax,inp_yaml['magnetic_ordering']['Minimum_moment'])
 if mag_on == 0 :
 	wincar(dir+'/INPUT0/INCAR',dir+'/INPUT0/INCAR',[['MAGMOM',''],['ISPIN','1']],[])
 

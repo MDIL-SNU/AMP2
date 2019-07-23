@@ -23,11 +23,11 @@ def vec_same(vec1,vec2):
 	else:
 		return 0
 
-def dir_to_cart(vec,axis):
-	cart_vec = []
+def apply_sym(vec,axis):
+	new_vec = []
 	for i in range(3):
-		cart_vec.append(vec[0]*axis[0][i]+vec[1]*axis[1][i]+vec[2]*axis[2][i])
-	return cart_vec
+		new_vec.append(vec[0]*axis[0][i]+vec[1]*axis[1][i]+vec[2]*axis[2][i])
+	return new_vec
 
 
 def dup_pos(pos):
@@ -38,7 +38,7 @@ def dup_pos(pos):
 
 	for i in range(len(pos)):
 		for j in range(len(oper)):
-			made_pos.append(vec_mod(dir_to_cart(pos[i],oper[j])))
+			made_pos.append(vec_mod(apply_sym(pos[i],oper[j])))
 	for i in range(len(made_pos)):
 		if len(irre_pos) == 0:
 			irre_pos.append(made_pos[i])
@@ -74,8 +74,14 @@ for line in atom_pos:
 D = np.mat(pos)
 Cell = (L,D,atom_type)
 
+rec_lat = reciprocal_lattice(axis)
+
+print rec_lat
+
 rot_oper = spglib.get_symmetry(Cell)['rotations']
 oper = np.ndarray.tolist(rot_oper)
+
+print oper
 
 with open(pocket_path,'r') as f:
 	lines = f.readlines()
@@ -83,6 +89,7 @@ with open(pocket_path,'r') as f:
 poc_kp = []
 for line in lines:
 	poc_kp.append([[float(x) for x in line.split()[0:3]]])
+
 
 weight = []
 for poc in poc_kp:
@@ -94,9 +101,11 @@ for poc in poc_kp:
 			break
 		else:
 			prev_poc_len = len(poc)
+
 	print poc
 	print '-------------------'
 
 	weight.append(len(poc))
+
 
 print len(poc)

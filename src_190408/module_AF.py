@@ -8,15 +8,7 @@ from module_vector import *
 from module_vasprun import *
 from module_amp2_input import *
 
-def write_relaxed_poscar(target):
-	[axis_ori,atom_pos_ori] = read_poscar(target+'/INPUT0/POSCAR')
-	[axis_rlx,atom_pos_rlx] = read_poscar(target+'/relax_GGA/CONTCAR')
-	new_atom_pos = []
-	for i in range(len(atom_pos_rlx)):
-		new_atom_pos.append(atom_pos_rlx[i][0:3]+atom_pos_ori[i][3:])
-	write_poscar(axis_rlx,new_atom_pos,target+'/INPUT0/POSCAR_rlx','relaxed poscar')
-
-def check_spin(ref_dir,inp_pos):
+def check_spin(ref_dir,inp_pos,min_mom):
 	[axis,atom_pos] = read_poscar(inp_pos)
 	magnet_out = subprocess.check_output(['grep','-A'+str(len(atom_pos)+3),'magnetization (x)',ref_dir+'/OUTCAR']).splitlines()[-len(atom_pos):]
 	magnet_list = [float(x.split()[-1]) for x in magnet_out]
@@ -34,7 +26,7 @@ def check_spin(ref_dir,inp_pos):
 			mag_val[atom_pos[i][4]] = magnet_list[i]
 	new_type_name = []
 	for typ in type_name:
-		if abs(mag_val[typ]) > 0.5:
+		if abs(mag_val[typ]) > min_mom:
 			new_type_name.append(typ)
 		else:
 			mag_val[typ] = 0
