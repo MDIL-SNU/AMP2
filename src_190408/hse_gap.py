@@ -154,10 +154,10 @@ if os.path.isfile(dir+'/band_'+pot_point+'/KPT') and count_line(dir+'/band_'+pot
 		dir_band = dir+'/band_'+pot_point
 		# Insulator in GGA. Band reodering is not required.
 		if not 'etal' in gap_log:
-			fermi = float(subprocess.check_output(['head',dir_band+'/DOSCAR','-n','6']).splitlines()[-1].split()[3])
 			ncl = subprocess.check_output(['grep','NONCOL',dir_band+'/OUTCAR']).split()[2]
 			spin = subprocess.check_output(['grep','ISPIN',dir_band+'/OUTCAR']).split()[2]
 			[KPT,Band,nelect] = EIGEN_to_array(dir_band+'/EIGENVAL',spin)
+			fermi = get_fermi_level(Band,nelect,ncl)
 			[vb_idx,cb_idx,eVBM,eCBM] = find_cb(Band,Band,KPT,fermi,dir_hse,dir_band)
 			E_shift = float(gap)+eVBM-eCBM
 			for i in range(len(Band[0][0])):
@@ -180,10 +180,10 @@ if os.path.isfile(dir+'/band_'+pot_point+'/KPT') and count_line(dir+'/band_'+pot
 					[symk,order,xticlabel,rec] = make_symk(dir_band+'/sym')
 					make_xtic_hse(symk,order,rec,inp_band['kspacing_for_band'],dir_band)
 
-				fermi = float(subprocess.check_output(['head',dir_band+'/DOSCAR','-n','6']).splitlines()[-1].split()[3])
 				ncl = subprocess.check_output(['grep','NONCOL',dir_band+'/OUTCAR']).split()[2]
 				spin = subprocess.check_output(['grep','ISPIN',dir_band+'/OUTCAR']).split()[2]
 				[KPT,Band,nelect] = EIGEN_to_array(dir_band+'/EIGENVAL',spin)
+				fermi = get_fermi_level(Band,nelect,ncl)
 				Band_reorder = get_band_reorder(Band,KPT,fermi,spin,dir_band)
 				[vb_idx,cb_idx,eVBM,eCBM] = find_cb(Band,Band_reorder,KPT,fermi,dir_hse,dir_band)
 

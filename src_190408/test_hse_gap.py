@@ -66,7 +66,7 @@ else:
 	sys.exit()
 
 # Identify the candidates of which band gap can open in hse calculation.
-if os.path.isdir(dir+'/dos_'+pot_point) and os.path.isdir(dir+'/dos_'+pot_point+'/Pdos_dat'):
+if 'etal' in gap_log and os.path.isdir(dir+'/dos_'+pot_point) and os.path.isdir(dir+'/dos_'+pot_point+'/Pdos_dat'):
 	DF_DVB = round(DOS_ratio_fermi_to_vb(dir+'/dos_'+pot_point+'/DOSCAR',inp_hse['fermi_width'],[inp_hse['vb_dos_min'],inp_hse['vb_dos_max']]),4)
 	if DF_DVB < inp_hse['cutoff_DF_DVB']:
 		make_amp2_log(dir_hse,'DF/DVB is '+str(DF_DVB)+'. Band_gap can open.')
@@ -77,7 +77,7 @@ if os.path.isdir(dir+'/dos_'+pot_point) and os.path.isdir(dir+'/dos_'+pot_point+
 		sys.exit()
 
 # we perform the hse calculation only for the materials of which band gap can open.
-if os.path.isfile(dir+'/band_'+pot_point+'/KPT') and os.path.getsize(dir+'/band_'+pot_point+'/KPT') > 0 :
+if os.path.isfile(dir+'/band_'+pot_point+'/KPT') and count_line(dir+'/band_'+pot_point+'/KPT') > 3  :
 	# Extract data from VASP output files
 	spin = subprocess.check_output(['grep','ISPIN',dir_hse+'/OUTCAR']).split()[2]
 	ncl = subprocess.check_output(['grep','NONCOL',dir_hse+'/OUTCAR']).split()[2]
@@ -93,10 +93,10 @@ if os.path.isfile(dir+'/band_'+pot_point+'/KPT') and os.path.getsize(dir+'/band_
 		dir_band = dir+'/band_'+pot_point
 		# Insulator in GGA. Band reodering is not required.
 		if not 'etal' in gap_log:
-			fermi = float(subprocess.check_output(['head',dir_band+'/DOSCAR','-n','6']).splitlines()[-1].split()[3])
 			ncl = subprocess.check_output(['grep','NONCOL',dir_band+'/OUTCAR']).split()[2]
 			spin = subprocess.check_output(['grep','ISPIN',dir_band+'/OUTCAR']).split()[2]
 			[KPT,Band,nelect] = EIGEN_to_array(dir_band+'/EIGENVAL',spin)
+			fermi = get_fermi_level(Band,nelect,ncl)
 			[vb_idx,cb_idx,eVBM,eCBM] = find_cb(Band,Band,KPT,fermi,dir_hse,dir_band)
 			E_shift = float(gap)+eVBM-eCBM
 			for i in range(len(Band[0][0])):
@@ -118,10 +118,10 @@ if os.path.isfile(dir+'/band_'+pot_point+'/KPT') and os.path.getsize(dir+'/band_
 					[symk,order,xticlabel,rec] = make_symk(dir_band+'/sym')
 					make_xtic_hse(symk,order,rec,inp_band['kspacing_for_band'],dir_band)
 
-				fermi = float(subprocess.check_output(['head',dir_band+'/DOSCAR','-n','6']).splitlines()[-1].split()[3])
 				ncl = subprocess.check_output(['grep','NONCOL',dir_band+'/OUTCAR']).split()[2]
 				spin = subprocess.check_output(['grep','ISPIN',dir_band+'/OUTCAR']).split()[2]
 				[KPT,Band,nelect] = EIGEN_to_array(dir_band+'/EIGENVAL',spin)
+				fermi = get_fermi_level(Band,nelect,ncl)
 				Band_reorder = get_band_reorder(Band,KPT,fermi,spin,dir_band)
 				[vb_idx,cb_idx,eVBM,eCBM] = find_cb(Band,Band_reorder,KPT,fermi,dir_hse,dir_band)
 
