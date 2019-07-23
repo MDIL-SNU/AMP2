@@ -8,7 +8,6 @@ from module_log import *
 from module_vector import *
 
 def make_list(inp_file):
-	inp_file = sys.argv[1]
 	with open(inp_file,'r') as f:
 		inp_yaml = yaml.load(f)
 	Submit_path = inp_yaml['directory']['submit']
