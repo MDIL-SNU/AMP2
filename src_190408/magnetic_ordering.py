@@ -8,6 +8,7 @@ from module_vasprun import *
 from module_converge import *
 from module_AF import *
 from module_amp2_input import *
+from module_relax import *
 code_data = 'Version xx. Modified at 2019-07-17'
 
 # Set input
