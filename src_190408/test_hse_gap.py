@@ -25,9 +25,7 @@ npar = inp_yaml['vasp_parallel']['npar']
 kpar = inp_yaml['vasp_parallel']['kpar']
 inp_hse = inp_yaml['Hybrid_oneshot']
 inp_band = inp_yaml['band_calculation']
-node = node_simple(sys.argv[3])
-nproc = sys.argv[4]
-pot_type = sys.argv[5]
+pot_type = 'GGA'
 if isinstance(pot_type,list):
 	if len(pot_type) == 1:
 		pot_cell = pot_type[0]
@@ -42,31 +40,7 @@ else:
 # Set directory for input structure and INCAR
 dir_hse = dir+'/hybrid_'+pot_cell+'_'+pot_point
 
-# Check existing data
-if os.path.isdir(dir_hse) and os.path.isfile(dir_hse+'/Band_gap.log') :
-	make_amp2_log_default(dir,src_path,'Hybrid oneshot calculation',node,code_data)
-	make_amp2_log(dir,'Hybrid oneshot calculation is already done.')
-	print 1
-	sys.exit()
-
-if not os.path.isdir(dir_hse):
-	os.mkdir(dir_hse,0755)
-
-# Alpha auto setting (From dielectric constant)
-PBE0_on = 0
-if inp_hse['alpha'] in ['Auto','auto'] or inp_hse['alpha'] == 0:
-	if os.path.isdir(dir+'/dielectric_GGA'):
-		PBE0_on = 1
-		diel_path = dir+'/dielectric_GGA'
-	elif os.path.isdir(dir+'/dielectric_LDA'):
-		PBE0_on = 1
-		diel_path = dir+'/dielectric_LDA'
-	else:
-		inp_hse['alpha'] = 0.25
-
 os.chdir(dir_hse)
-
-make_amp2_log_default(dir_hse,src_path,'Hybrid oneshot calculation',node,code_data)
 
 # check relax calculation
 if not os.path.isdir(dir+'/relax_'+pot_cell):
@@ -91,17 +65,8 @@ else:
 	print 0
 	sys.exit()
 
-# Odd number electrons and non-magnetic system --> always metal.
-spin = subprocess.check_output(['grep','ISPIN',dir+'/relax_'+pot_cell+'/OUTCAR']).split()[2]
-ncl = subprocess.check_output(['grep','NONCOL',dir+'/relax_'+pot_cell+'/OUTCAR']).split()[2]
-nelect = subprocess.check_output(['grep','NELECT',dir+'/relax_'+pot_cell+'/OUTCAR']).split()[2]
-if spin == '1' and int(float(nelect))%2 == 1 and ncl == 'F':
-	make_amp2_log(dir_hse,'The band gap cannot be opened in this system.')
-	print 1
-	sys.exit()
-
 # Identify the candidates of which band gap can open in hse calculation.
-if 'etal' in gap_log and os.path.isdir(dir+'/dos_'+pot_point) and os.path.isdir(dir+'/dos_'+pot_point+'/Pdos_dat'):
+if os.path.isdir(dir+'/dos_'+pot_point) and os.path.isdir(dir+'/dos_'+pot_point+'/Pdos_dat'):
 	DF_DVB = round(DOS_ratio_fermi_to_vb(dir+'/dos_'+pot_point+'/DOSCAR',inp_hse['fermi_width'],[inp_hse['vb_dos_min'],inp_hse['vb_dos_max']]),4)
 	if DF_DVB < inp_hse['cutoff_DF_DVB']:
 		make_amp2_log(dir_hse,'DF/DVB is '+str(DF_DVB)+'. Band_gap can open.')
@@ -112,33 +77,7 @@ if 'etal' in gap_log and os.path.isdir(dir+'/dos_'+pot_point) and os.path.isdir(
 		sys.exit()
 
 # we perform the hse calculation only for the materials of which band gap can open.
-if os.path.isfile(dir+'/band_'+pot_point+'/KPT') and count_line(dir+'/band_'+pot_point+'/KPT') > 3 :
-	if not os.path.isfile(dir_hse+'/POSCAR'):
-		# copy VASP input
-		copy_input_cont(dir+'/relax_'+pot_cell,dir_hse)
-	# make KPOINTS
-	make_kpts_for_hse(dir+'/relax_'+pot_cell+'/IBZKPT',dir+'/band_'+pot_point+'/KPT',dir_hse,'oneshot')
-	# make INCAR
-	if PBE0_on == 1:
-		inp_hse['alpha'] = calc_alpha_auto(diel_path+'/dielectric.log')
-		wincar(dir_hse+'/INCAR',dir_hse+'/INCAR',[['NSW','0'],['ALGO',''],['LDA',''],['LMAXMIX','']],['\n\nHybrid calculation:\n   LHFCALC= .T.\n   HFSCREEN = 0.0\n   PRECFOCK = Normal\n   ALGO = ALL\n   AEXX = '+str(inp_hse['alpha'])+'\n'])
-	else:
-		wincar(dir_hse+'/INCAR',dir_hse+'/INCAR',[['NSW','0'],['ALGO',''],['LDA',''],['LMAXMIX','']],['\n\nHybrid calculation:\n   LHFCALC= .T.\n   HFSCREEN = 0.2\n   PRECFOCK = Normal\n   ALGO = ALL\n   AEXX = '+str(inp_hse['alpha'])+'\n'])
-	incar_from_yaml(dir_hse,inp_hse['INCAR'])
-	mag_on = check_magnet(dir+'/relax_'+pot_cell,inp_yaml['magnetic_ordering']['Minimum_moment'])
-	vasprun = make_incar_for_ncl(dir_hse,mag_on,kpar,npar,vasp_std,vasp_gam,vasp_ncl)
-	make_amp2_log(dir_hse,'Run VASP calculation.')
-	# VASP calculation for HSE
-	out = run_vasp(dir_hse,nproc,vasprun)
-	if out == 1:  # error in vasp calculation
-		print 0
-		sys.exit() 
-	out = electronic_step_convergence_check(dir_hse)
-	if not out == 0:
-		make_amp2_log(dir_hse,'Electronic step is not converged.')
-		print 0
-		sys.exit()
-
+if os.path.isfile(dir+'/band_'+pot_point+'/KPT') and os.path.getsize(dir+'/band_'+pot_point+'/KPT') > 0 :
 	# Extract data from VASP output files
 	spin = subprocess.check_output(['grep','ISPIN',dir_hse+'/OUTCAR']).split()[2]
 	ncl = subprocess.check_output(['grep','NONCOL',dir_hse+'/OUTCAR']).split()[2]
@@ -168,7 +107,6 @@ if os.path.isfile(dir+'/band_'+pot_point+'/KPT') and count_line(dir+'/band_'+pot
 			if inp_yaml['calculation']['plot'] == 1:
 				os.chdir(dir_band)
 				subprocess.call([gnuplot,dir_band+'/band_corrected.in'])
-
 		# Metal in GGA. Band reordering is required.
 		else:
 			# WAVECAR is required for band reordering.
@@ -193,6 +131,7 @@ if os.path.isfile(dir+'/band_'+pot_point+'/KPT') and count_line(dir+'/band_'+pot
 					for n in cb_idx[i]:
 						for k in range(len(KPT)):
 							Band_reorder[n][k][i] = Band_reorder[n][k][i] + E_shift
+
 				fermi = get_fermi_level(Band_reorder,nelect,ncl)
 				if calc_gap(fermi,spin,ncl,KPT,Band_reorder,nelect) > 0.01:
 					plot_band_corrected_structure(spin,Band_reorder,eVBM,dir_band+'/xtic.dat',dir_band+'/xlabel.dat',[inp_band['y_min'],inp_band['y_max']+float(gap)],dir_band)

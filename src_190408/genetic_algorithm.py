@@ -101,10 +101,10 @@ if len(gene_list) < num_min_gene:
 	num_min_gene = len(gene_list)
 
 min_gene = [[x,y] for (y,x) in sorted(zip(energy_gene, gene_list))][0:num_min_gene]
-
+energy_tolerance = float(sys.argv[3])*mag_sum # eV
 loop_num = 0
 for kk in range(num_min_gene):
-	if abs(round(min_gene[kk][1]-min_gene[0][1],5)) < 0.000001:
+	if abs(round(min_gene[kk][1]-min_gene[0][1],5)) < energy_tolerance:
 		loop_num = kk+1
 
 for kk in range(loop_num):

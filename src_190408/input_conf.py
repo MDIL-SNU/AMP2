@@ -19,9 +19,13 @@ def input_conf(conf):
 	for dir_key in inp0_yaml['directory'].keys():
 		inp0_yaml['directory'][dir_key] = os.path.expanduser(inp0_yaml['directory'][dir_key])	# home to absolute path
 		inp0_yaml['directory'][dir_key] = os.path.abspath(inp0_yaml['directory'][dir_key])	# absolute path
-		if dir_key == 'src_path' or dir_key == 'pot_path' or dir_key == 'submit':
+		if dir_key == 'src_path' or dir_key == 'pot_path':
 			if not os.path.isdir(inp0_yaml['directory'][dir_key]):
 				print('ERROR. check the config_directory')
+				sys.exit()
+		elif dir_key == 'submit':
+			if not os.path.isfile(inp0_yaml['directory'][dir_key]) and not os.path.isdir(inp0_yaml['directory'][dir_key]):
+				print('ERROR. There is no submit file or directory.')
 				sys.exit()
 		else:
 			if not os.path.isdir(inp0_yaml['directory'][dir_key]):

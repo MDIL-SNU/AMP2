@@ -1,0 +1,11 @@
+directory:
+  submit: ./Submit
+  src_path: ./src
+  pot_path_GGA: /data/vasp4us/pot/PBE52
+  pot_path_LDA: /data/vasp4us/pot/LDA52
+
+program:
+  vasp_std: /data/vasp4us/vasp_std
+  vasp_gam: /data/vasp4us/vasp_gam
+  vasp_ncl: /data/vasp4us/vasp_ncl
+  gnuplot: /gnuplot

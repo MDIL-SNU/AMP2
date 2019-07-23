@@ -25,46 +25,63 @@ inp_effm = inp_yaml['effective_mass']
 
 node = node_simple(sys.argv[3])
 nproc = sys.argv[4]
-POT = sys.argv[5]
+pot_type = sys.argv[5]
+if pot_type == 'LDA':
+	POT = 'LDA'
+else:
+	POT = 'GGA'
 carrier_type = sys.argv[6]
 max_E_diff = calc_max_E_diff(inp_effm['Fermi_for_cutoff'],inp_effm['temperature_for_Fermi'])
 
 # Set directory for input structure and INCAR
-dir_effm = dir+'/effm_'+POT+'/'+carrier_type
+dir_effm = dir+'/effm_'+pot_type+'/'+carrier_type
 
 # Check existing data
 if os.path.isdir(dir_effm) and os.path.isfile(dir_effm+'/effective_mass.log') :
-	make_amp2_log_default(dir,src_path,carrier_type+' effective mass calculation with '+POT,node,code_data)
-	make_amp2_log(dir,carrier_type+' effective mass calculation with '+POT+' is already done.')
+	make_amp2_log_default(dir,src_path,carrier_type+' effective mass calculation with '+pot_type,node,code_data)
+	make_amp2_log(dir,carrier_type+' effective mass calculation with '+pot_type+' is already done.')
 	print 1
 	sys.exit()
 
-if not os.path.isdir(dir+'/effm_'+POT):
-	os.mkdir(dir+'/effm_'+POT,0755)
+if not os.path.isdir(dir+'/effm_'+pot_type):
+	os.mkdir(dir+'/effm_'+pot_type,0755)
 if not os.path.isdir(dir_effm):
 	os.mkdir(dir_effm,0755)
 
 os.chdir(dir_effm)
 
-make_amp2_log_default(dir_effm,src_path,carrier_type+' effective mass calculation with '+POT,node,code_data)
+make_amp2_log_default(dir_effm,src_path,carrier_type+' effective mass calculation with '+pot_type,node,code_data)
+########
+if pot_type == 'HSE':
+	make_amp2_log(dir_effm,'Effective mass calculation with HSE is not supported yet.')
+	print 1
+	sys.exit()
+
+########
+with open(dir+'/INPUT0/INCAR','r') as inp:
+	tmp = inp.read()
+if 'LSORBIT' in tmp:
+	make_amp2_log(dir_effm,'Effective mass calculation with SOC is not supported yet.')
+	print 1
+	sys.exit()
 
 # check band calculation
-if not os.path.isdir(dir+'/band_'+POT):
+if not os.path.isdir(dir+'/band_'+pot_type):
 	make_amp2_log(dir_effm,'Band directory does not exist.')
 	print 0
 	sys.exit()
 else:
-	if not os.path.isfile(dir+'/band_'+POT+'/CONTCAR'):
+	if not os.path.isfile(dir+'/band_'+pot_type+'/CONTCAR'):
 		make_amp2_log(dir_effm,'CONTCAR file in band does not exist.')
 		print 0
 		sys.exit()
-	elif count_line(dir+'/band_'+POT+'/CONTCAR') < 9:
+	elif count_line(dir+'/band_'+pot_type+'/CONTCAR') < 9:
 		make_amp2_log(dir_effm,'CONTCAR file in band is invalid.')
 		print 0
 		sys.exit()
 
-	if os.path.isfile(dir+'/band_'+POT+'/Band_gap.log'):
-		with open(dir+'/band_'+POT+'/Band_gap.log','r') as inp:
+	if os.path.isfile(dir+'/band_'+pot_type+'/Band_gap.log'):
+		with open(dir+'/band_'+pot_type+'/Band_gap.log','r') as inp:
 			gap_log = inp.readline()
 	else:
 		make_amp2_log(dir_effm,'Band gap calculation should be performed.')
@@ -78,40 +95,41 @@ if 'etal' in gap_log:
 	print 1
 	sys.exit()
 else:
-	# check CHGCAR
-	if os.path.isfile(dir_effm+'/CHGCAR') and os.path.getsize(dir_effm+'/CHGCAR') > 0 :
-		make_amp2_log(dir_effm,'Effective mass calculaton is performed by using existing CHGCAR file.')
-	elif os.path.isfile(dir+'/band_'+POT+'/CHGCAR') and os.path.getsize(dir+'/band_'+POT+'/CHGCAR') > 0 :
-		copy_input_cont(dir+'/band_'+POT,dir_effm)
-		subprocess.call(['cp',dir+'/band_'+POT+'/CHGCAR',dir_effm+'/.'])
-		make_amp2_log(dir_effm,'Effective mass calculaton is performed by using existing CHGCAR file in band calculation.')
-	else:
-		make_amp2_log(dir_effm,'Do vasp calculation for CHGCAR file.')
-		# Copy input data and write CHGCAR
-		copy_input_cont(dir+'/band_'+POT,dir_effm)
-		subprocess.call(['cp',dir+'/INPUT0/KPOINTS',dir_effm+'/.'])
-		# make INCAR for CHGCAR
-		incar_from_yaml(dir_effm,inp_effm['INCAR'])
-		if os.path.isfile(dir+'/band_'+POT+'/OUTCAR'):
-			mag_on = check_magnet(dir+'/band_'+POT)
+	if not pot_type == 'HSE':
+		# check CHGCAR
+		if os.path.isfile(dir_effm+'/CHGCAR') and os.path.getsize(dir_effm+'/CHGCAR') > 0 :
+			make_amp2_log(dir_effm,'Effective mass calculaton is performed by using existing CHGCAR file.')
+		elif os.path.isfile(dir+'/band_'+pot_type+'/CHGCAR') and os.path.getsize(dir+'/band_'+pot_type+'/CHGCAR') > 0 :
+			copy_input_cont(dir+'/band_'+pot_type,dir_effm)
+			subprocess.call(['cp',dir+'/band_'+pot_type+'/CHGCAR',dir_effm+'/.'])
+			make_amp2_log(dir_effm,'Effective mass calculaton is performed by using existing CHGCAR file in band calculation.')
 		else:
-			mag_on = 2
-		vasprun = make_incar_for_ncl(dir_effm,mag_on,kpar,npar,vasp_std,vasp_gam,vasp_ncl)
-		incar_from_yaml(dir_effm,inp_effm['INCAR'])
-		wincar(dir_effm+'/INCAR',dir_effm+'/INCAR',[['NSW','0'],['LCHARG','.T.']],[])
+			make_amp2_log(dir_effm,'Do vasp calculation for CHGCAR file.')
+			# Copy input data and write CHGCAR
+			copy_input_cont(dir+'/band_'+pot_type,dir_effm)
+			subprocess.call(['cp',dir+'/INPUT0/KPOINTS',dir_effm+'/.'])
+			# make INCAR for CHGCAR
+			incar_from_yaml(dir_effm,inp_effm['INCAR'])
+			if os.path.isfile(dir+'/band_'+pot_type+'/OUTCAR'):
+				mag_on = check_magnet(dir+'/band_'+pot_type,inp_yaml['magnetic_ordering']['Minimum_moment'])
+			else:
+				mag_on = 2
+			vasprun = make_incar_for_ncl(dir_effm,mag_on,kpar,npar,vasp_std,vasp_gam,vasp_ncl)
+			incar_from_yaml(dir_effm,inp_effm['INCAR'])
+			wincar(dir_effm+'/INCAR',dir_effm+'/INCAR',[['NSW','0'],['LCHARG','.T.']],[])
 
-		# VASP calculation for CHGCAR
-		out = run_vasp(dir_effm,nproc,vasprun)
-		if out == 1:  # error in vasp calculation
-			print 0
-			sys.exit() 
-		make_amp2_log(dir_effm,'CHGCAR file is generated successfully.')
+			# VASP calculation for CHGCAR
+			out = run_vasp(dir_effm,nproc,vasprun)
+			if out == 1:  # error in vasp calculation
+				print 0
+				sys.exit() 
+			make_amp2_log(dir_effm,'CHGCAR file is generated successfully.')
 
 	# make pocket.log
 	if os.path.isfile(dir_effm+'/pocket.log') and os.path.getsize(dir_effm+'/pocket.log') > 0 :
 		make_amp2_log(dir_effm,'Using existing pocket.log')
 	else:
-		pocket(dir_effm,dir+'/band_'+POT,carrier_type,max_E_diff,inp_effm['pocket_search_dist'])
+		pocket(dir_effm,dir+'/band_'+pot_type,carrier_type,max_E_diff,inp_effm['pocket_search_dist'])
 		make_amp2_log(dir_effm,'Generate new pocket.log')
 
 	# make k-points to determine searching space
@@ -119,6 +137,10 @@ else:
 		make_amp2_log(dir_effm,'Using existing NKPT')
 	else:
 		make_kpts_for_searching_space(dir_effm,inp_effm['grid_size_for_searching'])
+		if pot_type == 'HSE':
+			make_kpts_for_hse(dir+'/relax_'+pot_type+'/IBZKPT',dir_effm+'/KPOINTS_searching',dir_effm,'band')
+		else:
+			shutil.copy(dir_effm+'/KPOINTS_searching',dir_effm+'/KPOINTS')
 		make_amp2_log(dir_effm,'Generate new NKPT')
 
 	# make k-points to calculate effective mass	
@@ -127,14 +149,18 @@ else:
 	else:
 		# check the vasp calculation to determine searching space
 		if not check_vasp_done(dir_effm) == 1:
-			if os.path.isfile(dir+'/band_'+POT+'/OUTCAR'):
-				mag_on = check_magnet(dir+'/band_'+POT)
+			if os.path.isfile(dir+'/band_'+pot_type+'/OUTCAR'):
+				mag_on = check_magnet(dir+'/band_'+pot_type,inp_yaml['magnetic_ordering']['Minimum_moment'])
 			else:
 				mag_on = 2
 			vasprun = make_incar_for_ncl(dir_effm,mag_on,kpar,npar,vasp_std,vasp_gam,vasp_ncl)
-
-			incar_from_yaml(dir_effm,inp_effm['INCAR'])
-			wincar(dir_effm+'/INCAR',dir_effm+'/INCAR',[['ISTART','1'],['ICHARG','11'],['LCHARG','.F.']],[])
+			if pot_type == 'HSE':
+				incar_for_hse(dir_effm+'/INCAR')
+				wincar(dir_effm+'/INCAR',dir_effm+'/INCAR',[['ALGO','All']],[])
+				incar_from_yaml(dir_effm,inp_effm['INCAR'])
+			else:
+				incar_from_yaml(dir_effm,inp_effm['INCAR'])
+				wincar(dir_effm+'/INCAR',dir_effm+'/INCAR',[['ISTART','1'],['ICHARG','11'],['LCHARG','.F.']],[])
 			out = run_vasp(dir_effm,nproc,vasprun)
 			if out == 1:  # error in vasp calculation
 				print 0
@@ -146,8 +172,8 @@ else:
 
 	# check the vasp calculation to calculate effective mass
 	if not check_vasp_done(dir_effm) == 1:
-		if os.path.isfile(dir+'/band_'+POT+'/OUTCAR'):
-			mag_on = check_magnet(dir+'/band_'+POT)
+		if os.path.isfile(dir+'/band_'+pot_type+'/OUTCAR'):
+			mag_on = check_magnet(dir+'/band_'+pot_type,inp_yaml['magnetic_ordering']['Minimum_moment'])
 		else:
 			mag_on = 2
 		vasprun = make_incar_for_ncl(dir_effm,mag_on,kpar,npar,vasp_std,vasp_gam,vasp_ncl)

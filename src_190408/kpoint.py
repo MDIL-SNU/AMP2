@@ -7,7 +7,7 @@ import os, sys, subprocess, yaml
 from module_log import *
 from module_vasprun import *
 from module_converge import *
-code_data = 'Date: 2018-12-06'
+code_data = 'Version xx. Modified at 2019-07-17'
 
 # Set input
 dir = sys.argv[1]
@@ -27,6 +27,11 @@ inp_conv = inp_yaml['converge_test']
 ENCONV = inp_conv['ENCONV']
 PRCONV = inp_conv['PRCONV']
 FOCONV = inp_conv['FOCONV']
+pot_type = inp_conv['potential_type']
+if pot_type == 'LDA':
+	POT = 'LDA'
+else:
+	POT = 'GGA'
 
 node = node_simple(sys.argv[3])
 nproc = sys.argv[4]
@@ -69,7 +74,6 @@ while convergence == 1 :
 
 	make_amp2_log(dir+'/kptest','KP'+str(KPL)+' calculation start')
 	now_path = dir+'/kptest/KP'+str(KPL)
-	copy_input_no_kp(dir+'/INPUT0',now_path,'GGA')
 
 	os.chdir(now_path)
 	
@@ -78,6 +82,7 @@ while convergence == 1 :
 		if 'Voluntary' in subprocess.check_output(['tail','-n','1',now_path+'/OUTCAR']):
 			rerun = 1
 	if rerun == 0:
+		copy_input_no_kp(dir+'/INPUT0',now_path,POT)
 		sym = int(open(dir+'/INPUT0/sym','r').readline())
 		kpt_generation_for_relax(now_path,KPL,sym)
 		gam = set_parallel(now_path+'/KPOINTS',now_path+'/INCAR',npar,kpar)
@@ -86,6 +91,9 @@ while convergence == 1 :
 		else:
 			vasprun = vasp_std
 
+		if pot_type == 'HSE':
+			incar_for_hse(now_path+'/INCAR')
+		incar_from_yaml(now_path,inp_conv['INCAR'])
 		wincar(now_path+'/INCAR',now_path+'/INCAR',[['NSW','0'],['LCHARG','F'],['LWAVE','F']],[])
 		out = run_vasp(now_path,nproc,vasprun)
 		if out == 1:  # error in vasp calculation

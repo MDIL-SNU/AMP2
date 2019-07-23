@@ -29,8 +29,9 @@ def copy_input_no_kp(source,target,pot_type):
 # generate kpoints file from kpl and symmetry
 def kpt_generation_for_relax(target,KPL,sym):
 	kpoint = open(target+'/KPOINTS','w')
-	# Gamma-centred mesh for hexagoanl symmetry
-	if sym==6 or sym==12 or sym==13 or sym==14 or sym==10 or sym==15:
+	# Gamma-centred mesh for hexagoanl and rhombohedral symmetry
+	if sym==12 or sym==13 or sym==14:
+#	if sym==6 or sym==12 or sym==13 or sym==14 or sym==10 or sym==15:
 		KPset = 'Gamma-centred'
 	else :
 		KPset = 'Monk-horst'
@@ -41,8 +42,9 @@ def kpt_generation_for_relax(target,KPL,sym):
 		l.append((recipro_latt[i][0]**2.+recipro_latt[i][1]**2.+recipro_latt[i][2]**2.)**0.5)
 	KP = []
 	for i in range(3) :
-		if sym == 5 or sym == 6:  # symmetry BCT
+		if sym in [5,6,10]:  # symmetry BCT and ORCI
 			KP.append(str(KPL))
+#			KP.append(str(int(round(l[i]/(max(l)/KPL)))))
 		else:
 			KP.append(str(int(round(l[i]/(max(l)/KPL)))))
 		if KP[-1] == '0' :
@@ -115,8 +117,8 @@ def electronic_step_convergence_check(target):
 	if elec_step == int(subprocess.check_output(['grep','NELM',target+'/OUTCAR']).split(';')[0].split()[2]):
 		make_amp2_log(target,'Electronic step is not conversed.')
 		algo = subprocess.check_output(['grep','ALGO',target+'/INCAR']).split()[2]
-		if algo == 'Normal':
-			make_amp2_log(target,'Current ALGO is Normal but it is not converged.')
+		if algo == 'Normal' or algo == 'All':
+			make_amp2_log(target,'Current ALGO is '+algo+' but it is not converged.')
 			if spin == '2':
 				if subprocess.check_output(['grep','BMIX_MAG',target+'/OUTCAR']).split()[-1] == '1.00':
 					make_amp2_log(target,'Change mixing parameter.')
@@ -127,6 +129,10 @@ def electronic_step_convergence_check(target):
 					return 2
 			else:
 				return 2
+		elif algo == 'Damped':
+			wincar(target+'/INCAR',target+'/INCAR',[['ALGO','All']],[])
+			make_amp2_log(target,'ALGO changes from '+algo+' to All.')
+			return 1
 		else:
 			wincar(target+'/INCAR',target+'/INCAR',[['ALGO','Normal']],[])
 			make_amp2_log(target,'ALGO changes from '+algo+' to Normal.')
@@ -134,14 +140,14 @@ def electronic_step_convergence_check(target):
 	else:
 		return 0
 # check magnetism from relaxation
-def check_magnet(dir_in):
+def check_magnet(dir_in,min_mom):
 	nion = int(subprocess.check_output(['grep','NION',dir_in+'/OUTCAR']).split()[-1])
 	spin = subprocess.check_output(['grep','ISPIN',dir_in+'/OUTCAR']).split()[2]
 	mag_on = 0
 	if spin == '2' :
 		mag = [float(x.split()[-1]) for x in subprocess.check_output(['grep','magnetization (x)',dir_in+'/OUTCAR','-A'+str(nion+3)]).splitlines()[-nion:]]
 		for i in range(len(mag)) :
-			if abs(mag[i]) > 0.001 :
+			if abs(mag[i]) > min_mom :
 				mag_on = 1
 				break
 	return mag_on
@@ -175,7 +181,7 @@ def make_incar_for_ncl(dir_target,mag_on,kpar,npar,vasp_std,vasp_gam,vasp_ncl):
 			if 'LMAXMIX' in tmp:
 				maxmix = '!#'
 			with open('SOC_note','w') as soc_note:
-				soc_note.write('Spin-orbit coupling is condiered!')
+				soc_note.write('Spin-orbit coupling is considered!')
 		# Fix INCAR
 		wincar(dir_target+'/INCAR',dir_target+'/INCAR',[['MAGMOM',''],['LSORBIT',SOC],['LMAXMIX',maxmix],['ISPIN','2']],[])
 	elif not mag_on == 2:
@@ -209,15 +215,13 @@ def wincar(SOURCE,OUT,option,add) :
 					incar[j] = '   '+option[i][0]+' = '+option[i][1]+'\n'
 		if check == 0 and option[i][1] != '' :
 			if option[i][1] == '#' :
-				add.append('#   '+option[i][0]+' = \n')
+				add.append('#   '+option[i][0]+' = ')
 			elif option[i][1] != '=' :
-				add.append('   '+option[i][0]+' = '+option[i][1]+'\n')
+				add.append('   '+option[i][0]+' = '+option[i][1])
 	for j in range(len(incar)) :
 		out.write(incar[j])
-	if len(add) != 0 :
-		out.write('\n')
 	for i in range(len(add)) :
-		out.write(add[i])
+		out.write(add[i]+'\n')
 	out.close()
 	return 0
 
@@ -253,7 +257,7 @@ def make_multiple_kpts(kp_log,kpt_file,pos_file,kp_multi,sym):
 		idx = l.index(max(l))
 		KP=[]
 		for i in range(3) :
-			if sym == 5 or sym == 6:
+			if sym in [5,6,10]: # for BCT and ORCI
 				KP.append(str(KPL))
 			else:
 				KP[i:] = [str(int(round(l[i]/(l[idx]/KPL))))]
@@ -272,4 +276,16 @@ def make_multiple_kpts(kp_log,kpt_file,pos_file,kp_multi,sym):
 	
 	with open(kpt_file,'w') as kpt:
 		kpt.write(khead[0]+khead[1]+khead[2]+"  "+KP[0]+"  "+KP[1]+"  "+KP[2]+"\n  0  0  0\n")
+
+def incar_for_hse(incar_file):
+	wincar(incar_file,incar_file,[['ALGO',''],['LDA',''],['LMAXMIX','']],['\n\nHybrid calculation:\n   LHFCALC= .T.\n   HFSCREEN = 0.2\n   PRECFOCK = Normal\n   ALGO = Damped\n   AEXX = 0.25\n'])
+
+def write_relaxed_poscar(target,pot_type):
+	from module_amp2_input import read_poscar,write_poscar
+	[axis_ori,atom_pos_ori] = read_poscar(target+'/INPUT0/POSCAR')
+	[axis_rlx,atom_pos_rlx] = read_poscar(target+'/relax_'+pot_type+'/CONTCAR')
+	new_atom_pos = []
+	for i in range(len(atom_pos_rlx)):
+		new_atom_pos.append(atom_pos_rlx[i][0:3]+atom_pos_ori[i][3:])
+	write_poscar(axis_rlx,new_atom_pos,target+'/INPUT0/POSCAR_rlx_'+pot_type,'relaxed poscar')
 

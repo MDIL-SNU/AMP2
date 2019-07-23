@@ -10,7 +10,7 @@ def poscar_to_atom_inform(poscar_file):
 	atom_num = [int(x) for x in pos_lines[6].split()]
 	return [atom_name,atom_num]
 
-def make_dos_dat(dos_file,spin,atom_num):
+def make_dos_dat(dos_file,spin,atom_num,ncl):
 	with open(dos_file,'r') as dos_inp:
 		dos = dos_inp.readlines()
 	ndos = int(dos[5].split()[2]) + 1
@@ -26,31 +26,47 @@ def make_dos_dat(dos_file,spin,atom_num):
 
 	# read partial dos
 	Obt_num = {'s':1,'p':3,'d':5,'f':7} 
-	Obt_dic = {3:[1,'sum','s','p','d'],6:[2,'sum','s','p','d'],9:[1,'no_sum','s','p','d'],18:[2,'no_sum','s','p','d'],4:[1,'no_sum','s','p','d','f'],8:[2,'sum','s','p','d','f'], 16:[1,'no_sum','s','p','d','f'], 32:[2,'no_sum','s','p','d','f']}
-
+	if ncl == 'F':
+		Obt_dic = {3:[1,'sum','s','p','d'],6:[2,'sum','s','p','d'],9:[1,'no_sum','s','p','d'],18:[2,'no_sum','s','p','d'],4:[1,'sum','s','p','d','f'],8:[2,'sum','s','p','d','f'], 16:[1,'no_sum','s','p','d','f'], 32:[2,'no_sum','s','p','d','f']}
+	else:
+		Obt_dic = {12:[4,'sum','s','p','d'], 36:[4,'no_sum','s','p','d'], 16:[4,'sum','s','p','d','f'],64:[4,'no_sum','s','p','d','f']}
 	par_dos = []
 	idf = len(dos[6+ndos].split()) - 1
 	for typ in range(len(atom_num)):
 		atom_sum = sum(atom_num[:typ])+1
 		par_dos.append([])
 		for i in range(ndos-1):
-			dos_tmp = [[0 for y in range(Obt_dic[idf][0])] for x in range(len(Obt_dic[idf])-2)]
+			if ncl == 'T':
+				dos_tmp = [[0] for x in range(len(Obt_dic[idf])-2)]
+			else:
+				dos_tmp = [[0 for y in range(Obt_dic[idf][0])] for x in range(len(Obt_dic[idf])-2)]
 			for n in range(atom_num[typ]):
 				idx = n + atom_sum
 				line_tmp = [float(x) for x in dos[6+idx*ndos+i].split()[1:]]
-				dos_single = [[0 for y in range(Obt_dic[idf][0])] for x in range(len(Obt_dic[idf])-2)]
+				if ncl == 'T':
+					dos_single = [[0] for x in range(len(Obt_dic[idf])-2)]
+				else:
+					dos_single = [[0 for y in range(Obt_dic[idf][0])] for x in range(len(Obt_dic[idf])-2)]
 				line_idx = 0
 				for orb in range(len(Obt_dic[idf])-2):
 					if Obt_dic[idf][1] == 'sum':
 						for spin_idx in range(Obt_dic[idf][0]):
-							dos_single[orb][spin_idx] = line_tmp[line_idx]
+							if ncl == 'T':
+								if spin_idx == 0:
+									dos_single[orb][spin_idx] = line_tmp[line_idx]
+							else:
+								dos_single[orb][spin_idx] = line_tmp[line_idx]
 							line_idx = line_idx+1
 					else:
 						for orb_idx2 in range(Obt_num[Obt_dic[idf][orb+2]]):
 							for spin_idx in range(Obt_dic[idf][0]):
-								dos_single[orb][spin_idx] = dos_single[orb][spin_idx]+line_tmp[line_idx]
+								if ncl == 'T':
+									if spin_idx == 0:
+										dos_single[orb][spin_idx] = dos_single[orb][spin_idx]+line_tmp[line_idx]
+								else:
+									dos_single[orb][spin_idx] = dos_single[orb][spin_idx]+line_tmp[line_idx]
+	
 								line_idx = line_idx+1
-
 				for orb in range(len(Obt_dic[idf])-2):
 					dos_tmp[orb] = [x+y for x,y in zip(dos_tmp[orb],dos_single[orb])]
 											
@@ -94,8 +110,8 @@ def write_par_dos(Ene,par_dos,atom_name,fermi,target):
 def make_dos_in(target,atom_name,spin,orb_len,plot_range):
 	color_list = ['web-green','light-red','orange','web-blue','dark-violet','skyblue']
 	with open(target+'/Pdos_dat/dos.in','w') as out:
-		out.write("set terminal postscript enhanced color font 'Arial, 14' size 3.6,5.4\n")
-		out.write("set output 'dos_"+target.split('/')[-2]+".eps'\n")
+		out.write("set terminal pdfcairo enhanced color font 'Arial, 14' size 3.6,5.4\n")
+		out.write("set output 'dos_"+target.split('/')[-2]+".pdf'\n")
 		out.write('set termoption dash\n')
 		out.write("set ylabel 'Energy (eV)' font 'Arial, 14'\n")
 		out.write("set xlabel 'Density of State' font 'Arial, 14'\n")

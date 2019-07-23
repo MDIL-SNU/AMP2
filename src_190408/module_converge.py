@@ -42,9 +42,14 @@ def convergence_check(target,be1,be2,ENCONV,PRCONV,FOCONV):
 	if PRCONV > 0 :
 		for i in range(6) :
 			if abs(PRESS[0][i]-PRESS[1][i]) > PRCONV or abs(PRESS[0][i]-PRESS[2][i]) > PRCONV :
+#				if abs(PRESS[0][i]-PRESS[1][i])/abs(PRESS[0][i]) > 0.1 or abs(PRESS[0][i]-PRESS[2][i])/abs(PRESS[0][i]) > 0.1:
+#					make_amp2_log(target,'Pressure is not yet converged')
+#					return 1
+#					sys.exit()
 				make_amp2_log(target,'Pressure is not yet converged')
 				return 1
 				sys.exit()
+		
 	# Convergence check for force
 	if FOCONV > 0 :
 		for i in range(nion):
@@ -83,6 +88,10 @@ def make_conv_dat(target,typ):
 				conv.append(tmp)
 
 	test_val = []
+	with open(target+'/'+conv[0][0].split(':')[0]+'/POSCAR','r') as pos_f:
+		lines = pos_f.readlines()
+	natom = sum([int(x) for x in lines[6].split()])
+
 	with open(target+'/conv_plot.dat','w') as out:
 		for i in range(len(conv)):
 			target_path = conv[i][0].split(':')[0]
@@ -93,7 +102,7 @@ def make_conv_dat(target,typ):
 			else:
 				test_val.append(float(target_path[2:]))
 			out.write(target_path+'\t'+str(test_val[i])+'\t')		# title
-			out.write(conv[i][1]+'\t')				# energy
+			out.write(str(float(conv[i][1])/float(natom))+'\t')				# energy
 			max_press = max([float(x) for x in conv[i][4:7]])
 			out.write(str(max_press)+'\t')				# pressure
 			out.write(str(max_force(target+'/'+target_path+'/OUTCAR')[0])+'\n')	# force

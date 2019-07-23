@@ -15,15 +15,15 @@ program:
 
 calculation:
   kp_test: 1
-  encut_test: 0
-  relaxation: 0
-  band: 0
-  density_of_states: 0
-  hse_oneshot: 0
-  dielectric: 0
-  effective_mass: 0
+  encut_test: 1
+  relaxation: 1
+  band: 1
+  density_of_states: 1
+  hse_oneshot: 1
+  dielectric: 1
+  effective_mass: 1
   plot: 1
-  magnetic_ordering: 0
+  magnetic_ordering: 1
   large_off: -1
 
 cif2vasp:
@@ -57,14 +57,21 @@ converge_test:
   ENSTART: 200
   ENSTEP: 50
   ENMAX: 1000
+  potential_type: GGA # Choose on potential in GGA, LDA, HSE
+  INCAR:
 
 relaxation:
   potential_type:
     - GGA
 #    - LDA
+#    - HSE
   max_iteration: 10
   converged_ionic_step: 5
   pos_warning_percent: 1
+  energy: -1
+  pressure: 10
+  force: 0.02
+#  SOC_on: 1
   INCAR:
 #    EDIFF: 1e-08
 
@@ -76,27 +83,35 @@ band_calculation:
   potential_type:
     - GGA
 #    - LDA
+#    - HSE
   relax_check: 1
   INCAR:
+    EDIFF: 1e-08 # For band correction, high precision is required.
 
 Hybrid_oneshot:
   alpha: 0.25
+  potential_type: # The potential used for lattice parameter optimization
+    - GGA # If one variable is inserted, we use the lattice parameter and the points of VBM and CBM with that potential.
+#   - - HSE # If two variables are inserted, we use the lattice parameter with above potential and the points of VBM and CBM with below potential.
+#     - GGA
   fermi_width: 0.3
   vb_dos_min: 1
   vb_dos_max: 3
   energy_width_for_extreme: 0.5
   search_space_for_extreme: 0.05
-  cutoff_DF_DVB: 0.29
+  cutoff_DF_DVB: 0.3
+  band_structure_correction: 0
   INCAR:
 
 density_of_states:
   potential_type:
     - GGA
 #    - LDA
+#    - HSE
   relax_check: 1
   KP_multiplier: 2
-  y_min: 3                      # set plot region, downward from VBM
-  y_max: 2                      # set plot region, upward from CBM
+  y_min: 3      # set plot region, downward from VBM
+  y_max: 2      # set plot region, upward from CBM
   INCAR:
 
 dielectric:
@@ -122,12 +137,16 @@ effective_mass:
   potential_type:
     - GGA
 #    - LDA
+#    - HSE
   INCAR:
 
 magnetic_ordering:
-  from_relax: 0
+  potential_type: GGA # Choose on potential in GGA, LDA, HSE (If from relax:0, it must be same to potential_type in convergence.)
+  Minimum_moment: 0.2
+  from_relax: 1
   cutoff_for_parameter: 5.0
-  Tolerance: 0.01
+  Tolerance: 0.01 # Tolerance to define identical pair for Ising coefficient
+  energy_tolerance: 0.00001 # Tolerance to find lowest energy spin ordering candidates
   Maximum_atoms_number: -1
   Maximum_pair_type: -1
   Genetic_algorithm:
@@ -139,3 +158,4 @@ magnetic_ordering:
       crossover: 30
       mutation: 30
       random: 15
+  INCAR:

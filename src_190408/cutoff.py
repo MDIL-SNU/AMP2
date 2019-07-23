@@ -7,7 +7,8 @@ import os, sys, subprocess, yaml
 from module_log import *
 from module_vasprun import *
 from module_converge import *
-code_data = 'Date: 2018-12-06'
+import math
+code_data = 'Version xx. Modified at 2019-07-17'
 
 # Set input
 dir = sys.argv[1]
@@ -30,6 +31,11 @@ FOCONV = inp_conv['FOCONV']
 ENSTART = inp_conv['ENSTART']
 ENSTEP = inp_conv['ENSTEP']
 ENMAX = inp_conv['ENMAX']
+pot_type = inp_conv['potential_type']
+if pot_type == 'LDA':
+	POT = 'LDA'
+else:
+	POT = 'GGA'
 
 node = node_simple(sys.argv[3])
 nproc = sys.argv[4]
@@ -56,10 +62,10 @@ if os.path.isfile(enlog):
 	os.remove(enlog)
 
 ### cutoff energy test setting ###
-ENPOT = subprocess.check_output(['grep','ENMIN',dir+'/INPUT0/POTCAR_GGA']).splitlines()
+ENPOT = subprocess.check_output(['grep','ENMIN',dir+'/INPUT0/POTCAR_'+POT]).splitlines()
 for i in range(len(ENPOT)) :
 	if float(ENPOT[i].split()[5]) > ENSTART :
-		ENSTART = int(float(ENPOT[i].split()[5])/ENSTEP)*ENSTEP
+		ENSTART = int(math.ceil(float(ENPOT[i].split()[5])/ENSTEP))*ENSTEP
 
 ENCUT = ENSTART
 loopnum = 0
@@ -78,8 +84,6 @@ while convergence == 1 :
 
 	make_amp2_log(dir+'/cutoff','EN'+str(ENCUT)+' calculation start')
 	now_path = dir+'/cutoff/EN'+str(ENCUT)
-	copy_input(dir+'/INPUT0',now_path,'GGA')
-
 	os.chdir(now_path)
 
 	rerun = 0 
@@ -87,12 +91,16 @@ while convergence == 1 :
 		if 'Voluntary' in subprocess.check_output(['tail','-n','1',now_path+'/OUTCAR']):
 			rerun = 1
 	if rerun == 0:
+		copy_input(dir+'/INPUT0',now_path,POT)
 		gam = set_parallel(now_path+'/KPOINTS',now_path+'/INCAR',npar,kpar)
 		if gam == 1:
 			vasprun = vasp_gam
 		else:
 			vasprun = vasp_std
 
+		if pot_type == 'HSE':
+			incar_for_hse(now_path+'/INCAR')
+		incar_from_yaml(now_path,inp_conv['INCAR'])
 		wincar(now_path+'/INCAR',now_path+'/INCAR',[['ENCUT',str(ENCUT)],['NSW','0'],['LWAVE','F'],['LCHARG','F']],[])
 		# Running vasp
 		out = run_vasp(now_path,nproc,vasprun)
