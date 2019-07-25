@@ -78,7 +78,10 @@ def set_parallel(kpoints,incar,npar,kpar):
 			nparf = str(npar*kpar)
 			kparf = '#'
 			wincar(incar,incar,[['NPAR',nparf],['KPAR',kparf]],[])
-			return 1
+			if all([float(x) == 0.0 for x in kp_line[3].split()[0:3]]):
+				return 1
+			else:
+				return 0
 		else:
 			nparf = str(npar); kparf = str(kpar)
 			wincar(incar,incar,[['NPAR',nparf],['KPAR',kparf]],[])
