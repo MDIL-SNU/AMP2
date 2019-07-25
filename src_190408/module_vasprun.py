@@ -281,7 +281,7 @@ def make_multiple_kpts(kp_log,kpt_file,pos_file,kp_multi,sym):
 		kpt.write(khead[0]+khead[1]+khead[2]+"  "+KP[0]+"  "+KP[1]+"  "+KP[2]+"\n  0  0  0\n")
 
 def incar_for_hse(incar_file):
-	wincar(incar_file,incar_file,[['ALGO',''],['LDA',''],['LMAXMIX','']],['\n\nHybrid calculation:\n   LHFCALC= .T.\n   HFSCREEN = 0.2\n   PRECFOCK = Normal\n   ALGO = Damped\n   AEXX = 0.25\n'])
+	wincar(incar_file,incar_file,[['ALGO',''],['LDA',''],['LMAXMIX',''],['ISYM','3']],['\n\nHybrid calculation:\n   LHFCALC= .T.\n   HFSCREEN = 0.2\n   PRECFOCK = Normal\n   ALGO = Damped\n   AEXX = 0.25\n'])
 
 def write_relaxed_poscar(target,pot_type):
 	from module_amp2_input import read_poscar,write_poscar
