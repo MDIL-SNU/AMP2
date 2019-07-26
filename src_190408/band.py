@@ -178,6 +178,7 @@ if gap == 'metal':
 		fermi = float(subprocess.check_output(['head',dir+'/relax_'+POT+'/DOSCAR','-n','6']).splitlines()[-1].split()[3])
 else:
 	make_amp2_log(dir_band,'Band calculaton is done.\nBand gap is '+gap+' eV.')
+	os.remove(dir_band+'/WAVECAR')
 with open(dir_band+'/KPOINTS_band','r') as kpt_inp:
 	nkpt_for_band = int(kpt_inp.readlines()[1].split()[0])
 
