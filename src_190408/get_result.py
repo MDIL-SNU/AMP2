@@ -98,14 +98,17 @@ for POT in pot_list:
 			with open(target+'/effm_'+POT+'/'+typ+'/effective_mass.log','r') as inp:
 				lines = inp.readlines()
 
-			effm = [float(x) for x in lines[4].split()]
+			if lines[4].split() == 3:
+				effm = [float(x) for x in lines[4].split()]
+			else:
+				effm = [float(x) for x in lines[4].split()[1:4]]
 			for i in range(3):
 				effm_ten.append([float(x) for x in lines[i+1].split()])
 				effm_avg = effm_avg+1.0/effm[i]
 			effm_avg = 3.0/effm_avg
 			DB[typ+'_effective_mass_averaged_'+POT] = effm_avg
-			DB[typ+'_effective_mass_principal_axis_'+POT] = effm
-			DB[typ+'_effective_mass_tenson_'+POT] = effm_ten
+			DB[typ+'_effective_mass_diagonalized_'+POT] = effm
+			DB[typ+'_effective_mass_tensor_'+POT] = effm_ten
 			shutil.copy(target+'/effm_'+POT+'/'+typ+'/effective_mass.log',res_path+'/effective_mass_'+typ+'_'+POT+'.log')
 
 with open(res_path+'/Properties.json','w') as out:

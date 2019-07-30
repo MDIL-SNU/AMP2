@@ -101,12 +101,14 @@ else:
 			make_amp2_log(dir_effm,'Effective mass calculaton is performed by using existing CHGCAR file.')
 		elif os.path.isfile(dir+'/band_'+pot_type+'/CHGCAR') and os.path.getsize(dir+'/band_'+pot_type+'/CHGCAR') > 0 :
 			copy_input_cont(dir+'/band_'+pot_type,dir_effm)
+			shutil.copy(dir+'/INPUT0/INCAR',dir_effm+'/INCAR')
 			subprocess.call(['cp',dir+'/band_'+pot_type+'/CHGCAR',dir_effm+'/.'])
 			make_amp2_log(dir_effm,'Effective mass calculaton is performed by using existing CHGCAR file in band calculation.')
 		else:
 			make_amp2_log(dir_effm,'Do vasp calculation for CHGCAR file.')
 			# Copy input data and write CHGCAR
 			copy_input_cont(dir+'/band_'+pot_type,dir_effm)
+			shutil.copy(dir+'/INPUT0/INCAR',dir_effm+'/INCAR')
 			subprocess.call(['cp',dir+'/INPUT0/KPOINTS',dir_effm+'/.'])
 			# make INCAR for CHGCAR
 			incar_from_yaml(dir_effm,inp_effm['INCAR'])
