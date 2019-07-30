@@ -231,17 +231,6 @@ def make_kpts_for_calculation(target,grid_size,max_E_diff):
 			final_pocket_inform.append(pocket_inform[k])
 			for k_id in range(3):
 				num_kp_for_effm[-1].append([int(np.ceil((pocket_kpt[k][k_id]-kp_min[k_id])/grid_size))+1,int(np.ceil((kp_max[k_id]-pocket_kpt[k][k_id])/grid_size))+1])
-			for k_id in range(3):
-				num_kp_max = int(np.ceil((kp_max[k_id]-pocket_kpt[k][k_id])/grid_size))+1
-				num_kp_min = int(np.ceil((pocket_kpt[k][k_id]-kp_min[k_id])/grid_size))+1
-#				if num_kp_max < (num_kp_for_test[i]-1)/2:
-#					num_kp_max = num_kp_max+1
-#				else:
-#					num_kp_max = (num_kp_for_test[i]-1)/2
-#				if num_kp_min < (num_kp_for_test[i]-1)/2:
-#					num_kp_min = num_kp_min+1
-				num_kp_for_effm[k].append([num_kp_min,num_kp_max])
-
 			for x_id in range(num_kp_for_effm[-1][0][0]+num_kp_for_effm[-1][0][1]+1):
 				for y_id in range(num_kp_for_effm[-1][1][0]+num_kp_for_effm[-1][1][1]+1):
 					for z_id in range(num_kp_for_effm[-1][2][0]+num_kp_for_effm[-1][2][1]+1):
@@ -388,7 +377,7 @@ def write_effm(effm_dia,effm,target,carrier_type):
 		for i in range(3):
 			out.write(' '.join(['{:10.3f}'.format(effm[i][x]) for x in range(3)])+'\n')
 #			out.write('\t'.join([str(effm[i][x]) for x in range(3)])+'\n')
-		out.write(' '.join(['{:10.3f}'.format(effm_dia[x]) for x in range(3)]))
+		out.write('Diagonalized effective mass: '+' '.join(['{:10.3f}'.format(effm_dia[x]) for x in range(3)]))
 #		out.write('\t'.join([str(effm_dia[x]) for x in range(3)]))
 
 def cal_dk2(Band,n,x_id,y_id,z_id,num,shift,spin_idx,diff_K):
