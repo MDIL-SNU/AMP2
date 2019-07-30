@@ -654,7 +654,9 @@ def gap_estimation(target,fermi,spin,ncl,KPT,Band,nelect):
 		total_VBM_kpt = VBM_k[total_VBM_spin]
 		total_CBM_kpt = CBM_k[total_CBM_spin]
 		gap = total_CBM-total_VBM
-
+		if gap < 0.01:
+			gap = 0.0
+			metal = 1
 	elif metal == 1:
 		total_VBM_kpt = KPT[VB_max.index(max(VB_max))]
 		total_CBM_kpt = KPT[CB_min.index(min(CB_min))]
