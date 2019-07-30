@@ -386,8 +386,10 @@ def write_effm(effm_dia,effm,target,carrier_type):
 	with open(target+'/effective_mass.log','w') as out:
 		out.write(carrier_type+'\n')
 		for i in range(3):
-			out.write('\t'.join([str(effm[i][x]) for x in range(3)])+'\n')
-		out.write('\t'.join([str(effm_dia[x]) for x in range(3)]))
+			out.write(' '.join(['{:10.3f}'.format(effm[i][x]) for x in range(3)])+'\n')
+#			out.write('\t'.join([str(effm[i][x]) for x in range(3)])+'\n')
+		out.write(' '.join(['{:10.3f}'.format(effm_dia[x]) for x in range(3)]))
+#		out.write('\t'.join([str(effm_dia[x]) for x in range(3)]))
 
 def cal_dk2(Band,n,x_id,y_id,z_id,num,shift,spin_idx,diff_K):
 	dxx = (Band[n][idx_change(x_id+1,y_id,z_id,num,shift)][spin_idx] + Band[n][idx_change(x_id-1,y_id,z_id,num,shift)][spin_idx] \

@@ -686,12 +686,12 @@ def gap_estimation(target,fermi,spin,ncl,KPT,Band,nelect):
 			if not total_VBM_kpt[i] == total_CBM_kpt[i]:
 				direct = 1
 		if direct == 0 :
-			gap_log.write('Band gap: '+str(gap)+' eV (Direct)\n\n')
+			gap_log.write('Band gap: '+'{10.3}'.format(gap)+' eV (Direct)\n\n')
 		else :
-			gap_log.write('Band gap: '+str(gap)+' eV (Indirect)\n\n')
-		gap_simple.write('     '+str(gap))
-		gap_log.write('VBM: '+'  '.join(total_VBM_kpt)+'   : '+str(total_VBM)+' eV\n')
-		gap_log.write('CBM: '+'  '.join(total_CBM_kpt)+'   : '+str(total_CBM)+' eV\n')
+			gap_log.write('Band gap: '+'{10.3}'.format(gap)+' eV (Indirect)\n\n')
+		gap_simple.write('     '+'{10.3}'.format(gap))
+		gap_log.write('VBM: '+'  '.join(total_VBM_kpt)+'   : '+'{10.3}'.format(total_VBM)+' eV\n')
+		gap_log.write('CBM: '+'  '.join(total_CBM_kpt)+'   : '+'{10.3}'.format(total_CBM)+' eV\n')
 		gap_log.write('\nnVBM: '+str(total_VBM_index)+'  spin: '+str(total_VBM_spin+1)+'\n')
 		gap_log.write('nCBM: '+str(total_CBM_index)+'  spin: '+str(total_CBM_spin+1)+'\n')
 		kpt_out.write("Example file\n               0\nReciprocal\n")

@@ -319,9 +319,12 @@ def pyhead(filename,num_line):
 
 def pytail(filename):
 	import os
-	with open(filename,'rb') as f:
-		f.seek(-2,os.SEEK_END)
-		while f.read(1) != b'\n':
-			f.seek(-2,os.SEEK_CUR)
-		return f.readline().decode()
-
+	try:
+		with open(filename,'rb') as f:
+			f.seek(-2,os.SEEK_END)
+			while f.read(1) != b'\n':
+				f.seek(-2,os.SEEK_CUR)
+			return f.readline().decode()
+	except:
+		with open(filename,'r') as f:
+			return f.readline()

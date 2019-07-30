@@ -7,6 +7,7 @@ from module_vasprun import *
 from module_vector import *
 
 def write_diel_log(outcar_file,target):
+	import numpy as np
 	diel_file_error = 0 # 0 is no error
 	try:
 		diel = pygrep('DIELECTRIC TENSOR (including',outcar_file,0,4).splitlines()[-3:]
