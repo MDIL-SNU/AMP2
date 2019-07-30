@@ -40,6 +40,7 @@ for POT in pot_list:
 			gga_eg_type = str(gap_log.split()[4])
 		DB['Band_gap_'+POT] = gga_gap
 		DB['Band_gap_D/I_'+POT] = gga_eg_type
+		shutil.copy(target+'/band_'+POT+'/Band_gap.log',res_path+'/Band_gap_'+POT+'.log')
 
 	# Band_structure
 	if os.path.isfile(target+'/band_'+POT+'/'+name+'.png'):
@@ -59,6 +60,7 @@ for POT in pot_list:
 				hse_eg_type = str(gap_log.split()[4])
 			DB['Band_gap_hybrid_'+POT+'_'+POT2] = hse_gap
 			DB['Band_gap_D/I_hybrid_'+POT+'_'+POT2] = hse_eg_type
+			shutil.copy(target+'/hybrid_'+POT+'_'+POT2+'/Band_gap.log',res_path+'/Band_gap_hybrid_'+POT+'_'+POT2+'.log')
 
 	# Corrected band_structure
 	if os.path.isfile(target+'/band_'+POT+'/'+name+'_corrected.png'):
@@ -85,6 +87,7 @@ for POT in pot_list:
 		DB['Dielectric_tensor_'+POT] = diel_avg
 		DB['Dielectric_tensor_electronic_'+POT] = diel_ele
 		DB['Dielectric_tensor_ionic_'+POT] = diel_ion
+		shutil.copy(target+'/dielectric_'+POT+'/dielectric.log',res_path+'/dielectric_'+POT+'.log')
 
 	# Effective mass
 	effm_typ = ['hole','electron']
@@ -103,6 +106,7 @@ for POT in pot_list:
 			DB[typ+'_effective_mass_averaged_'+POT] = effm_avg
 			DB[typ+'_effective_mass_principal_axis_'+POT] = effm
 			DB[typ+'_effective_mass_tenson_'+POT] = effm_ten
+			shutil.copy(target+'/effm_'+POT+'/'+typ+'/effective_mass.log',res_path+'/effective_mass_'+typ+'_'+POT+'.log')
 
 with open(res_path+'/Properties.json','w') as out:
 #	out.write(json.dump(DB,indent='\t'))

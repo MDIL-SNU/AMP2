@@ -372,12 +372,12 @@ def calc_effm(target,carrier_type,Temp,oper):
 	deriv_tensor = deriv_tensor_oper/float(len(oper))
 
 	deriv_mat = np.linalg.inv(deriv_tensor)
-	deriv_dia = np.linalg.eigvals(deriv_tensor)
+	deriv_dia = np.linalg.eigvals(deriv_mat)
 
 	effm_dia = []
 	effm = []
 	for i in range(3):
-		effm_dia.append(scp['natural unit of action in eV s'][0]**2.0*scp['atomic unit of charge'][0]*1.0e20/(deriv_dia[i])/sc.m_e)
+		effm_dia.append(scp['natural unit of action in eV s'][0]**2.0*scp['atomic unit of charge'][0]*1.0e20*(deriv_dia[i])/sc.m_e)
 		effm.append([scp['natural unit of action in eV s'][0]**2.0*scp['atomic unit of charge'][0]*1.0e20*(deriv_mat[i][x])/sc.m_e for x in range(3)])
 
 	return [effm_dia,effm]

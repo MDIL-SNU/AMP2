@@ -33,7 +33,14 @@ def write_diel_log(outcar_file,target):
 		diel_e[i] = [float(diel_e[i][0]), float(diel_e[i][1]), float(diel_e[i][2])]
 		diel_i[i] = [float(diel_i[i][0]), float(diel_i[i][1]), float(diel_i[i][2])]
 		diel_sum[i] = [diel_e[i][0]+diel_i[i][0],diel_e[i][1]+diel_i[i][1],diel_e[i][2]+diel_i[i][2]]
-	diel0 = (diel_sum[0][0]+diel_sum[1][1]+diel_sum[2][2])/3.0
+	diel_e_array = np.asarray(diel_e)
+	diel_i_array = np.asarray(diel_i)
+	diel_sum_array = np.asarray(diel_sum)
+	diel_e_dia = np.linalg.eigvals(diel_e)
+	diel_i_dia = np.linalg.eigvals(diel_i)
+	diel_sum_dia = np.linalg.eigvals(diel_sum)
+
+	diel0 = sum(diel_sum_dia)/3.0
 	mode_check = check_imaginary(outcar_file,target)
 	with open(target+'/dielectric.log', 'w') as diel_log:
 		if diel_file_error == 1:
@@ -44,11 +51,16 @@ def write_diel_log(outcar_file,target):
 			diel_log.write('USE IT CAUTIOUSLY!! Read amp2.log   ')
 		diel_log.write('Dielectric tensor (electronic contribution):\n')
 		for i in range(3) :
-			diel_log.write('  '+str(round(diel_e[i][0],3))+'\t'+str(round(diel_e[i][1],3))+'\t'+str(round(diel_e[i][2],3))+'\n')
+			diel_log.write('  '.join(['{:10.3f}'.format(diel_e[i][x]) for x in range(3)])+'\n')
+#			diel_log.write('  '+str(round(diel_e[i][0],3))+'\t'+str(round(diel_e[i][1],3))+'\t'+str(round(diel_e[i][2],3))+'\n')
 		diel_log.write('Dielectric tensor (ionic contribution):\n')
 		for i in range(3) :
-			diel_log.write('  '+str(round(diel_i[i][0],3))+'\t'+str(round(diel_i[i][1],3))+'\t'+str(round(diel_i[i][2],3))+'\n')
-		diel_log.write('\nAveraged static dielectric constant: '+str(round(diel0,3))+'\n')
+			diel_log.write('  '.join(['{:10.3f}'.format(diel_i[i][x]) for x in range(3)])+'\n')
+#			diel_log.write('  '+str(round(diel_i[i][0],3))+'\t'+str(round(diel_i[i][1],3))+'\t'+str(round(diel_i[i][2],3))+'\n')
+
+		diel_log.write('\nDielectric constant diagonalization (electronic): '+' '.join(['{:10.3f}'.format(diel_e_dia[x]) for x in range(3)])+'\n')
+		diel_log.write('Dielectric constant diagonalization (ionic): '+' '.join(['{:10.3f}'.format(diel_i_dia[x]) for x in range(3)])+'\n')
+		diel_log.write('\nAveraged static dielectric constant: '+'{:10.3f}'.format(diel0)+'\n')
 
 def check_imaginary(outcar_file,target):
 	# return 0: no probelm, return 1: there are imaginary modes.
