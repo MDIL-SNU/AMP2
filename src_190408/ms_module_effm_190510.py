@@ -5,7 +5,7 @@
 import subprocess,os
 from module_band import EIGEN_to_array
 from module_vector import *
-from module_vasprun import poscar_to_axis
+from module_vasprun import poscar_to_axis,pygrep,pyhead,pytail
 import numpy as np
 
 def calc_max_E_diff(Fermi_cut,temp):
@@ -15,8 +15,10 @@ def calc_max_E_diff(Fermi_cut,temp):
 	return max_E_diff
 
 def pocket(target,band_path,carrier_type,E_width,search_space):
-	spin = subprocess.check_output(['grep','ISPIN',band_path+'/OUTCAR']).split()[2]
-	ncl = subprocess.check_output(['grep','NONCOL',band_path+'/OUTCAR']).split()[2]
+	spin = pygrep('ISPIN',band_path+'/OUTCAR',0,0).split()[2]
+#	spin = subprocess.check_output(['grep','ISPIN',band_path+'/OUTCAR']).split()[2]
+	ncl = pygrep('NONCOL',band_path+'/OUTCAR',0,0).split()[2]
+#	ncl = subprocess.check_output(['grep','NONCOL',band_path+'/OUTCAR']).split()[2]
 	[KPT,Band,nelect] = EIGEN_to_array(band_path+'/EIGENVAL',spin)
 	axis = poscar_to_axis(band_path+'/POSCAR')
 	rec_lat = reciprocal_lattice(axis)
@@ -311,13 +313,15 @@ def Fermi_dist(x,x0,carrier_type,Temp):
 
 def PROCAR_to_array(procar_file):
 	# read head line
-	lines = subprocess.check_output(['grep','# of',procar_file]).splitlines()
+	lines = pygrep('# of',procar_file,0,0).splitlines()
+#	lines = subprocess.check_output(['grep','# of',procar_file]).splitlines()
 	spin = len(lines)
 	line = lines[0].replace(':',': ').split() # due to printing format
 	nband = int(line[7])
 	nkpt = int(line[3])
 	# read energy line
-	lines = subprocess.check_output(['grep','# energy',procar_file]).splitlines()
+	lines = pygrep('# energy',procar_file,0,0).splitlines()
+#	lines = subprocess.check_output(['grep','# energy',procar_file]).splitlines()
 	Band = []
 	for n in range(nband):
 		Band.append([])
@@ -342,12 +346,15 @@ def check_vasp_done(target):
 	# it can be used when KPOINTS is written by cart scale.
 	if not os.path.isfile(target+'/OUTCAR'):
 		return 0
-	outcar_last_line = subprocess.check_output(['tail','-1',target+'/OUTCAR'])
+	outcar_last_line = pytail(target+'/OUTCAR')
+#	outcar_last_line = subprocess.check_output(['tail','-1',target+'/OUTCAR'])
 	if not 'Voluntary' in outcar_last_line:
 		return 0
 	else:
-		kpt_for_kpoints = subprocess.check_output(['head','-8',target+'/KPOINTS']).splitlines()[3:8]
-		kpt_for_outcar =  subprocess.check_output(['grep','-A5','k-points in units of 2pi',target+'/OUTCAR']).splitlines()[1:6]
+		kpt_for_kpoints = pyhead(target+'/KPOINTS',8).splitlines()[3:8]
+#		kpt_for_kpoints = subprocess.check_output(['head','-8',target+'/KPOINTS']).splitlines()[3:8]
+		kpt_for_outcar =  pygrep('k-points in units of 2pi',target+'/OUTCAR',0,5).splitlines()[1:6]
+#		kpt_for_outcar =  subprocess.check_output(['grep','-A5','k-points in units of 2pi',target+'/OUTCAR']).splitlines()[1:6]
 		for i in range(5):
 			for j in range(3):
 				if not round(float(kpt_for_kpoints[i].split()[j]),7) == round(float(kpt_for_outcar[i].split()[j]),7):

@@ -186,7 +186,10 @@ else:
 	else:
 		make_amp2_log(dir_effm,'VASP calculation is already done.')
 
-	oper = read_operation(dir+'/INPUT0/POSCAR')
+	if os.path.isfile(dir+'/INPUT0/POSCAR_rlx_'+POT):
+		oper = read_operation(dir+'/INPUT0/POSCAR_rlx_'+POT)
+	else:
+		oper = read_operation(dir+'/INPUT0/POSCAR')
 	[effm_dia,effm] = calc_effm(dir_effm,carrier_type,inp_effm['temperature_for_Fermi'],oper)
 	write_effm(effm_dia,effm,dir_effm,carrier_type)
 

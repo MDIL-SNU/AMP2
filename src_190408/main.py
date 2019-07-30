@@ -3,7 +3,7 @@
 ### yybbyb@snu.ac.kr			###
 ###########################################
 import os, sys, subprocess, yaml, shutil
-from input_conf import input_conf
+from input_conf import *
 from module_amp2_input import *
 from module_log import *
 # input from shell
@@ -31,13 +31,13 @@ while len(make_list(inp_file)) > 0:
 	if target == '0':
 		shutil.move(target,ERROR_path+'/'+target.split('/')[-1])
 		continue
-	if large_off > 1:
+	if isinstance(large_off,int) and large_off > 1:
 		num_pos = len(read_poscar(target+'/INPUT0/POSCAR')[1])
 		if num_pos > large_off:
 			shutil.move(target,ERROR_path+'/'+target.split('/')[-1])
 			continue
 
-	if cal_dic['kp_test'] == 1:
+	if set_on_off(cal_dic['kp_test']) == 1:
 #		subprocess.call(['python',src_path+'/kpoint.py',target,inp_file,node,nproc])
 		notice = subprocess.check_output(['python',src_path+'/kpoint.py',target,inp_file,node,nproc])
 		if not notice.splitlines()[-1][0] == '1':
@@ -48,13 +48,13 @@ while len(make_list(inp_file)) > 0:
 		make_amp2_log(target,'Warning!!! KPOINTS file should be located in INPUT0.')
 		shutil.move(target,ERROR_path+'/'+target.split('/')[-1])
 		continue
-	if cal_dic['encut_test'] == 1:
+	if set_on_off(cal_dic['encut_test']) == 1:
 #		subprocess.call(['python',src_path+'/cutoff.py',target,inp_file,node,nproc])
 		notice = subprocess.check_output(['python',src_path+'/cutoff.py',target,inp_file,node,nproc])
 		if not notice.splitlines()[-1][0] == '1':
 			shutil.move(target,ERROR_path+'/'+target.split('/')[-1])
 			continue
-	if cal_dic['relaxation'] == 1:
+	if set_on_off(cal_dic['relaxation']) == 1:
 		pot_type = inp_yaml['magnetic_ordering']['potential_type']
 		if pot_type in inp_yaml['relaxation']['potential_type']:
 #			subprocess.call(['python',src_path+'/relax.py',target,inp_file,node,nproc,pot_type])
@@ -65,7 +65,7 @@ while len(make_list(inp_file)) > 0:
 			if not notice.splitlines()[-1][0] == '1':
 				shutil.move(target,ERROR_path+'/'+target.split('/')[-1])
 				continue
-	if cal_dic['magnetic_ordering'] == 1:
+	if set_on_off(cal_dic['magnetic_ordering']) == 1:
 #		subprocess.call(['python',src_path+'/relax.py',target,inp_file,node,nproc,pot_type])
 		if not os.path.isfile(target+'/INPUT0/KPOINTS'):
 			continue
@@ -73,7 +73,7 @@ while len(make_list(inp_file)) > 0:
 		if not notice.splitlines()[-1][0] == '1':
 			shutil.move(target,ERROR_path+'/'+target.split('/')[-1])
 			continue
-	if cal_dic['relaxation'] == 1:
+	if set_on_off(cal_dic['relaxation']) == 1:
 		for pot_type in inp_yaml['relaxation']['potential_type']:
 #			subprocess.call(['python',src_path+'/relax.py',target,inp_file,node,nproc,pot_type])
 			if not pot_type == inp_yaml['magnetic_ordering']['potential_type']:
@@ -95,7 +95,7 @@ while len(make_list(inp_file)) > 0:
 #				shutil.move(target,ERROR_path+'/'+target.split('/')[-1])
 #				continue
 	
-	if cal_dic['band'] == 1:
+	if set_on_off(cal_dic['band']) == 1:
 		for pot_type in inp_yaml['band_calculation']['potential_type']:
 #			subprocess.call(['python',src_path+'/band.py',target,inp_file,node,nproc,pot_type])
 			if not os.path.isfile(target+'/INPUT0/POTCAR_'+pot_type) and not pot_type == 'HSE':
@@ -109,7 +109,7 @@ while len(make_list(inp_file)) > 0:
 			calc_out = 0
 			shutil.move(target,ERROR_path+'/'+target.split('/')[-1])
 			continue
-	if cal_dic['density_of_states'] == 1:
+	if set_on_off(cal_dic['density_of_states']) == 1:
 		for pot_type in inp_yaml['density_of_states']['potential_type']:
 			if not os.path.isfile(target+'/INPUT0/POTCAR_'+pot_type) and not pot_type == 'HSE':
 				make_amp2_log(target,'POTCAR_'+pot_type+' file is missing.')
@@ -122,7 +122,7 @@ while len(make_list(inp_file)) > 0:
 			calc_out = 0
 			shutil.move(target,ERROR_path+'/'+target.split('/')[-1])
 			continue
-	if cal_dic['dielectric'] == 1:
+	if set_on_off(cal_dic['dielectric']) == 1:
 		for pot_type in inp_yaml['dielectric']['potential_type']:
 			if not os.path.isfile(target+'/INPUT0/POTCAR_'+pot_type):
 				make_amp2_log(target,'POTCAR_'+pot_type+' file is missing.')
@@ -136,7 +136,7 @@ while len(make_list(inp_file)) > 0:
 			calc_out = 0
 			shutil.move(target,ERROR_path+'/'+target.split('/')[-1])
 			continue
-	if cal_dic['hse_oneshot'] == 1:
+	if set_on_off(cal_dic['hse_oneshot']) == 1:
 		for pot_type in inp_yaml['Hybrid_oneshot']['potential_type']:
 			notice = subprocess.check_output(['python',src_path+'/hse_gap.py',target,inp_file,node,nproc,pot_type])
 			if not notice.splitlines()[-1][0] == '1':
@@ -146,7 +146,7 @@ while len(make_list(inp_file)) > 0:
 	subprocess.call(['python',src_path+'/rerun_for_metal.py',inp_file,node,nproc,target])
 	if not os.path.isdir(target):
 		continue
-	if cal_dic['effective_mass'] == 1:
+	if set_on_off(cal_dic['effective_mass']) == 1:
 		for pot_type in inp_yaml['effective_mass']['potential_type']:
 			if not os.path.isfile(target+'/INPUT0/POTCAR_'+pot_type) and not pot_type == 'HSE':
 				make_amp2_log(target,'POTCAR_'+pot_type+' file is missing.')

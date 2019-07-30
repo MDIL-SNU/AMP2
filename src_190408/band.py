@@ -7,6 +7,8 @@ from module_log import *
 from module_vasprun import *
 from module_band import *
 from module_hse import *
+from input_conf import set_on_off
+
 code_data = 'Version xx. Modified at 2019-07-17.'
 
 dir = sys.argv[1]
@@ -39,7 +41,8 @@ dir_band = dir+'/band_'+pot_type
 # Check existing data
 if os.path.isdir(dir_band) and os.path.isfile(dir_band+'/Band_gap.log') :
 	make_amp2_log_default(dir,src_path,'Band calculation',node,code_data)
-	gap = subprocess.check_output(['head','-n','1',dir_band+'/Band_gap.log']).split()[2]
+	gap = pyhead(dir_band+'/Band_gap.log',1).split()[2]
+#	gap = subprocess.check_output(['head','-n','1',dir_band+'/Band_gap.log']).split()[2]
 #	print('Success! Band gap: '+gap)
 	if gap == 'is':
 		make_amp2_log(dir,'Band calculation is already done.\nIt is metallic.')
@@ -68,7 +71,7 @@ else:
 		make_amp2_log(dir_band,'CONTCAR file in relaxation is invalid.')
 		no_rlx = 1
 
-if no_rlx == 1 and inp_band['relax_check'] == 1:
+if no_rlx == 1 and set_on_off(inp_band['relax_check']) == 1:
 	print 0
 	sys.exit()
 # Potential type
@@ -87,7 +90,8 @@ if pot_type == 'HSE':
 		mag_on = check_magnet(dir+'/relax_'+pot_type,inp_yaml['magnetic_ordering']['Minimum_moment'])
 	vasprun = make_incar_for_ncl(dir_band,mag_on,kpar,npar,vasp_std,vasp_gam,vasp_ncl)
 	incar_for_hse(dir_band+'/INCAR')
-	hse_algo = subprocess.check_output(['grep','ALGO',dir+'/relax_'+pot_type+'/INCAR']).split()[2]
+	hse_algo = pygrep('ALGO',dir+'/relax_'+pot_type+'/INCAR',0,0).split()[2]
+#	hse_algo = subprocess.check_output(['grep','ALGO',dir+'/relax_'+pot_type+'/INCAR']).split()[2]
 	wincar(dir_band+'/INCAR',dir_band+'/INCAR',[['NSW','0'],['ALGO',hse_algo]],[])
 	# Write k-points for band structure and band gap search
 	make_sym_for_band(dir_band+'/POSCAR',dir_band+'/sym',dir_band)
@@ -159,8 +163,10 @@ else:
 		sys.exit() 
 
 # Extract data from VASP output files
-spin = subprocess.check_output(['grep','ISPIN',dir_band+'/OUTCAR']).split()[2]
-ncl = subprocess.check_output(['grep','NONCOL',dir_band+'/OUTCAR']).split()[2]
+spin = pygrep('ISPIN',dir_band+'/OUTCAR',0,0).split()[2]
+#spin = subprocess.check_output(['grep','ISPIN',dir_band+'/OUTCAR']).split()[2]
+ncl = pygrep('NONCOL',dir_band+'/OUTCAR',0,0).split()[2]
+#ncl = subprocess.check_output(['grep','NONCOL',dir_band+'/OUTCAR']).split()[2]
 [KPT,Band,nelect] = EIGEN_to_array(dir_band+'/EIGENVAL',spin)
 fermi = get_fermi_level(Band,nelect,ncl)
 
@@ -173,9 +179,11 @@ gap = gap_estimation(dir_band,fermi,spin,ncl,KPT,Band,nelect) # gap is string
 if gap == 'metal':
 	make_amp2_log(dir,'Band calculation is already done.\nIt is metallic.')
 	if os.path.isdir(dir+'/dos_'+POT):
-		fermi = float(subprocess.check_output(['head',dir+'/dos_'+POT+'/DOSCAR','-n','6']).splitlines()[-1].split()[3])
+		fermi = float(pyhead(dir+'/dos_'+POT+'/DOSCAR',6).splitlines()[-1].split()[3])
+#		fermi = float(subprocess.check_output(['head',dir+'/dos_'+POT+'/DOSCAR','-n','6']).splitlines()[-1].split()[3])
 	elif os.path.isdir(dir+'/relax_'+POT):
-		fermi = float(subprocess.check_output(['head',dir+'/relax_'+POT+'/DOSCAR','-n','6']).splitlines()[-1].split()[3])
+		fermi = float(pyhead(dir+'/relax_'+POT+'/DOSCAR',6).splitlines()[-1].split()[3])
+#		fermi = float(subprocess.check_output(['head',dir+'/relax_'+POT+'/DOSCAR','-n','6']).splitlines()[-1].split()[3])
 else:
 	make_amp2_log(dir_band,'Band calculaton is done.\nBand gap is '+gap+' eV.')
 	os.remove(dir_band+'/WAVECAR')

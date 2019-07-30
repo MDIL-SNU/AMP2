@@ -93,7 +93,8 @@ def run_vasp(target,nproc,vasprun):
 	os.chdir(target)
 	out = subprocess.call(['mpirun -np '+nproc+' '+vasprun+' >& stdout.x'], stdout=subprocess.PIPE, shell=True)
 	if out == 0:
-		out_res = subprocess.check_output(['tail','-1',target+'/OUTCAR']).split()
+		out_res = pytail(target+'/OUTCAR').split()
+#		out_res = subprocess.check_output(['tail','-1',target+'/OUTCAR']).split()
 		if len(out_res) > 0 and out_res[0] == 'Voluntary':
 			make_amp2_log(target,'VASP calculation is performed successfully.')
 			subprocess.call(['rm',target+'/vasprun.xml'])
@@ -111,19 +112,23 @@ def electronic_step_convergence_check(target):
 	# 0: well converged, 1: can try to calculation with other setting (retry), 2: cannot be converged (stop)
 	with open(target+'/OSZICAR','r') as inp:
 		fr_log = inp.readlines()[1:]
-	spin = subprocess.check_output(['grep','ISPIN',target+'/OUTCAR']).split()[2]
+	spin = pygrep('ISPIN',target+'/OUTCAR',0,0).split()[2]
+#	spin = subprocess.check_output(['grep','ISPIN',target+'/OUTCAR']).split()[2]
 	elec_step = 0
 	for ll in fr_log:
 		if ll.split()[0] == '1':
 			break
 		elec_step = elec_step+1
-	if elec_step == int(subprocess.check_output(['grep','NELM',target+'/OUTCAR']).split(';')[0].split()[2]):
+	if elec_step == int(pygrep('NELM',target+'/OUTCAR',0,0).split(';')[0].split()[2]):
+#	if elec_step == int(subprocess.check_output(['grep','NELM',target+'/OUTCAR']).split(';')[0].split()[2]):
 		make_amp2_log(target,'Electronic step is not conversed.')
-		algo = subprocess.check_output(['grep','ALGO',target+'/INCAR']).split()[2]
+		algo = pygrep('ALGO',target+'/INCAR',0,0).split()[2]
+#		algo = subprocess.check_output(['grep','ALGO',target+'/INCAR']).split()[2]
 		if algo == 'Normal' or algo == 'All':
 			make_amp2_log(target,'Current ALGO is '+algo+' but it is not converged.')
 			if spin == '2':
-				if subprocess.check_output(['grep','BMIX_MAG',target+'/OUTCAR']).split()[-1] == '1.00':
+				if pygrep('BMIX_MAG',target+'/OUTCAR',0,0).split()[-1] == '1.00':
+#				if subprocess.check_output(['grep','BMIX_MAG',target+'/OUTCAR']).split()[-1] == '1.00':
 					make_amp2_log(target,'Change mixing parameter.')
 					wincar(target+'/INCAR',target+'/INCAR',[['AMIX','0.2'],['BMIX','0.0001'],['AMIX_MAG','0.8'],['BMIX_MAG','0.0001']],[])
 					return 1
@@ -144,11 +149,14 @@ def electronic_step_convergence_check(target):
 		return 0
 # check magnetism from relaxation
 def check_magnet(dir_in,min_mom):
-	nion = int(subprocess.check_output(['grep','NION',dir_in+'/OUTCAR']).split()[-1])
-	spin = subprocess.check_output(['grep','ISPIN',dir_in+'/OUTCAR']).split()[2]
+	nion = int(pygrep('NION',dir_in+'/OUTCAR',0,0).split()[-1])
+#	nion = int(subprocess.check_output(['grep','NION',dir_in+'/OUTCAR']).split()[-1])
+	spin = pygrep('ISPIN',dir_in+'/OUTCAR',0,0).split()[2]
+#	spin = subprocess.check_output(['grep','ISPIN',dir_in+'/OUTCAR']).split()[2]
 	mag_on = 0
 	if spin == '2' :
-		mag = [float(x.split()[-1]) for x in subprocess.check_output(['grep','magnetization (x)',dir_in+'/OUTCAR','-A'+str(nion+3)]).splitlines()[-nion:]]
+		mag = [float(x.split()[-1]) for x in pygrep('magnetization (x)',dir_in+'/OUTCAR',0,nion+3).splitlines()[-nion:]]
+#		mag = [float(x.split()[-1]) for x in subprocess.check_output(['grep','magnetization (x)',dir_in+'/OUTCAR','-A'+str(nion+3)]).splitlines()[-nion:]]
 		for i in range(len(mag)) :
 			if abs(mag[i]) > min_mom :
 				mag_on = 1
@@ -291,4 +299,29 @@ def write_relaxed_poscar(target,pot_type):
 	for i in range(len(atom_pos_rlx)):
 		new_atom_pos.append(atom_pos_rlx[i][0:3]+atom_pos_ori[i][3:])
 	write_poscar(axis_rlx,new_atom_pos,target+'/INPUT0/POSCAR_rlx_'+pot_type,'relaxed poscar')
+
+def pygrep(pattern,filename,prev_line,after_line):
+	results = ''
+	with open(filename,'r') as f:
+		lines = f.readlines()
+		for i,line in enumerate(lines):
+			if pattern in line:
+				for j in range(i-int(prev_line),i+1+int(after_line)):
+					results = results+lines[j]
+	return results
+
+def pyhead(filename,num_line):
+	results = ''
+	with open(filename,'r') as f:
+		for i in range(num_line):
+			results = results + f.readline()
+	return results
+
+def pytail(filename):
+	import os
+	with open(filename,'rb') as f:
+		f.seek(-2,os.SEEK_END)
+		while f.read(1) != b'\n':
+			f.seek(-2,os.SEEK_CUR)
+		return f.readline().decode()
 

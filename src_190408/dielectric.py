@@ -6,7 +6,8 @@ import shutil, os, sys, subprocess, yaml
 from module_log import *
 from module_vasprun import *
 from module_dielectric import *
-code_data = 'Date: 2018-12-05'
+from input_conf import set_on_off
+code_data = 'Version xx. Modified at 2019-07-29.'
 
 dir = sys.argv[1]
 
@@ -55,11 +56,11 @@ else:
 		make_amp2_log(dir_diel,'CONTCAR file in relaxation is invalid.')
 		no_rlx = 1
 
-if no_rlx == 1 and inp_diel['relax_check'] == 1:
+if no_rlx == 1 and set_on_off(inp_diel['relax_check']) == 1:
 	print 0
 	sys.exit()
 
-if inp_diel['metal_check'] == 1:
+if set_on_off(inp_diel['metal_check']) == 1:
 	if os.path.isfile(dir+'/band_'+POT+'/Band_gap.log'):
 		with open(dir+'/band_'+POT+'/Band_gap.log','r') as inp:
 			gap_log = inp.readline()

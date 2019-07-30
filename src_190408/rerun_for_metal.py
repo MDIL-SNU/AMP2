@@ -30,7 +30,7 @@ if os.path.isfile(target+'/HSE/Band_gap.log'):
 elif os.path.isfile(target+'/band_GGA/Band_gap.log'):
 	with open(target+'/band_GGA/Band_gap.log','r') as inp:
 		gap_log = inp.readline()
-elif os.path.isdir(target+'/band_LDA/Band_gap.log'):
+elif os.path.isfile(target+'/band_LDA/Band_gap.log'):
 	with open(target+'/band_LDA/Band_gap.log','r') as inp:
 		gap_log = inp.readline()
 else:

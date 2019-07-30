@@ -3,6 +3,7 @@
 ### yybbyb@snu.ac.kr			###
 ###########################################
 import datetime, getpass, os
+
 def make_amp2_log_default(path,src_path,comment,node,code_data):
 	with open(path+'/amp2.log','a') as amp2_log:
 		amp2_start_time = datetime.datetime.now().strftime("\tThe calculation is started at %Y-%m-%d : %H:%M \n")
@@ -37,7 +38,9 @@ def node_simple(node_file):
 	return node
 
 def read_code_head(code,head_num):
-	code_ver = subprocess.check_output(['head','-'+str(head_num),code])
+	from module_vasprun import pyhead
+	code_ver = pyhead(code,head_num)
+#	code_ver = subprocess.check_output(['head','-'+str(head_num),code])
 	return code_ver
 
 def write_log_in_outcar(outcar_file,log_file):

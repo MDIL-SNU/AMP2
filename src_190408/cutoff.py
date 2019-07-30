@@ -42,7 +42,8 @@ nproc = sys.argv[4]
 
 # Check existing data
 if os.path.isdir(dir+'/cutoff') and os.path.isfile(dir+'/cutoff/cutoff.log') :
-	if len(subprocess.check_output(['grep','Converged',dir+'/cutoff/cutoff.log']).splitlines()) > 0 :
+	if len(pygrep('Converged',dir+'/cutoff/cutoff.log',0,0).splitlines()) > 0 :
+#	if len(subprocess.check_output(['grep','Converged',dir+'/cutoff/cutoff.log']).splitlines()) > 0 :
 		make_amp2_log_default(dir,src_path,'cutoff energy test',node,code_data)
 		make_amp2_log(dir,'Already done')
 #		print('Success!')
@@ -62,7 +63,8 @@ if os.path.isfile(enlog):
 	os.remove(enlog)
 
 ### cutoff energy test setting ###
-ENPOT = subprocess.check_output(['grep','ENMIN',dir+'/INPUT0/POTCAR_'+POT]).splitlines()
+ENPOT = pygrep('ENMIN',dir+'/INPUT0/POTCAR_'+POT,0,0).splitlines()
+#ENPOT = subprocess.check_output(['grep','ENMIN',dir+'/INPUT0/POTCAR_'+POT]).splitlines()
 for i in range(len(ENPOT)) :
 	if float(ENPOT[i].split()[5]) > ENSTART :
 		ENSTART = int(math.ceil(float(ENPOT[i].split()[5])/ENSTEP))*ENSTEP
@@ -88,7 +90,8 @@ while convergence == 1 :
 
 	rerun = 0 
 	if os.path.isfile(now_path+'/OUTCAR'):
-		if 'Voluntary' in subprocess.check_output(['tail','-n','1',now_path+'/OUTCAR']):
+		if 'Voluntary' in pytail(now_path+'/OUTCAR',1):
+#		if 'Voluntary' in subprocess.check_output(['tail','-n','1',now_path+'/OUTCAR']):
 			rerun = 1
 	if rerun == 0:
 		copy_input(dir+'/INPUT0',now_path,POT)

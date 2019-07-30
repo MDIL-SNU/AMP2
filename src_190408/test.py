@@ -12,7 +12,13 @@ import spglib
 import numpy as np
 import math
 # input from shell
+dir = sys.argv[1]
+POT = 'GGA'
+if os.path.isfile(dir+'/INPUT0/POSCAR_rlx_'+POT):
+	oper = read_operation(dir+'/INPUT0/POSCAR_rlx_'+POT)
+else:
+	oper = read_operation(dir+'/INPUT0/POSCAR')
+dir_effm = dir+'/effm_GGA/hole'
+[effm_dia,effm] = calc_effm(dir_effm,'hole',300,oper)
+print effm_dia,effm
 
-target_mat = sys.argv[1]
-target = sys.argv[2]
-out_mk_poscar = make_poscar_from_cif(target_mat,target)

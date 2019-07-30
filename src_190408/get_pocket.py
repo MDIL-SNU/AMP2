@@ -3,13 +3,16 @@ from module_effm import *
 import subprocess
 from module_band import EIGEN_to_array
 from module_vector import *
-from module_vasprun import poscar_to_axis
+from module_vasprun import poscar_to_axis,pygrep,pyhead,pytail
+
 import numpy as np
 
 
 def pocket_check(target,band_path,carrier_type,E_width,search_space):
-	spin = subprocess.check_output(['grep','ISPIN',band_path+'/OUTCAR']).split()[2]
-	ncl = subprocess.check_output(['grep','NONCOL',band_path+'/OUTCAR']).split()[2]
+	spin = pygrep('ISPIN',band_path+'/OUTCAR',0,0).split()[2]
+#	spin = subprocess.check_output(['grep','ISPIN',band_path+'/OUTCAR']).split()[2]
+	ncl = pygrep('NONCOL',band_path+'/OUTCAR',0,0).split()[2]
+#	ncl = subprocess.check_output(['grep','NONCOL',band_path+'/OUTCAR']).split()[2]
 	[KPT,Band,nelect] = EIGEN_to_array(band_path+'/EIGENVAL',spin)
 	axis = poscar_to_axis(band_path+'/POSCAR')
 	rec_lat = reciprocal_lattice(axis)

@@ -10,7 +10,8 @@ from module_amp2_input import *
 
 def check_spin(ref_dir,inp_pos,min_mom):
 	[axis,atom_pos] = read_poscar(inp_pos)
-	magnet_out = subprocess.check_output(['grep','-A'+str(len(atom_pos)+3),'magnetization (x)',ref_dir+'/OUTCAR']).splitlines()[-len(atom_pos):]
+	magnet_out = pygrep('magnetization (x)',ref_dir+'/OUTCAR',0,len(atom_pos)+3).splitlines()[-len(atom_pos):]
+#	magnet_out = subprocess.check_output(['grep','-A'+str(len(atom_pos)+3),'magnetization (x)',ref_dir+'/OUTCAR']).splitlines()[-len(atom_pos):]
 	magnet_list = [float(x.split()[-1]) for x in magnet_out]
 	type_name = []
 #	type_num = []

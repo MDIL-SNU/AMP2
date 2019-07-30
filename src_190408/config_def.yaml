@@ -100,7 +100,7 @@ Hybrid_oneshot:
   energy_width_for_extreme: 0.5
   search_space_for_extreme: 0.05
   cutoff_DF_DVB: 0.3
-  band_structure_correction: 0
+  band_structure_correction: 1
   INCAR:
 
 density_of_states:

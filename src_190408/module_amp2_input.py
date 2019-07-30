@@ -6,6 +6,7 @@ import os, sys, yaml, shutil, glob, math, subprocess
 from operator import itemgetter
 from module_log import *
 from module_vector import *
+from module_vasprun import pygrep,pyhead,pytail
 
 def make_list(inp_file):
 	with open(inp_file,'r') as f:
@@ -359,7 +360,8 @@ def make_incar_note(poscar,target,soc_target,u_value,magmom_def,src_path):
 	nelect = 0
 
 	for j in range(len(atom_z)) :
-		pot_line = subprocess.check_output(['grep','ZVAL',target+'/INPUT0/POTCAR_GGA']).splitlines()[j].split()[5]
+		pot_line = pygrep('ZVAL',target+'/INPUT0/POTCAR_GGA',0,0).splitlines()[j].split()[5]
+#		pot_line = subprocess.check_output(['grep','ZVAL',target+'/INPUT0/POTCAR_GGA']).splitlines()[j].split()[5]
 		nelect = nelect + int(atom_cnt[j])*int(float(pot_line))
 		if atom_z[j] in TMd :
 			if atom_z[j] in TMU :
@@ -482,7 +484,8 @@ def make_incar(poscar,target,src_path,max_nelm):
 	nelect = 0
 
 	for j in range(len(atom_z)) :
-		pot_line = subprocess.check_output(['grep','ZVAL',target+'/INPUT0/POTCAR_GGA']).splitlines()[j].split()[5]
+		pot_line = pygrep('ZVAL',target+'/INPUT0/POTCAR_GGA',0,0).splitlines()[j].split()[5]
+#		pot_line = subprocess.check_output(['grep','ZVAL',target+'/INPUT0/POTCAR_GGA']).splitlines()[j].split()[5]
 		nelect = nelect + int(atom_cnt[j])*int(float(pot_line))
 
 	# Set maximum number of electronic steps
@@ -495,7 +498,13 @@ def make_incar(poscar,target,src_path,max_nelm):
 #		nelm = 30
 	wincar(src_path+'/INCAR0',target+'/INPUT0/INCAR0',[['SYSTEM',target.split('/')[-1]],['NELM',str(nelm)]],[])
 	with open(target+'/INPUT0/INCAR','w') as out_inc:
-			subprocess.call(['cat',target+'/INPUT0/INCAR0',target+'/INPUT0/U_note',target+'/INPUT0/spin_note'], stdout=out_inc)
+		with open(target+'/INPUT0/INCAR0','r') as f:
+			out_inc.write(f.read())
+		with open(target+'/INPUT0/U_note','r') as f:
+			out_inc.write(f.read())
+		with open(target+'/INPUT0/spin_note','r') as f:
+			out_inc.write(f.read())
+#		subprocess.call(['cat',target+'/INPUT0/INCAR0',target+'/INPUT0/U_note',target+'/INPUT0/spin_note'], stdout=out_inc)
 
 def read_cif_lattice(line):
 	a = line.replace('\n','').replace('\r','')

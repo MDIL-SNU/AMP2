@@ -7,6 +7,7 @@ from module_log import *
 from module_vasprun import *
 from module_band import *
 from module_hse import *
+from input_conf import set_on_off
 from module_relax import *
 code_data = 'Version xx. Modified at 2019-07-16'
 
@@ -92,9 +93,12 @@ else:
 	sys.exit()
 
 # Odd number electrons and non-magnetic system --> always metal.
-spin = subprocess.check_output(['grep','ISPIN',dir+'/relax_'+pot_cell+'/OUTCAR']).split()[2]
-ncl = subprocess.check_output(['grep','NONCOL',dir+'/relax_'+pot_cell+'/OUTCAR']).split()[2]
-nelect = subprocess.check_output(['grep','NELECT',dir+'/relax_'+pot_cell+'/OUTCAR']).split()[2]
+spin = pygrep('ISPIN',dir+'/relax_'+pot_cell+'/OUTCAR',0,0).split()[2]
+#spin = subprocess.check_output(['grep','ISPIN',dir+'/relax_'+pot_cell+'/OUTCAR']).split()[2]
+ncl = pygrep('NONCOL',dir+'/relax_'+pot_cell+'/OUTCAR',0,0).split()[2]
+#ncl = subprocess.check_output(['grep','NONCOL',dir+'/relax_'+pot_cell+'/OUTCAR']).split()[2]
+nelect = pygrep('NELECT',dir+'/relax_'+pot_cell+'/OUTCAR',0,0).split()[2]
+#nelect = subprocess.check_output(['grep','NELECT',dir+'/relax_'+pot_cell+'/OUTCAR']).split()[2]
 if spin == '1' and int(float(nelect))%2 == 1 and ncl == 'F':
 	make_amp2_log(dir_hse,'The band gap cannot be opened in this system.')
 	print 1
@@ -140,8 +144,10 @@ if os.path.isfile(dir+'/band_'+pot_point+'/KPT') and count_line(dir+'/band_'+pot
 		sys.exit()
 
 	# Extract data from VASP output files
-	spin = subprocess.check_output(['grep','ISPIN',dir_hse+'/OUTCAR']).split()[2]
-	ncl = subprocess.check_output(['grep','NONCOL',dir_hse+'/OUTCAR']).split()[2]
+	spin = pygrep('ISPIN',dir_hse+'/OUTCAR',0,0).split()[2]
+#	spin = subprocess.check_output(['grep','ISPIN',dir_hse+'/OUTCAR']).split()[2]
+	ncl = pygrep('NONCOL',dir_hse+'/OUTCAR',0,0).split()[2]
+#	ncl = subprocess.check_output(['grep','NONCOL',dir_hse+'/OUTCAR']).split()[2]
 	[KPT,Band,nelect] = EIGEN_to_array(dir_hse+'/EIGENVAL',spin)
 	fermi = get_fermi_level(Band,nelect,ncl)
 
@@ -150,12 +156,14 @@ if os.path.isfile(dir+'/band_'+pot_point+'/KPT') and count_line(dir+'/band_'+pot
 	make_amp2_log(dir_hse,'HSE band gap calculaton is done.\nBand gap is '+gap)
 
 	# Small gap correction
-	if inp_hse['band_structure_correction'] == 1 and float(gap) > 0.01:
+	if set_on_off(inp_hse['band_structure_correction']) == 1 and float(gap) > 0.01:
 		dir_band = dir+'/band_'+pot_point
 		# Insulator in GGA. Band reodering is not required.
 		if not 'etal' in gap_log:
-			ncl = subprocess.check_output(['grep','NONCOL',dir_band+'/OUTCAR']).split()[2]
-			spin = subprocess.check_output(['grep','ISPIN',dir_band+'/OUTCAR']).split()[2]
+			ncl = pygrep('NONCOL',dir_band+'/OUTCAR',0,0).split()[2]
+#			ncl = subprocess.check_output(['grep','NONCOL',dir_band+'/OUTCAR']).split()[2]
+			spin = pygrep('ISPIN',dir_band+'/OUTCAR',0,0).split()[2]
+#			spin = subprocess.check_output(['grep','ISPIN',dir_band+'/OUTCAR']).split()[2]
 			[KPT,Band,nelect] = EIGEN_to_array(dir_band+'/EIGENVAL',spin)
 			fermi = get_fermi_level(Band,nelect,ncl)
 			[vb_idx,cb_idx,eVBM,eCBM] = find_cb(Band,Band,KPT,fermi,dir_hse,dir_band)
@@ -174,14 +182,17 @@ if os.path.isfile(dir+'/band_'+pot_point+'/KPT') and count_line(dir+'/band_'+pot
 			# WAVECAR is required for band reordering.
 			if os.path.isfile(dir_band+'/WAVECAR') and os.path.getsize(dir_band+'/WAVECAR') > 1000:
 				# Make new xtic including all k-points in band caculation
-				if int(subprocess.check_output(['head',dir_band+'/KPOINTS_band','-n','2']).splitlines()[-1].split()[0]) == count_line(dir_band+'/xtic.dat'):
+				if int(pyhead(dir_band+'/KPOINTS_band',2).splitlines()[-1].split()[0]) == count_line(dir_band+'/xtic.dat'):
+#				if int(subprocess.check_output(['head',dir_band+'/KPOINTS_band','-n','2']).splitlines()[-1].split()[0]) == count_line(dir_band+'/xtic.dat'):
 					shutil.copy(dir_band+'/xtic.dat',dir_band+'/xtic_hse.dat')
 				else:
 					[symk,order,xticlabel,rec] = make_symk(dir_band+'/sym')
 					make_xtic_hse(symk,order,rec,inp_band['kspacing_for_band'],dir_band)
 
-				ncl = subprocess.check_output(['grep','NONCOL',dir_band+'/OUTCAR']).split()[2]
-				spin = subprocess.check_output(['grep','ISPIN',dir_band+'/OUTCAR']).split()[2]
+				ncl = pygrep('NONCOL',dir_band+'/OUTCAR',0,0).split()[2]
+#				ncl = subprocess.check_output(['grep','NONCOL',dir_band+'/OUTCAR']).split()[2]
+				spin = pygrep('ISPIN',dir_band+'/OUTCAR',0,0).split()[2]
+#				spin = subprocess.check_output(['grep','ISPIN',dir_band+'/OUTCAR']).split()[2]
 				[KPT,Band,nelect] = EIGEN_to_array(dir_band+'/EIGENVAL',spin)
 				fermi = get_fermi_level(Band,nelect,ncl)
 				Band_reorder = get_band_reorder(Band,KPT,fermi,spin,dir_band)

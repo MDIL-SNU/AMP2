@@ -5,26 +5,31 @@
 import subprocess,sys
 from module_log import *
 from module_vector import dist_point
+from module_vasprun import pygrep,pyhead,pytail
 
 # check convergence for kpoints and cutoff energy
 def convergence_check(target,be1,be2,ENCONV,PRCONV,FOCONV):
 	path_list = [target,be1,be2]
-	nion = int(subprocess.check_output(['grep','NION',target+'/OUTCAR']).splitlines()[-1].split()[11])
+	nion = int(pygrep('NION',target+'/OUTCAR',0,0).splitlines()[-1].split()[11])
+#	nion = int(subprocess.check_output(['grep','NION',target+'/OUTCAR']).splitlines()[-1].split()[11])
 	# Read energy, pressure and force
 	ENERGY = []
 	PRESS = []
 	FORCE = []
 	for path in path_list:
 		if ENCONV > 0:
-			ENERGY.append(float(subprocess.check_output(['grep','free  ',path+'/OUTCAR']).splitlines()[-1].split()[4]))
+			ENERGY.append(float(pygrep('free  ',path+'/OUTCAR',0,0).splitlines()[-1].split()[4]))
+#			ENERGY.append(float(subprocess.check_output(['grep','free  ',path+'/OUTCAR']).splitlines()[-1].split()[4]))
 		if PRCONV > 0:
-			line = subprocess.check_output(['grep','in kB',path+'/OUTCAR']).splitlines()[-1].split()
+			line = pygrep('in kB',path+'/OUTCAR',0,0).splitlines()[-1].split()
+#			line = subprocess.check_output(['grep','in kB',path+'/OUTCAR']).splitlines()[-1].split()
 			if len(line) == 8:
 				PRESS.append([float(x) for x in line[2:]])
 			else:
 				PRESS.append([99999.,99999.,99999.,99999.,99999.,99999.])
 		if FOCONV > 0:
-			force_lines = subprocess.check_output(['grep','TOTAL-F',path+'/OUTCAR','-A',str(nion+1)]).splitlines()[2:nion+2]
+			force_lines = pygrep('TOTAL-F',path+'/OUTCAR',0,nion+1).splitlines()[2:nion+2]
+#			force_lines = subprocess.check_output(['grep','TOTAL-F',path+'/OUTCAR','-A',str(nion+1)]).splitlines()[2:nion+2]
 			FORCE_one_sample = []
 			for line in force_lines:
 				if len(line.split()) == 6:
@@ -63,8 +68,10 @@ def convergence_check(target,be1,be2,ENCONV,PRCONV,FOCONV):
 # make a log file for convergence test
 def write_conv_result(target,logfile):
 	head = target.split('/')[-1]
-	energy = float(subprocess.check_output(['grep','free  ',target+'/OUTCAR']).splitlines()[-1].split()[4])
-	line = subprocess.check_output(['grep','in kB',target+'/OUTCAR']).splitlines()[-1].split()
+	energy = float(pygrep('free  ',target+'/OUTCAR',0,0).splitlines()[-1].split()[4])
+#	energy = float(subprocess.check_output(['grep','free  ',target+'/OUTCAR']).splitlines()[-1].split()[4])
+	line = pygrep('in kB',target+'/OUTCAR',0,0).splitlines()[-1].split()
+#	line = subprocess.check_output(['grep','in kB',target+'/OUTCAR']).splitlines()[-1].split()
 	if len(line) == 8:
 		press = [float(x) for x in line[2:]]
 	else:
@@ -149,8 +156,10 @@ def make_conv_plot(target,typ,region):
 		inp.write("p 'conv_plot.dat' u 2:5 w linespoints pt 9 ps 2.5 lc rgb 'blue' title 'Force'\n")
 
 def max_force(outcar_path):
-	nion = int(subprocess.check_output(['grep','NION',outcar_path]).split()[-1])
-	force_list = subprocess.check_output(['grep','-A'+str(nion+1),'TOTAL-FORCE',outcar_path]).splitlines()
+	nion = int(pygrep('NION',outcar_path,0,0).split()[-1])
+#	nion = int(subprocess.check_output(['grep','NION',outcar_path]).split()[-1])
+	force_list = pygrep('TOTAL-FORCE',outcar_path,0,nion+1).splitlines()
+#	force_list = subprocess.check_output(['grep','-A'+str(nion+1),'TOTAL-FORCE',outcar_path]).splitlines()
 	max_f = [0,[0,0,0]]
 	for line in force_list[2:]:
 		if len(line.split()) == 6:

@@ -3,7 +3,7 @@
 # data : 2018-12-05                #
 ####################################
 from module_vector import *
-from module_vasprun import poscar_to_axis
+from module_vasprun import poscar_to_axis,pygrep,pyhead,pytail
 from module_log import *
 import os,sys,math,subprocess
 def make_sym_for_band(poscar_file,sym_file,target):
@@ -752,12 +752,15 @@ def plot_band_structure(spin,Band,fermi,xtic_file,xlabel_file,plot_range,target)
 
 	# make band.in
 	nband = len(Band)
-	if subprocess.check_output(['head','-n','1',target+'/Band_gap.log']).split()[2] == 'is' :
+	if pyhead(target+'/Band_gap.log',1).split()[2] == 'is' :
+#	if subprocess.check_output(['head','-n','1',target+'/Band_gap.log']).split()[2] == 'is' :
 		gap = 0
 		fermi = str(fermi)
 	else :
-		gap = round(float(subprocess.check_output(['head','-n','1',target+'/Band_gap.log']).split()[2]))
-		fermi = subprocess.check_output(['grep','VBM',target+'/Band_gap.log']).splitlines()[0].split()[-2]
+		gap = round(float(pyhead(target+'/Band_gap.log',1).split()[2]))
+#		gap = round(float(subprocess.check_output(['head','-n','1',target+'/Band_gap.log']).split()[2]))
+		fermi = pygrep('VBM',target+'/Band_gap.log',0,0).splitlines()[0].split()[-2]
+#		fermi = subprocess.check_output(['grep','VBM',target+'/Band_gap.log']).splitlines()[0].split()[-2]
 
 	title = target.split('/')[-2]
 	make_band_in(title,xlabel_file,fermi,gap,nband,spin,plot_range,target)

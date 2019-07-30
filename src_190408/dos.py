@@ -6,6 +6,7 @@ import shutil, os, sys, subprocess, yaml
 from module_log import *
 from module_vasprun import *
 from module_dos import *
+from input_conf import set_on_off
 code_data = 'Version xx. Modified at 2019-07-18'
 
 dir = sys.argv[1]
@@ -62,7 +63,7 @@ else:
 		make_amp2_log(dir_dos,'CONTCAR file in relaxation is invalid.')
 		no_rlx = 1
 
-if no_rlx == 1 and inp_dos['relax_check'] == 1:
+if no_rlx == 1 and set_on_off(inp_dos['relax_check']) == 1:
 	print 0
 	sys.exit()
 
@@ -85,7 +86,8 @@ if pot_type == 'HSE':
 		sym = int(symf.readline().split()[0])
 	make_multiple_kpts(dir+'/kptest/kpoint.log',dir_dos+'/KPOINTS',dir_dos+'/POSCAR',inp_dos['KP_multiplier'],sym)
 	incar_for_hse(dir_dos+'/INCAR')
-	hse_algo = subprocess.check_output(['grep','ALGO',dir+'/relax_'+pot_type+'/INCAR']).split()[2]
+	hse_algo = pygrep('ALGO',dir+'/relax_'+pot_type+'/INCAR',0,0).split()[2]
+#	hse_algo = subprocess.check_output(['grep','ALGO',dir+'/relax_'+pot_type+'/INCAR']).split()[2]
 	wincar(dir_dos+'/INCAR',dir_dos+'/INCAR',[['NSW','0'],['NEDOS','3001'],['ALGO',hse_algo]],[])
 	incar_from_yaml(dir_dos,inp_dos['INCAR'])
 	vasprun = vasp_std
@@ -180,14 +182,20 @@ else:
 		sys.exit()
 
 # set fermi level
-fermi = float(subprocess.check_output(['head',dir_dos+'/DOSCAR','-n','6']).splitlines()[-1].split()[3])
+fermi = float(pyhead(dir_dos+'/DOSCAR',6).splitlines()[-1].split()[3])
+#fermi = float(subprocess.check_output(['head',dir_dos+'/DOSCAR','-n','6']).splitlines()[-1].split()[3])
 gap = 0
 if os.path.isdir(dir_band) and os.path.isfile(dir_band+'/Band_gap.log'):
-	if not subprocess.check_output(['head','-n','1',dir_band+'/Band_gap.log']).split()[2] == 'is' :
-		fermi = float(subprocess.check_output(['grep','VBM',dir_band+'/Band_gap.log']).splitlines()[0].split()[-2])
-		gap = round(float(subprocess.check_output(['head','-n','1',dir_band+'/Band_gap.log']).split()[2]))
-spin = subprocess.check_output(['grep','ISPIN',dir_dos+'/OUTCAR']).split()[2]
-ncl = subprocess.check_output(['grep','NONCOL',dir_dos+'/OUTCAR']).split()[2]
+	if not pyhead(dir_band+'/Band_gap.log',1,).split()[2] == 'is' :
+#	if not subprocess.check_output(['head','-n','1',dir_band+'/Band_gap.log']).split()[2] == 'is' :
+		fermi = float(pygrep('VBM',dir_band+'/Band_gap.log',0,0).splitlines()[0].split()[-2])
+#		fermi = float(subprocess.check_output(['grep','VBM',dir_band+'/Band_gap.log']).splitlines()[0].split()[-2])
+		gap = round(float(pyhead(dir_band+'/Band_gap.log',1).split()[2]))
+#		gap = round(float(subprocess.check_output(['head','-n','1',dir_band+'/Band_gap.log']).split()[2]))
+spin = pygrep('ISPIN',dir_dos+'/OUTCAR',0,0).split()[2]
+#spin = subprocess.check_output(['grep','ISPIN',dir_dos+'/OUTCAR']).split()[2]
+ncl = pygrep('NONCOL',dir_dos+'/OUTCAR',0,0).split()[2]
+#ncl = subprocess.check_output(['grep','NONCOL',dir_dos+'/OUTCAR']).split()[2]
 # read atom information from poscar
 [atom_name,atom_num] = poscar_to_atom_inform(dir_dos+'/POSCAR')
 # read dos information from doscar

@@ -70,3 +70,9 @@ def inp_override(source,override):
 		else:
 			source = {key: override[key]}
 	return source
+
+def set_on_off(set_val):
+	if set_val in ['F','f',0,'.f.','.F.']:
+		return 0
+	else:
+		return 1

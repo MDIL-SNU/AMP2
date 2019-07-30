@@ -9,6 +9,7 @@ from module_converge import *
 from module_AF import *
 from module_amp2_input import *
 from module_relax import *
+from input_conf import set_on_off
 code_data = 'Version xx. Modified at 2019-07-17'
 
 # Set input
@@ -59,7 +60,7 @@ target = dir+'/magnetic_ordering'
 
 ### Check magnetic elements
 # define path for OUTCAR and POSCAR (atom type should be including (! xx1))
-if inp_af['from_relax'] == 1:
+if set_on_off(inp_af['from_relax']) == 1:
 	if os.path.isfile(dir+'/INPUT0/POSCAR_rlx_'+pot_type):
 		make_amp2_log(target,'Magnetic elements are determined by OUTCAR in relax_'+pot_type+'.')
 		ref_dir = dir+'/relax_'+pot_type
@@ -89,7 +90,8 @@ if ref_dir == '':
 	print 0
 	sys.exit()
 
-spin = subprocess.check_output(['grep','ISPIN',ref_dir+'/OUTCAR']).split()[2]
+spin = pygrep('ISPIN',ref_dir+'/OUTCAR',0,0).split()[2]
+#spin = subprocess.check_output(['grep','ISPIN',ref_dir+'/OUTCAR']).split()[2]
 if spin == '1':
 	make_amp2_log(target,'ISPIN was turned off.')
 	with open(target+'/amp2.log','r') as amp2_log:
@@ -121,13 +123,13 @@ if not os.path.isfile(target+'/POSCAR_param'):
 			min_cell_length = min_cell_length + 2
 
 [axis_param,pos_param] = read_poscar(target+'/POSCAR_param')
-if inp_af['Maximum_atoms_number'] > 0 and len(pos_param) > inp_af['Maximum_atoms_number']:
+if isinstance(inp_af['Maximum_atoms_number'],int) and inp_af['Maximum_atoms_number'] > 0 and len(pos_param) > inp_af['Maximum_atoms_number']:
 	make_amp2_log(target,'The number of atoms in supercell is larger than the criteria.')
 	print 0
 	sys.exit()
 
 [pair_list,sole_list,mag_list] = find_pair(target+'/POSCAR_param',cutoff_length,mag_atom_list,mag_val,inp_af['Tolerance'])
-if inp_af['Maximum_pair_type'] > 0 and len(pair_list) > inp_af['Maximum_pair_type']:
+if isinstance(inp_af['Maximum_pair_type'],int) and inp_af['Maximum_pair_type'] > 0 and len(pair_list) > inp_af['Maximum_pair_type']:
 	make_amp2_log(target,'The number of pairs is larger than the criteria.')
 	print 0
 	sys.exit()
@@ -176,7 +178,8 @@ for i in range(len(tot_mag_list)):
 			print 0
 			sys.exit()
 
-		energy = subprocess.check_output(['grep','free  ','OUTCAR']).splitlines()[-1].split()[4]
+		energy = pygrep('free  ','OUTCAR',0,0).splitlines()[-1].split()[4]
+#		energy = subprocess.check_output(['grep','free  ','OUTCAR']).splitlines()[-1].split()[4]
 		with open(targ_dir+'/energy','w') as enef:
 			enef.write('Spin_'+str(i)+'\t'+energy+'\n')
 
@@ -210,7 +213,8 @@ for cell in supercell_list:
 		subprocess.call(['python',src_path+'/make_supercell.py',inp_pos,str(cell[0]),str(cell[1]),str(cell[2]),ga_path+'/POSCAR_ref'])
 		subprocess.call(['python',src_path+'/genetic_algorithm.py',target+'/input_GA.yaml',ga_path+'/POSCAR_ref',energy_tolerance])
 
-	fin_energy = float(subprocess.check_output(['tail','-1',ga_path+'/energy.dat']).split()[0])
+	fin_energy = float(pytail(ga_path+'/energy.dat').split()[0])
+#	fin_energy = float(subprocess.check_output(['tail','-1',ga_path+'/energy.dat']).split()[0])
 	fin_energy = fin_energy/float(cell[0]*cell[1]*cell[2])
 	if round(fin_energy-min_energy_in_ga,8) < 0 :
 		min_energy_in_ga = fin_energy
@@ -284,7 +288,8 @@ for i in range(len(POSCARs)):
 
 			ionic_converge = 0
 			iteration = 1
-			energy = subprocess.check_output(['grep','free  ','OUTCAR']).splitlines()
+			energy = pygrep('free  ','OUTCAR',0,0).splitlines()
+#			energy = subprocess.check_output(['grep','free  ','OUTCAR']).splitlines()
 			while iteration < inp_rlx['max_iteration']:
 				with open(calc_path+'/OUT_TOT','a') as out_log:
 					out_log.write(open(calc_path+'/OUTCAR','r').read())
@@ -315,11 +320,13 @@ for i in range(len(POSCARs)):
 					print 0
 					sys.exit()
 
-				energy = subprocess.check_output(['grep','free  ','OUTCAR']).splitlines()
+				energy = pygrep('free  ','OUTCAR',0,0).splitlines()
+#				energy = subprocess.check_output(['grep','free  ','OUTCAR']).splitlines()
 				iteration = iteration+1
 				make_amp2_log(calc_path,'Iteration number is '+str(iteration))
 		else:
-			energy = subprocess.check_output(['grep','free  ','OUTCAR']).splitlines()
+			energy = pygrep('free  ','OUTCAR',0,0).splitlines()
+#			energy = subprocess.check_output(['grep','free  ','OUTCAR']).splitlines()
 
 		if i == 0:
 			stable_ene = [i,float(energy[-1].split()[4])]
@@ -327,7 +334,8 @@ for i in range(len(POSCARs)):
 			if stable_ene[1] > float(energy[-1].split()[4]):
 				stable_ene = [i,float(energy[-1].split()[4])]
 		with open('free','w') as fr_file:
-			fr_file.write(subprocess.check_output(['grep','free  ','OUTCAR']).splitlines()[-1])
+			fr_file.write(pygrep('free  ','OUTCAR',0,0).splitlines()[-1])
+#			fr_file.write(subprocess.check_output(['grep','free  ','OUTCAR']).splitlines()[-1])
 
 with open(target+'/amp2.log','r') as amp2_log:
 	with open(dir+'/amp2.log','a') as amp2_log_tot:

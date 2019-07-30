@@ -35,7 +35,8 @@ dir_relax = dir+'/relax_'+pot_type
 # Check existing data
 run_cont = 0
 if os.path.isdir(dir_relax) and os.path.isfile(dir_relax+'/CONTCAR') and os.path.isfile(dir_relax+'/free') :
-	if len(subprocess.check_output(['grep','free  ',dir_relax+'/free']).splitlines()) > 0 :
+	if len(pygrep('free  ',dir_relax+'/free',0,0).splitlines()) > 0 :
+#	if len(subprocess.check_output(['grep','free  ',dir_relax+'/free']).splitlines()) > 0 :
 		make_amp2_log_default(dir,src_path,'Relaxation with '+pot_type+' potential',node,code_data)
 #		print('Success!')
 		make_amp2_log(dir,'Already done')
@@ -98,7 +99,8 @@ if out == 2:  # electronic step is not converged. (algo = normal)
 
 ionic_converge = 0
 iteration = 1
-energy = subprocess.check_output(['grep','free  ','OUTCAR']).splitlines()
+energy = pygrep('free  ','OUTCAR',0,0).splitlines()
+#energy = subprocess.check_output(['grep','free  ','OUTCAR']).splitlines()
 while iteration < inp_rlx['max_iteration']:
 	with open(dir_relax+'/OUT_TOT','a') as out_log:
 		out_log.write(open(dir_relax+'/OUTCAR','r').read())
@@ -131,7 +133,8 @@ while iteration < inp_rlx['max_iteration']:
 		print 0
 		sys.exit()
 
-	energy = subprocess.check_output(['grep','free  ','OUTCAR']).splitlines()
+	energy = pygrep('free  ','OUTCAR',0,0).splitlines()
+#	energy = subprocess.check_output(['grep','free  ','OUTCAR']).splitlines()
 	iteration = iteration+1
 	make_amp2_log(dir_relax,'Iteration number is '+str(iteration))
 
@@ -150,7 +153,8 @@ if mag_on == 0 :
 	wincar(dir+'/INPUT0/INCAR',dir+'/INPUT0/INCAR',[['MAGMOM',''],['ISPIN','1']],[])
 
 with open('free','w') as fr_file:
-	fr_file.write(subprocess.check_output(['grep','free  ','OUTCAR']).splitlines()[-1])
+	fr_file.write(pygrep('free  ','OUTCAR',0,0).splitlines()[-1])
+#	fr_file.write(subprocess.check_output(['grep','free  ','OUTCAR']).splitlines()[-1])
 warn = set_pos_compare(dir_relax+'/CONTCAR',dir+'/INPUT0/POSCAR',dir_relax,inp_rlx['pos_warning_percent'])
 
 with open(dir_relax+'/amp2.log','r') as amp2_log:

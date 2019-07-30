@@ -3,6 +3,7 @@ import numpy as np
 import os,subprocess
 from module_band import *
 from module_vector import *
+from module_vasprun import pygrep,pyhead,pytail
 
 def read_wavecar(wave_file,min_band,max_band):
 	AU2Ang = 0.529177249
@@ -191,12 +192,15 @@ def plot_band_new_structure(spin,Band,fermi,xtic_file,xlabel_file,plot_range,tar
 
 	# make band.in
 	nband = len(Band)
-	if subprocess.check_output(['head','-n','1',target+'/Band_gap.log']).split()[2] == 'is' :
+	if pyhead(target+'/Band_gap.log',1).split()[2] == 'is' :
+#	if subprocess.check_output(['head','-n','1',target+'/Band_gap.log']).split()[2] == 'is' :
 		gap = 0
 		fermi = str(fermi)
 	else :
-		gap = round(float(subprocess.check_output(['head','-n','1',target+'/Band_gap.log']).split()[2]))
-		fermi = subprocess.check_output(['grep','VBM',target+'/Band_gap.log']).splitlines()[0].split()[-2]
+		gap = round(float(pyhead(target+'/Band_gap.log',1).split()[2]))
+#		gap = round(float(subprocess.check_output(['head','-n','1',target+'/Band_gap.log']).split()[2]))
+		fermi = pygrep('VBM',target+'/Band_gap.log',0,0).splitlines()[0].split()[-2]
+#		fermi = subprocess.check_output(['grep','VBM',target+'/Band_gap.log']).splitlines()[0].split()[-2]
 
 	title = 'Band_corrected'
 	make_band_new_in(title,xlabel_file,fermi,gap,nband,spin,plot_range,target)
@@ -268,8 +272,10 @@ min_band = -1
 max_band = 0
 ordering_window = 3
 
-fermi = float(subprocess.check_output(['head',gga_path+'/DOSCAR','-n','6']).splitlines()[-1].split()[3])
-spin = subprocess.check_output(['grep','ISPIN',gga_path+'/OUTCAR']).split()[2]
+fermi = float(pyhead(gga_path+'/DOSCAR',6).splitlines()[-1].split()[3])
+#fermi = float(subprocess.check_output(['head',gga_path+'/DOSCAR','-n','6']).splitlines()[-1].split()[3])
+spin = pygrep('ISPIN',gga_path+'/OUTCAR',0,0).split()[2]
+#spin = subprocess.check_output(['grep','ISPIN',gga_path+'/OUTCAR']).split()[2]
 [KPT,Band,nelect] = EIGEN_to_array(gga_path+'/EIGENVAL',spin)
 
 for n in range(len(Band)):
