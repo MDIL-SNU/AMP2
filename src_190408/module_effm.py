@@ -357,8 +357,8 @@ def calc_effm(target,carrier_type,Temp,oper):
 	# symmetry operation
 	deriv_tensor_oper = np.zeros_like(deriv_tensor,dtype=float)
 	for oper_line in oper:
-		oper_normal = [[oper_line[x][y]/dist_point(oper_line[x],[0,0,0]) for y in range(3)] for x in range(3)]
-		deriv_tensor_oper = deriv_tensor_oper+np.matmul(np.transpose(oper_normal),np.matmul(deriv_tensor,oper_normal))
+		oper_xyz = np.matmul(np.linalg.inv(np.ndarray(rec_axis)),np.matmul(oper_line,np.ndarray(rec_axis)))
+		deriv_tensor_oper = deriv_tensor_oper+np.matmul(np.transpose(oper_xyz),np.matmul(deriv_tensor,oper_xyz))
 	deriv_tensor = deriv_tensor_oper/float(len(oper))
 
 	deriv_mat = np.linalg.inv(deriv_tensor)
@@ -487,7 +487,7 @@ def read_operation(poscar):
 	for i in range(len(rot_oper)):
 		if sum([abs(x-0.5) for x in trans_oper[i]]) > 1.5-0.0000001: # considering the PBC (1.0 = 0.0)
 			oper.append(rot_oper[i])
-
+	# symmetry opperator according to a,b,c axis (not x,y,z axis)
 	return oper
 
 def valid_pocket(pocket_kpt,ref_kpt,num_kp_sep,grid_size,axis):
