@@ -480,8 +480,12 @@ def read_operation(poscar):
 	D = np.mat(pos)
 	Cell = (L,D,atom_type)
 
-	rot_oper = spglib.get_symmetry(Cell,symprec=1e-5)['rotations']
-	oper = np.ndarray.tolist(rot_oper)
+	rot_oper = np.ndarray.tolist(spglib.get_symmetry(Cell,symprec=1e-5)['rotations'])
+	trans_oper = np.ndarray.tolist(spglib.get_symmetry(Cell,symprec=1e-5)['translations'])
+	oper = []
+	for i in range(len(rot_oper)):
+		if sum([abs(x-0.5) for x in trans_oper[i]]) > 1.5-0.0000001: # considering the PBC (1.0 = 0.0)
+			oper.append(rot_oper[i])
 
 	return oper
 
