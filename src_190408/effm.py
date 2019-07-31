@@ -91,7 +91,7 @@ else:
 
 
 if 'etal' in gap_log:
-	make_amp2_log(dir_effm,'It is metallic band structure.\nDielectric calculation is unreasonable for a metallic system.')
+	make_amp2_log(dir_effm,'It is metallic band structure.\nEffective mass cannot be estimated in metallic system.')
 	print 1
 	sys.exit()
 else:
