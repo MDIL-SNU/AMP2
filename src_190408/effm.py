@@ -158,11 +158,11 @@ else:
 			vasprun = make_incar_for_ncl(dir_effm,mag_on,kpar,npar,vasp_std,vasp_gam,vasp_ncl)
 			if pot_type == 'HSE':
 				incar_for_hse(dir_effm+'/INCAR')
-				wincar(dir_effm+'/INCAR',dir_effm+'/INCAR',[['ALGO','All']],[])
+				wincar(dir_effm+'/INCAR',dir_effm+'/INCAR',[['NSW','0'],['ALGO','All']],[])
 				incar_from_yaml(dir_effm,inp_effm['INCAR'])
 			else:
 				incar_from_yaml(dir_effm,inp_effm['INCAR'])
-				wincar(dir_effm+'/INCAR',dir_effm+'/INCAR',[['ISTART','1'],['ICHARG','11'],['LCHARG','.F.']],[])
+				wincar(dir_effm+'/INCAR',dir_effm+'/INCAR',[['NSW','0'],['ISTART','1'],['ICHARG','11'],['LCHARG','.F.']],[])
 			out = run_vasp(dir_effm,nproc,vasprun)
 			if out == 1:  # error in vasp calculation
 				print 0
@@ -180,7 +180,7 @@ else:
 			mag_on = 2
 		vasprun = make_incar_for_ncl(dir_effm,mag_on,kpar,npar,vasp_std,vasp_gam,vasp_ncl)
 		incar_from_yaml(dir_effm,inp_effm['INCAR'])
-		wincar(dir_effm+'/INCAR',dir_effm+'/INCAR',[['ISTART','1'],['ICHARG','11'],['LCHARG','.F.']],[])
+		wincar(dir_effm+'/INCAR',dir_effm+'/INCAR',[['NSW','0'],['ISTART','1'],['ICHARG','11'],['LCHARG','.F.']],[])
 		out = run_vasp(dir_effm,nproc,vasprun)
 		if out == 1:  # error in vasp calculation
 			print 0
