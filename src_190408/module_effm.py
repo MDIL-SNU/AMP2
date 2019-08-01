@@ -357,7 +357,7 @@ def calc_effm(target,carrier_type,Temp,oper):
 	# symmetry operation
 	deriv_tensor_oper = np.zeros_like(deriv_tensor,dtype=float)
 	for oper_line in oper:
-		oper_xyz = np.matmul(np.linalg.inv(np.ndarray(rec_axis)),np.matmul(oper_line,np.ndarray(rec_axis)))
+		oper_xyz = np.matmul(np.linalg.inv(rec_axis),np.matmul(oper_line,rec_axis))
 		deriv_tensor_oper = deriv_tensor_oper+np.matmul(np.transpose(oper_xyz),np.matmul(deriv_tensor,oper_xyz))
 	deriv_tensor = deriv_tensor_oper/float(len(oper))
 
