@@ -243,25 +243,37 @@ for i in range(len(POSCARs)):
 		os.rmdir(calc_path)
 	else:
 		os.chdir(calc_path)
-		if not os.path.isfile(calc_path+'/free'):
-			make_amp2_log_default(calc_path,src_path,'Relaxation with '+pot_type+' potential',node,code_data)
-			make_amp2_log(calc_path,'New calculation')
-			subprocess.call(['cp',dir+'/INPUT0/INCAR',calc_path+'/INCAR'])
-			subprocess.call(['cp',dir+'/INPUT0/POTCAR_'+POT,calc_path+'/POTCAR'])
-			resized_kpoints(dir+'/INPUT0',calc_path)
-			nsw = set_nsw(calc_path+'/POSCAR',calc_path+'/INCAR')
-			converge_condition = set_ediffg(calc_path+'/POSCAR',inp_rlx['force'],inp_rlx['pressure'],inp_rlx['force'])
-			if not converge_condition == 0:
-				wincar(calc_path+'/INCAR',calc_path+'/INCAR',[['EDIFFG',str(converge_condition)]],[])
-			wincar(calc_path+'/INCAR',calc_path+'/INCAR',[['LCHARG','.F.'],['ALGO','Normal'],['NELM','200']],[])
-			if pot_type == 'HSE':
-				incar_for_hse(calc_path+'/INCAR')
-				wincar(calc_path+'/INCAR',calc_path+'/INCAR',[['ALGO','All']],[])
-			incar_from_yaml(calc_path,inp_rlx['INCAR'])
+		if os.path.isfile(calc_path+'/CONTCAR') and os.path.isfile(calc_path+'/free') and len(pygrep('free  ',calc_path+'/free',0,0).splitlines()) > 0 and len(pygrep('free  ',calc_path+'/free',0,0).splitlines()) <= inp_rlx['converged_ionic_step'] :
+			energy = pygrep('free  ','OUTCAR',0,0).splitlines()
+#			energy = subprocess.check_output(['grep','free  ','OUTCAR']).splitlines()
+		else:
+			run_cont = 0
+			if os.path.isfile(calc_path+'/CONTCAR') and count_line(calc_path+'/CONTCAR') > 9:
+				make_amp2_log_default(calc_path,src_path,'Relaxation with '+pot_type+' potential',node,code_data)
+				make_amp2_log(calc_path,'Calculation continue.')
+				subprocess.call(['cp',calc_path+'/CONTCAR',calc_path+'/POSCAR'])
+				run_cont = 1
 
-			with open(calc_path+'/mag_info','r') as inp:
-				mag_info = inp.readline()
-			wincar(calc_path+'/INCAR',calc_path+'/INCAR',[['MAGMOM',mag_info]],[])
+			if run_cont == 0:
+				make_amp2_log_default(calc_path,src_path,'Relaxation with '+pot_type+' potential',node,code_data)
+				make_amp2_log(calc_path,'New calculation')
+				subprocess.call(['cp',dir+'/INPUT0/INCAR',calc_path+'/INCAR'])
+				subprocess.call(['cp',dir+'/INPUT0/POTCAR_'+POT,calc_path+'/POTCAR'])
+				resized_kpoints(dir+'/INPUT0',calc_path)
+				nsw = set_nsw(calc_path+'/POSCAR',calc_path+'/INCAR')
+				converge_condition = set_ediffg(calc_path+'/POSCAR',inp_rlx['force'],inp_rlx['pressure'],inp_rlx['force'])
+				if not converge_condition == 0:
+					wincar(calc_path+'/INCAR',calc_path+'/INCAR',[['EDIFFG',str(converge_condition)]],[])
+				wincar(calc_path+'/INCAR',calc_path+'/INCAR',[['LCHARG','.F.'],['ALGO','Normal'],['NELM','200']],[])
+				if pot_type == 'HSE':
+					incar_for_hse(calc_path+'/INCAR')
+					wincar(calc_path+'/INCAR',calc_path+'/INCAR',[['ALGO','All']],[])
+				incar_from_yaml(calc_path,inp_rlx['INCAR'])
+
+				with open(calc_path+'/mag_info','r') as inp:
+					mag_info = inp.readline()
+				wincar(calc_path+'/INCAR',calc_path+'/INCAR',[['MAGMOM',mag_info]],[])
+
 			gam = set_parallel(calc_path+'/KPOINTS',calc_path+'/INCAR',npar,kpar)
 			if gam == 1:
 				vasprun = vasp_gam
@@ -324,9 +336,6 @@ for i in range(len(POSCARs)):
 #				energy = subprocess.check_output(['grep','free  ','OUTCAR']).splitlines()
 				iteration = iteration+1
 				make_amp2_log(calc_path,'Iteration number is '+str(iteration))
-		else:
-			energy = pygrep('free  ','OUTCAR',0,0).splitlines()
-#			energy = subprocess.check_output(['grep','free  ','OUTCAR']).splitlines()
 
 		if i == 0:
 			stable_ene = [i,float(energy[-1].split()[4])]

@@ -35,14 +35,15 @@ dir_relax = dir+'/relax_'+pot_type
 # Check existing data
 run_cont = 0
 if os.path.isdir(dir_relax) and os.path.isfile(dir_relax+'/CONTCAR') and os.path.isfile(dir_relax+'/free') :
-	if len(pygrep('free  ',dir_relax+'/free',0,0).splitlines()) > 0 :
+	if len(pygrep('free  ',dir_relax+'/free',0,0).splitlines()) > 0 and len(pygrep('free  ',dir_relax+'/free',0,0).splitlines()) <= inp_rlx['converged_ionic_step'] :
 #	if len(subprocess.check_output(['grep','free  ',dir_relax+'/free']).splitlines()) > 0 :
 		make_amp2_log_default(dir,src_path,'Relaxation with '+pot_type+' potential',node,code_data)
 #		print('Success!')
 		make_amp2_log(dir,'Already done')
 		print 1
 		sys.exit()
-elif os.path.isdir(dir_relax):
+
+if os.path.isdir(dir_relax):
 	if os.path.isfile(dir_relax+'/CONTCAR') and count_line(dir_relax+'/CONTCAR') > 9:
 		make_amp2_log_default(dir_relax,src_path,'Relaxation with '+pot_type+' potential',node,code_data)
 		make_amp2_log(dir_relax,'Calculation continue.')
@@ -56,6 +57,7 @@ elif os.path.isdir(dir_relax):
 		os.chdir(dir_relax)
 	else:
 		subprocess.call(['rm','-r',dir_relax])
+
 if run_cont == 0:
 	os.mkdir(dir_relax,0755)
 	os.chdir(dir_relax)
