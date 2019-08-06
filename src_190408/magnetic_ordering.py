@@ -240,6 +240,8 @@ for i in range(len(POSCARs)):
 		write_poscar(prim_axis,prim_atom_pos,ground_path+'/Stable'+str(i)+'/POSCAR0','Primitive cell')
 	pos_atom_num.append(len(prim_atom_pos))
 
+
+stable_ene = [999,9999999.9]
 for i in range(len(POSCARs)):
 	calc_path = ground_path+'/Stable'+str(i)
 	if not pos_atom_num[i] == min(pos_atom_num):
@@ -341,11 +343,8 @@ for i in range(len(POSCARs)):
 				iteration = iteration+1
 				make_amp2_log(calc_path,'Iteration number is '+str(iteration))
 
-		if i == 0:
+		if stable_ene[1] > float(energy[-1].split()[4]):
 			stable_ene = [i,float(energy[-1].split()[4])]
-		else:
-			if stable_ene[1] > float(energy[-1].split()[4]):
-				stable_ene = [i,float(energy[-1].split()[4])]
 		with open('free','w') as fr_file:
 			fr_file.write(pygrep('free  ','OUTCAR',0,0).splitlines()[-1])
 #			fr_file.write(subprocess.check_output(['grep','free  ','OUTCAR']).splitlines()[-1])
