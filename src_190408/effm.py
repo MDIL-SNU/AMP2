@@ -18,6 +18,7 @@ src_path = inp_yaml['directory']['src_path']
 vasp_std = inp_yaml['program']['vasp_std']
 vasp_gam = inp_yaml['program']['vasp_gam']
 vasp_ncl = inp_yaml['program']['vasp_ncl']
+mpi = inp_yaml['program']['mpi_command']
 gnuplot = inp_yaml['program']['gnuplot']
 npar = inp_yaml['vasp_parallel']['npar']
 kpar = inp_yaml['vasp_parallel']['kpar']
@@ -31,7 +32,7 @@ if pot_type == 'LDA':
 else:
 	POT = 'GGA'
 carrier_type = sys.argv[6]
-max_E_diff = calc_max_E_diff(inp_effm['Fermi_for_cutoff'],inp_effm['temperature_for_Fermi'])
+max_E_diff = calc_max_E_diff(inp_effm['fermi_for_cutoff'],inp_effm['temperature_for_fermi'])
 
 # Set directory for input structure and INCAR
 dir_effm = dir+'/effm_'+pot_type+'/'+carrier_type
@@ -111,17 +112,17 @@ else:
 			shutil.copy(dir+'/INPUT0/INCAR',dir_effm+'/INCAR')
 			subprocess.call(['cp',dir+'/INPUT0/KPOINTS',dir_effm+'/.'])
 			# make INCAR for CHGCAR
-			incar_from_yaml(dir_effm,inp_effm['INCAR'])
+			incar_from_yaml(dir_effm,inp_effm['incar'])
 			if os.path.isfile(dir+'/band_'+pot_type+'/OUTCAR'):
-				mag_on = check_magnet(dir+'/band_'+pot_type,inp_yaml['magnetic_ordering']['Minimum_moment'])
+				mag_on = check_magnet(dir+'/band_'+pot_type,inp_yaml['magnetic_ordering']['minimum_moment'])
 			else:
 				mag_on = 2
 			vasprun = make_incar_for_ncl(dir_effm,mag_on,kpar,npar,vasp_std,vasp_gam,vasp_ncl)
-			incar_from_yaml(dir_effm,inp_effm['INCAR'])
+			incar_from_yaml(dir_effm,inp_effm['incar'])
 			wincar(dir_effm+'/INCAR',dir_effm+'/INCAR',[['NSW','0'],['LCHARG','.T.']],[])
 
 			# VASP calculation for CHGCAR
-			out = run_vasp(dir_effm,nproc,vasprun)
+			out = run_vasp(dir_effm,nproc,vasprun,mpi)
 			if out == 1:  # error in vasp calculation
 				print 0
 				sys.exit() 
@@ -152,18 +153,18 @@ else:
 		# check the vasp calculation to determine searching space
 		if not check_vasp_done(dir_effm) == 1:
 			if os.path.isfile(dir+'/band_'+pot_type+'/OUTCAR'):
-				mag_on = check_magnet(dir+'/band_'+pot_type,inp_yaml['magnetic_ordering']['Minimum_moment'])
+				mag_on = check_magnet(dir+'/band_'+pot_type,inp_yaml['magnetic_ordering']['minimum_moment'])
 			else:
 				mag_on = 2
 			vasprun = make_incar_for_ncl(dir_effm,mag_on,kpar,npar,vasp_std,vasp_gam,vasp_ncl)
 			if pot_type == 'HSE':
 				incar_for_hse(dir_effm+'/INCAR')
 				wincar(dir_effm+'/INCAR',dir_effm+'/INCAR',[['NSW','0'],['ALGO','All']],[])
-				incar_from_yaml(dir_effm,inp_effm['INCAR'])
+				incar_from_yaml(dir_effm,inp_effm['incar'])
 			else:
-				incar_from_yaml(dir_effm,inp_effm['INCAR'])
+				incar_from_yaml(dir_effm,inp_effm['incar'])
 				wincar(dir_effm+'/INCAR',dir_effm+'/INCAR',[['NSW','0'],['ISTART','1'],['ICHARG','11'],['LCHARG','.F.']],[])
-			out = run_vasp(dir_effm,nproc,vasprun)
+			out = run_vasp(dir_effm,nproc,vasprun,mpi)
 			if out == 1:  # error in vasp calculation
 				print 0
 				sys.exit() 
@@ -175,13 +176,13 @@ else:
 	# check the vasp calculation to calculate effective mass
 	if not check_vasp_done(dir_effm) == 1:
 		if os.path.isfile(dir+'/band_'+pot_type+'/OUTCAR'):
-			mag_on = check_magnet(dir+'/band_'+pot_type,inp_yaml['magnetic_ordering']['Minimum_moment'])
+			mag_on = check_magnet(dir+'/band_'+pot_type,inp_yaml['magnetic_ordering']['minimum_moment'])
 		else:
 			mag_on = 2
 		vasprun = make_incar_for_ncl(dir_effm,mag_on,kpar,npar,vasp_std,vasp_gam,vasp_ncl)
-		incar_from_yaml(dir_effm,inp_effm['INCAR'])
+		incar_from_yaml(dir_effm,inp_effm['incar'])
 		wincar(dir_effm+'/INCAR',dir_effm+'/INCAR',[['NSW','0'],['ISTART','1'],['ICHARG','11'],['LCHARG','.F.']],[])
-		out = run_vasp(dir_effm,nproc,vasprun)
+		out = run_vasp(dir_effm,nproc,vasprun,mpi)
 		if out == 1:  # error in vasp calculation
 			print 0
 			sys.exit() 
@@ -192,7 +193,7 @@ else:
 		oper = read_operation(dir+'/INPUT0/POSCAR_rlx_'+POT)
 	else:
 		oper = read_operation(dir+'/INPUT0/POSCAR')
-	[effm_dia,effm] = calc_effm(dir_effm,carrier_type,inp_effm['temperature_for_Fermi'],oper)
+	[effm_dia,effm] = calc_effm(dir_effm,carrier_type,inp_effm['temperature_for_fermi'],oper)
 	write_effm(effm_dia,effm,dir_effm,carrier_type)
 
 	make_amp2_log(dir_effm,carrier_type+' effective mass calcuation is done.')

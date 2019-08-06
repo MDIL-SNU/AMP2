@@ -56,7 +56,7 @@ def kpt_generation_for_relax(target,KPL,sym):
 def incar_from_yaml(target,yaml_incar):
 	if bool(yaml_incar):
 		for incar_set_key in yaml_incar.keys():
-			wincar(target+'/INCAR',target+'/INCAR',[[incar_set_key,str(yaml_incar[incar_set_key])]],[])
+			wincar(target+'/INCAR',target+'/INCAR',[[incar_set_key.upper(),str(yaml_incar[incar_set_key])]],[])
 
 # set npar and kpar
 def set_parallel(kpoints,incar,npar,kpar):
@@ -88,10 +88,11 @@ def set_parallel(kpoints,incar,npar,kpar):
 			return 0
 
 # run vasp	
-def run_vasp(target,nproc,vasprun):
+def run_vasp(target,nproc,vasprun,mpi):
 	# 0: well done, 1: error in vasp calculation
+	mpi_core = {'mpirun':'-np'}
 	os.chdir(target)
-	out = subprocess.call(['mpirun -np '+nproc+' '+vasprun+' >& stdout.x'], stdout=subprocess.PIPE, shell=True)
+	out = subprocess.call([mpi+' '+mpi_core[mpi]+' '+nproc+' '+vasprun+' >& stdout.x'], stdout=subprocess.PIPE, shell=True)
 	if out == 0:
 		out_res = pytail(target+'/OUTCAR').split()
 #		out_res = subprocess.check_output(['tail','-1',target+'/OUTCAR']).split()
@@ -208,7 +209,7 @@ def wincar(SOURCE,OUT,option,add) :
 		check = 0
 		option[i] = [str(x) for x in option[i]]
 		for j in range(len(incar)) :
-			if option[i][0] in incar[j].split() :
+			if option[i][0].upper() in [x.upper() for x in incar[j].split()] :
 				check = 1
 				# Off the line
 				if option[i][1] == '#' :

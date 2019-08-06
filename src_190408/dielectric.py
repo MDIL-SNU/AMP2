@@ -17,6 +17,7 @@ with open(inp_file,'r') as f:
 ERROR_path = inp_yaml['directory']['error']
 src_path = inp_yaml['directory']['src_path']
 vasp_std = inp_yaml['program']['vasp_std']
+mpi = inp_yaml['program']['mpi_command']
 gnuplot = inp_yaml['program']['gnuplot']
 kpar = inp_yaml['vasp_parallel']['kpar']
 inp_diel = inp_yaml['dielectric']
@@ -86,19 +87,19 @@ else:
 		copy_input_cont(dir+'/relax_'+POT,dir_diel)
 	with open(dir+'/INPUT0/sym','r') as symf:
 		sym = int(symf.readline().split()[0])
-	make_multiple_kpts(dir+'/kptest/kpoint.log',dir_diel+'/KPOINTS',dir_diel+'/POSCAR',inp_diel['KP_multiplier'],sym)
-	incar_from_yaml(dir_diel,inp_diel['INCAR'])
+	make_multiple_kpts(dir+'/kptest/kpoint.log',dir_diel+'/KPOINTS',dir_diel+'/POSCAR',inp_diel['kp_multiplier'],sym)
+	incar_from_yaml(dir_diel,inp_diel['incar'])
 	wincar(dir_diel+'/INCAR',dir_diel+'/INCAR',[['NSW','#'],['IBRION','8'],['NPAR','#'],['KPAR',kpar],['LEPSILON','.T.']],[])
 	vasprun = vasp_std
 	# VASP calculation
-	out = run_vasp(dir_diel,nproc,vasprun)
+	out = run_vasp(dir_diel,nproc,vasprun,mpi)
 	if out == 1:  # error in vasp calculation
 		print 0
 		sys.exit() 
 	out = electronic_step_convergence_check(dir_diel)
 	while out == 1:
 		make_amp2_log(dir_diel,'Calculation options are changed. New calculation starts.')
-		out = run_vasp(dir_diel,nproc,vasprun)
+		out = run_vasp(dir_diel,nproc,vasprun,mpi)
 		if out == 1:  # error in vasp calculation
 			print 0
 			sys.exit()

@@ -19,6 +19,7 @@ src_path = inp_yaml['directory']['src_path']
 vasp_std = inp_yaml['program']['vasp_std']
 vasp_gam = inp_yaml['program']['vasp_gam']
 vasp_ncl = inp_yaml['program']['vasp_ncl']
+mpi = inp_yaml['program']['mpi_command']
 gnuplot = inp_yaml['program']['gnuplot']
 npar = inp_yaml['vasp_parallel']['npar']
 kpar = inp_yaml['vasp_parallel']['kpar']
@@ -76,30 +77,30 @@ if pot_type == 'HSE':
 	else:
 		copy_input_cont(dir+'/relax_'+pot_type,dir_dos)
 	# make INCAR for CHGCAR
-	incar_from_yaml(dir_dos,inp_dos['INCAR'])
+	incar_from_yaml(dir_dos,inp_dos['incar'])
 	if no_rlx == 1:
 		mag_on = 2
 	else:
-		mag_on = check_magnet(dir+'/relax_'+pot_type,inp_yaml['magnetic_ordering']['Minimum_moment'])
+		mag_on = check_magnet(dir+'/relax_'+pot_type,inp_yaml['magnetic_ordering']['minimum_moment'])
 	vasprun = make_incar_for_ncl(dir_dos,mag_on,kpar,npar,vasp_std,vasp_gam,vasp_ncl)
 	with open(dir+'/INPUT0/sym','r') as symf:
 		sym = int(symf.readline().split()[0])
-	make_multiple_kpts(dir+'/kptest/kpoint.log',dir_dos+'/KPOINTS',dir_dos+'/POSCAR',inp_dos['KP_multiplier'],sym)
+	make_multiple_kpts(dir+'/kptest/kpoint.log',dir_dos+'/KPOINTS',dir_dos+'/POSCAR',inp_dos['kp_multiplier'],sym)
 	incar_for_hse(dir_dos+'/INCAR')
 	hse_algo = pygrep('ALGO',dir+'/relax_'+pot_type+'/INCAR',0,0).split()[2]
 #	hse_algo = subprocess.check_output(['grep','ALGO',dir+'/relax_'+pot_type+'/INCAR']).split()[2]
 	wincar(dir_dos+'/INCAR',dir_dos+'/INCAR',[['NSW','0'],['NEDOS','3001'],['ALGO',hse_algo]],[])
-	incar_from_yaml(dir_dos,inp_dos['INCAR'])
+	incar_from_yaml(dir_dos,inp_dos['incar'])
 	vasprun = vasp_std
 	# VASP calculation
-	out = run_vasp(dir_dos,nproc,vasprun)
+	out = run_vasp(dir_dos,nproc,vasprun,mpi)
 	if out == 1:  # error in vasp calculation
 		print 0
 		sys.exit() 
 	out = electronic_step_convergence_check(dir_dos)
 	while out == 1:
 		make_amp2_log(dir_dos,'Calculation options are changed. New calculation starts.')
-		out = run_vasp(dir_dos,nproc,vasprun)
+		out = run_vasp(dir_dos,nproc,vasprun,mpi)
 		if out == 1:  # error in vasp calculation
 			print 0
 			sys.exit()
@@ -122,8 +123,8 @@ else:
 		else:
 			copy_input_cont(dir+'/relax_'+pot_type,dir_dos)
 			# make INCAR for dos
-			incar_from_yaml(dir_dos,inp_dos['INCAR'])
-			mag_on = check_magnet(dir+'/relax_'+pot_type,inp_yaml['magnetic_ordering']['Minimum_moment'])
+			incar_from_yaml(dir_dos,inp_dos['incar'])
+			mag_on = check_magnet(dir+'/relax_'+pot_type,inp_yaml['magnetic_ordering']['minimum_moment'])
 			vasprun = make_incar_for_ncl(dir_dos,mag_on,kpar,npar,vasp_std,vasp_gam,vasp_ncl)
 
 		subprocess.call(['cp',dir_band+'/CHGCAR',dir_dos+'/.'])
@@ -135,16 +136,16 @@ else:
 		else:
 			copy_input_cont(dir+'/relax_'+pot_type,dir_dos)
 		# make INCAR for CHGCAR
-		incar_from_yaml(dir_dos,inp_dos['INCAR'])
+		incar_from_yaml(dir_dos,inp_dos['incar'])
 		if no_rlx == 1:
 			mag_on = 2
 		else:
-			mag_on = check_magnet(dir+'/relax_'+pot_type,inp_yaml['magnetic_ordering']['Minimum_moment'])
+			mag_on = check_magnet(dir+'/relax_'+pot_type,inp_yaml['magnetic_ordering']['minimum_moment'])
 		vasprun = make_incar_for_ncl(dir_dos,mag_on,kpar,npar,vasp_std,vasp_gam,vasp_ncl)
 		wincar(dir_dos+'/INCAR',dir_dos+'/INCAR',[['NSW','0'],['LCHARG','.T.']],[])
 
 		# VASP calculation for CHGCAR
-		out = run_vasp(dir_dos,nproc,vasprun)
+		out = run_vasp(dir_dos,nproc,vasprun,mpi)
 		if out == 1:  # error in vasp calculation
 			print 0
 			sys.exit() 
@@ -152,25 +153,25 @@ else:
 
 	with open(dir+'/INPUT0/sym','r') as symf:
 		sym = int(symf.readline().split()[0])
-	make_multiple_kpts(dir+'/kptest/kpoint.log',dir_dos+'/KPOINTS',dir_dos+'/POSCAR',inp_dos['KP_multiplier'],sym)
-	incar_from_yaml(dir_dos,inp_dos['INCAR'])
+	make_multiple_kpts(dir+'/kptest/kpoint.log',dir_dos+'/KPOINTS',dir_dos+'/POSCAR',inp_dos['kp_multiplier'],sym)
+	incar_from_yaml(dir_dos,inp_dos['incar'])
 
 	wincar(dir_dos+'/INCAR',dir_dos+'/INCAR',[['NSW','0'],['ISTART','1'],['ICHARG','11'],['LCHARG','.F.'],['NEDOS','3001']],[])
 	# make INCAR for CHGCAR
 	if no_rlx == 1:
 		mag_on = 2
 	else:
-		mag_on = check_magnet(dir+'/relax_'+pot_type,inp_yaml['magnetic_ordering']['Minimum_moment'])
+		mag_on = check_magnet(dir+'/relax_'+pot_type,inp_yaml['magnetic_ordering']['minimum_moment'])
 	vasprun = make_incar_for_ncl(dir_dos,mag_on,kpar,npar,vasp_std,vasp_gam,vasp_ncl)
 	# VASP calculation
-	out = run_vasp(dir_dos,nproc,vasprun)
+	out = run_vasp(dir_dos,nproc,vasprun,mpi)
 	if out == 1:  # error in vasp calculation
 		print 0
 		sys.exit() 
 	out = electronic_step_convergence_check(dir_dos)
 	while out == 1:
 		make_amp2_log(dir_dos,'Calculation options are changed. New calculation starts.')
-		out = run_vasp(dir_dos,nproc,vasprun)
+		out = run_vasp(dir_dos,nproc,vasprun,mpi)
 		if out == 1:  # error in vasp calculation
 			print 0
 			sys.exit()

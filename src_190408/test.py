@@ -8,9 +8,17 @@ from module_effm import *
 from module_AF import *
 from module_amp2_input import *
 from module_vector import *
+from input_conf import *
 import spglib
 import numpy as np
 import math
 # input from shell
-dir = sys.argv[1]
-print pytail(dir)
+conf = sys.argv[1]
+with open(conf,'r') as inp:
+	inp_yaml = yaml.load(inp)
+print inp_yaml
+
+inp_yaml_low = dic_to_lowercase(inp_yaml)
+
+print inp_yaml_low
+

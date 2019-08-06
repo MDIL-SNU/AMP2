@@ -124,8 +124,8 @@ def write_ising_param(JJ,target):
 
 def write_inp_for_GA(mag_atom_list,inp_af,target):
 	inp_yaml = {}
-	for key in inp_af['Genetic_algorithm'].keys():
-		inp_yaml[key] = inp_af['Genetic_algorithm'][key]
+	for key in inp_af['genetic_algorithm'].keys():
+		inp_yaml[key] = inp_af['genetic_algorithm'][key]
 	inp_yaml['mag_atom_list'] = mag_atom_list
 	inp_yaml['cutoff'] = inp_af['cutoff_for_parameter']
 	inp_yaml['pair_coeff'] = target+'/Pair_coeff.dat'

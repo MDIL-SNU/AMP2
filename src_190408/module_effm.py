@@ -361,7 +361,7 @@ def calc_effm(target,carrier_type,Temp,oper):
 		deriv_tensor_oper = deriv_tensor_oper+np.matmul(np.transpose(oper_xyz),np.matmul(deriv_tensor,oper_xyz))
 	deriv_tensor = deriv_tensor_oper/float(len(oper))
 
-	deriv_mat = np.linalg.inv(deriv_tensor)
+	deriv_mat = np.real(np.linalg.inv(deriv_tensor))
 	deriv_dia = np.linalg.eigvals(deriv_mat)
 
 	effm_dia = []

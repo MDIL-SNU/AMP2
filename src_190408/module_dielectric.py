@@ -33,12 +33,12 @@ def write_diel_log(outcar_file,target):
 		diel_e[i] = [float(diel_e[i][0]), float(diel_e[i][1]), float(diel_e[i][2])]
 		diel_i[i] = [float(diel_i[i][0]), float(diel_i[i][1]), float(diel_i[i][2])]
 		diel_sum[i] = [diel_e[i][0]+diel_i[i][0],diel_e[i][1]+diel_i[i][1],diel_e[i][2]+diel_i[i][2]]
-	diel_e_array = np.asarray(diel_e)
-	diel_i_array = np.asarray(diel_i)
-	diel_sum_array = np.asarray(diel_sum)
-	diel_e_dia = np.linalg.eigvals(diel_e)
-	diel_i_dia = np.linalg.eigvals(diel_i)
-	diel_sum_dia = np.linalg.eigvals(diel_sum)
+	diel_e_array = np.real(np.asarray(diel_e))
+	diel_i_array = np.real(np.asarray(diel_i))
+	diel_sum_array = np.real(np.asarray(diel_sum))
+	diel_e_dia = np.real(np.linalg.eigvals(diel_e))
+	diel_i_dia = np.real(np.linalg.eigvals(diel_i))
+	diel_sum_dia = np.real(np.linalg.eigvals(diel_sum))
 
 	diel0 = sum(diel_sum_dia)/3.0
 	mode_check = check_imaginary(outcar_file,target)

@@ -22,6 +22,7 @@ ERROR_path = inp_yaml['directory']['error']
 src_path = inp_yaml['directory']['src_path']
 vasp_std = inp_yaml['program']['vasp_std']
 vasp_gam = inp_yaml['program']['vasp_gam']
+mpi = inp_yaml['program']['mpi_command']
 gnuplot = inp_yaml['program']['gnuplot']
 npar = inp_yaml['vasp_parallel']['npar']
 kpar = inp_yaml['vasp_parallel']['kpar']
@@ -100,7 +101,7 @@ if spin == '1':
 	print 1
 	sys.exit()
 
-[mag_atom_list,mag_val] = check_spin(ref_dir,inp_pos,inp_af['Minimum_moment'])
+[mag_atom_list,mag_val] = check_spin(ref_dir,inp_pos,inp_af['minimum_moment'])
 if len(mag_atom_list) == 0:
 	make_amp2_log(target,'There is no magnetic atom.')
 	with open(target+'/amp2.log','r') as amp2_log:
@@ -123,13 +124,13 @@ if not os.path.isfile(target+'/POSCAR_param'):
 			min_cell_length = min_cell_length + 2
 
 [axis_param,pos_param] = read_poscar(target+'/POSCAR_param')
-if isinstance(inp_af['Maximum_atoms_number'],int) and inp_af['Maximum_atoms_number'] > 0 and len(pos_param) > inp_af['Maximum_atoms_number']:
+if isinstance(inp_af['maximum_atoms_number'],int) and inp_af['maximum_atoms_number'] > 0 and len(pos_param) > inp_af['maximum_atoms_number']:
 	make_amp2_log(target,'The number of atoms in supercell is larger than the criteria.')
 	print 0
 	sys.exit()
 
-[pair_list,sole_list,mag_list] = find_pair(target+'/POSCAR_param',cutoff_length,mag_atom_list,mag_val,inp_af['Tolerance'])
-if isinstance(inp_af['Maximum_pair_type'],int) and inp_af['Maximum_pair_type'] > 0 and len(pair_list) > inp_af['Maximum_pair_type']:
+[pair_list,sole_list,mag_list] = find_pair(target+'/POSCAR_param',cutoff_length,mag_atom_list,mag_val,inp_af['tolerance'])
+if isinstance(inp_af['maximum_pair_type'],int) and inp_af['maximum_pair_type'] > 0 and len(pair_list) > inp_af['maximum_pair_type']:
 	make_amp2_log(target,'The number of pairs is larger than the criteria.')
 	print 0
 	sys.exit()
@@ -149,7 +150,7 @@ for i in range(len(tot_mag_list)):
 		if pot_type == 'HSE':
 			incar_for_hse(targ_dir+'/INCAR')
 			wincar(targ_dir+'/INCAR',targ_dir+'/INCAR',[['ALGO','All']],[])
-		incar_from_yaml(targ_dir,inp_af['INCAR'])
+		incar_from_yaml(targ_dir,inp_af['incar'])
 
 		wincar(targ_dir+'/INCAR',targ_dir+'/INCAR',[['MAGMOM',tot_mag_list[i]]],[])
 		gam = set_parallel(targ_dir+'/KPOINTS',targ_dir+'/INCAR',npar,kpar)
@@ -159,7 +160,7 @@ for i in range(len(tot_mag_list)):
 			vasprun = vasp_std
 		wincar(targ_dir+'/INCAR',targ_dir+'/INCAR',[['NSW','0'],['ISYM','0']],[])
 
-		out = run_vasp(targ_dir,nproc,vasprun)
+		out = run_vasp(targ_dir,nproc,vasprun,mpi)
 		if out == 1:  # error in vasp calculation
 			print 0
 			sys.exit() 
@@ -167,7 +168,7 @@ for i in range(len(tot_mag_list)):
 		out = electronic_step_convergence_check(targ_dir)
 		while out == 1:
 			make_amp2_log(targ_dir,'Calculation options are changed. New calculation starts.')
-			out = run_vasp(targ_dir,nproc,vasprun)
+			out = run_vasp(targ_dir,nproc,vasprun,mpi)
 			if out == 1:  # error in vasp calculation
 				print 0
 				sys.exit()
@@ -233,7 +234,10 @@ for i in range(len(POSCARs)):
 	[prim_axis,prim_atom_pos,sym] = get_primitive_cell(axis,atom_pos)
 	write_file(str(sym),ground_path+'/Stable'+str(i)+'/sym')
 	set_mag_info(prim_atom_pos,ground_path+'/Stable'+str(i),mag_val)
-	write_poscar(prim_axis,prim_atom_pos,ground_path+'/Stable'+str(i)+'/POSCAR','Primitive cell')
+	if not os.path.isfile(ground_path+'/Stable'+str(i)+'/POSCAR'):
+		write_poscar(prim_axis,prim_atom_pos,ground_path+'/Stable'+str(i)+'/POSCAR','Primitive cell')
+	if not os.path.isfile(ground_path+'/Stable'+str(i)+'/POSCAR0'):
+		write_poscar(prim_axis,prim_atom_pos,ground_path+'/Stable'+str(i)+'/POSCAR0','Primitive cell')
 	pos_atom_num.append(len(prim_atom_pos))
 
 for i in range(len(POSCARs)):
@@ -261,14 +265,14 @@ for i in range(len(POSCARs)):
 				subprocess.call(['cp',dir+'/INPUT0/POTCAR_'+POT,calc_path+'/POTCAR'])
 				resized_kpoints(dir+'/INPUT0',calc_path)
 				nsw = set_nsw(calc_path+'/POSCAR',calc_path+'/INCAR')
-				converge_condition = set_ediffg(calc_path+'/POSCAR',inp_rlx['force'],inp_rlx['pressure'],inp_rlx['force'])
+				converge_condition = set_ediffg(calc_path+'/POSCAR',inp_rlx['force'],inp_rlx['pressure'],inp_rlx['energy'])
 				if not converge_condition == 0:
 					wincar(calc_path+'/INCAR',calc_path+'/INCAR',[['EDIFFG',str(converge_condition)]],[])
 				wincar(calc_path+'/INCAR',calc_path+'/INCAR',[['LCHARG','.F.'],['ALGO','Normal'],['NELM','200']],[])
 				if pot_type == 'HSE':
 					incar_for_hse(calc_path+'/INCAR')
 					wincar(calc_path+'/INCAR',calc_path+'/INCAR',[['ALGO','All']],[])
-				incar_from_yaml(calc_path,inp_rlx['INCAR'])
+				incar_from_yaml(calc_path,inp_rlx['incar'])
 
 				with open(calc_path+'/mag_info','r') as inp:
 					mag_info = inp.readline()
@@ -280,14 +284,14 @@ for i in range(len(POSCARs)):
 			else:
 				vasprun = vasp_std
 
-			out = run_vasp(calc_path,nproc,vasprun)
+			out = run_vasp(calc_path,nproc,vasprun,mpi)
 			if out == 1:  # error in vasp calculation
 				print 0
 				sys.exit() 
 			out = electronic_step_convergence_check(calc_path)
 			while out == 1:
 				make_amp2_log(calc_path,'Calculation options are changed. New calculation starts.')
-				out = run_vasp(calc_path,nproc,vasprun)
+				out = run_vasp(calc_path,nproc,vasprun,mpi)
 				if out == 1:  # error in vasp calculation
 					print 0
 					sys.exit()
@@ -310,19 +314,19 @@ for i in range(len(POSCARs)):
 					make_amp2_log(calc_path,'Relaxation is done.')
 					break
 				shutil.copyfile(calc_path+'/CONTCAR',calc_path+'/POSCAR')
-				if bool(inp_rlx['INCAR']) and not 'EDIFFG' in inp_rlx['INCAR'].keys():
-					converge_condition = set_ediffg(calc_path+'/POSCAR',inp_rlx['force'],inp_rlx['pressure'],inp_rlx['force'])
+				if bool(inp_rlx['incar']) and not 'EDIFFG' in inp_rlx['incar'].keys():
+					converge_condition = set_ediffg(calc_path+'/POSCAR',inp_rlx['force'],inp_rlx['pressure'],inp_rlx['energy'])
 					if not converge_condition == 0:
 						wincar(calc_path+'/INCAR',calc_path+'/INCAR',[['EDIFFG',str(converge_condition)]],[])
 
-				out = run_vasp(calc_path,nproc,vasprun)
+				out = run_vasp(calc_path,nproc,vasprun,mpi)
 				if out == 1:  # error in vasp calculation
 					print 0
 					sys.exit() 
 				out = electronic_step_convergence_check(calc_path)
 				while out == 1:
 					make_amp2_log(calc_path,'Calculation options are changed. New calculation starts.')
-					out = run_vasp(calc_path,nproc,vasprun)
+					out = run_vasp(calc_path,nproc,vasprun,mpi)
 					if out == 1:  # error in vasp calculation
 						print 0
 						sys.exit()
@@ -353,11 +357,10 @@ with open(target+'/amp2.log','r') as amp2_log:
 ## check magnetic ordering (ferro or not)
 stable_path = ground_path+'/Stable'+str(stable_ene[0])
 shutil.copy(stable_path+'/POSCAR',target+'/POSCAR_spin')
-[new_mag_atom_list,new_mag_val] = check_spin(stable_path,ground_path+'/POSCAR_spin'+str(stable_ene[0]),inp_af['Minimum_moment'])
-ferro = 0
-for i in new_mag_val:
-	if new_mag_val[i] < 0:
-		ferro = 1
+[new_mag_atom_list,new_mag_val] = check_spin(stable_path,stable_path+'/POSCAR0',inp_af['minimum_moment'])
+ferro = 0 # 0 indicates Ferromagnetic ordering
+if min([new_mag_val[x] for x in new_mag_val])*max([new_mag_val[x] for x in new_mag_val]) < -0.01:
+		ferro = 1 # 1 indicates non-ferromagnetic ordering.
 if ferro == 0:
 	make_amp2_log(dir,'The ground state spin ordering is ferromagnetic ordering.')
 	if os.path.isdir(dir+'/relax_'+pot_type):
@@ -379,7 +382,7 @@ else:
 		make_amp2_log(dir,'We changed the files in relax_'+pot_type+' from magnetic calculation.')
 		shutil.copytree(stable_path,dir+'/relax_'+pot_type)
 	shutil.copytree(dir+'/INPUT0',dir+'/INPUT0_old')
-	shutil.copy(ground_path+'/POSCAR_spin'+str(stable_ene[0]),dir+'/INPUT0/POSCAR')
+	shutil.copy(stable_path+'/POSCAR0',dir+'/INPUT0/POSCAR')
 	write_relaxed_poscar(dir,pot_type)
 	shutil.copy(stable_path+'/INCAR',dir+'/INPUT0/INCAR')
 	shutil.copy(stable_path+'/KPOINTS',dir+'/INPUT0/KPOINTS')

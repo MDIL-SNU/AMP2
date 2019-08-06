@@ -17,6 +17,7 @@ ERROR_path = inp_yaml['directory']['error']
 src_path = inp_yaml['directory']['src_path']
 vasp_std = inp_yaml['program']['vasp_std']
 vasp_gam = inp_yaml['program']['vasp_gam']
+mpi = inp_yaml['program']['mpi_command']
 gnuplot = inp_yaml['program']['gnuplot']
 npar = inp_yaml['vasp_parallel']['npar']
 kpar = inp_yaml['vasp_parallel']['kpar']
@@ -66,13 +67,13 @@ if run_cont == 0:
 	copy_input(dir+'/INPUT0',dir_relax,POT)
 	nsw = set_nsw(dir_relax+'/POSCAR',dir_relax+'/INCAR')
 	wincar(dir_relax+'/INCAR',dir_relax+'/INCAR',[['LCHARG','.F.']],[])
-	converge_condition = set_ediffg(dir_relax+'/POSCAR',inp_rlx['force'],inp_rlx['pressure'],inp_rlx['force'])
+	converge_condition = set_ediffg(dir_relax+'/POSCAR',inp_rlx['force'],inp_rlx['pressure'],inp_rlx['energy'])
 	if not converge_condition == 0:
 		wincar(dir_relax+'/INCAR',dir_relax+'/INCAR',[['EDIFFG',str(converge_condition)]],[])
 	if pot_type == 'HSE':
 		incar_for_hse(dir_relax+'/INCAR')
 
-	incar_from_yaml(dir_relax,inp_rlx['INCAR'])
+	incar_from_yaml(dir_relax,inp_rlx['incar'])
 
 gam = set_parallel(dir_relax+'/KPOINTS',dir_relax+'/INCAR',npar,kpar)
 if gam == 1:
@@ -80,7 +81,7 @@ if gam == 1:
 else:
 	vasprun = vasp_std
 
-out = run_vasp(dir_relax,nproc,vasprun)
+out = run_vasp(dir_relax,nproc,vasprun,mpi)
 if out == 1:  # error in vasp calculation
 	print 0
 	sys.exit() 
@@ -88,7 +89,7 @@ if out == 1:  # error in vasp calculation
 out = electronic_step_convergence_check(dir_relax)
 while out == 1:
 	make_amp2_log(dir_relax,'Calculation options are changed. New calculation starts.')
-	out = run_vasp(dir_relax,nproc,vasprun)
+	out = run_vasp(dir_relax,nproc,vasprun,mpi)
 	if out == 1:  # error in vasp calculation
 		print 0
 		sys.exit()
@@ -111,12 +112,12 @@ while iteration < inp_rlx['max_iteration']:
 		make_amp2_log(dir_relax,'Relaxation is done.')
 		break
 	shutil.copyfile(dir_relax+'/CONTCAR',dir_relax+'/POSCAR')
-	if bool(inp_rlx['INCAR']) and not 'EDIFFG' in inp_rlx['INCAR'].keys():
-		converge_condition = set_ediffg(dir_relax+'/POSCAR',inp_rlx['force'],inp_rlx['pressure'],inp_rlx['force'])
+	if bool(inp_rlx['incar']) and not 'EDIFFG' in inp_rlx['incar'].keys():
+		converge_condition = set_ediffg(dir_relax+'/POSCAR',inp_rlx['force'],inp_rlx['pressure'],inp_rlx['energy'])
 		if not converge_condition == 0:
 			wincar(dir_relax+'/INCAR',dir_relax+'/INCAR',[['EDIFFG',str(converge_condition)]],[])
 
-	out = run_vasp(dir_relax,nproc,vasprun)
+	out = run_vasp(dir_relax,nproc,vasprun,mpi)
 	if out == 1:  # error in vasp calculation
 		print 0
 		sys.exit() 
@@ -124,7 +125,7 @@ while iteration < inp_rlx['max_iteration']:
 	out = electronic_step_convergence_check(dir_relax)
 	while out == 1:
 		make_amp2_log(dir_relax,'Calculation options are changed. New calculation starts.')
-		out = run_vasp(dir_relax,nproc,vasprun)
+		out = run_vasp(dir_relax,nproc,vasprun,mpi)
 		if out == 1:  # error in vasp calculation
 			print 0
 			sys.exit()
@@ -150,7 +151,7 @@ else:
 	write_relaxed_poscar(dir,pot_type)
 
 ## Check the magnetic moment in relaxed cell
-mag_on = check_magnet(dir_relax,inp_yaml['magnetic_ordering']['Minimum_moment'])
+mag_on = check_magnet(dir_relax,inp_yaml['magnetic_ordering']['minimum_moment'])
 if mag_on == 0 :
 	wincar(dir+'/INPUT0/INCAR',dir+'/INPUT0/INCAR',[['MAGMOM',''],['ISPIN','1']],[])
 

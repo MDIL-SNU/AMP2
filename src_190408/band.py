@@ -21,6 +21,7 @@ src_path = inp_yaml['directory']['src_path']
 vasp_std = inp_yaml['program']['vasp_std']
 vasp_gam = inp_yaml['program']['vasp_gam']
 vasp_ncl = inp_yaml['program']['vasp_ncl']
+mpi = inp_yaml['program']['mpi_command']
 gnuplot = inp_yaml['program']['gnuplot']
 npar = inp_yaml['vasp_parallel']['npar']
 kpar = inp_yaml['vasp_parallel']['kpar']
@@ -83,11 +84,11 @@ if pot_type == 'HSE':
 	shutil.copy(dir+'/INPUT0/sym',dir_band+'/.')
 
 	# make INCAR for CHGCAR
-	incar_from_yaml(dir_band,inp_band['INCAR'])
+	incar_from_yaml(dir_band,inp_band['incar'])
 	if no_rlx == 1:
 		mag_on = 2
 	else:
-		mag_on = check_magnet(dir+'/relax_'+pot_type,inp_yaml['magnetic_ordering']['Minimum_moment'])
+		mag_on = check_magnet(dir+'/relax_'+pot_type,inp_yaml['magnetic_ordering']['minimum_moment'])
 	vasprun = make_incar_for_ncl(dir_band,mag_on,kpar,npar,vasp_std,vasp_gam,vasp_ncl)
 	incar_for_hse(dir_band+'/INCAR')
 	hse_algo = pygrep('ALGO',dir+'/relax_'+pot_type+'/INCAR',0,0).split()[2]
@@ -101,13 +102,13 @@ if pot_type == 'HSE':
 	if no_rlx == 1:
 		mag_on = 2
 	else:
-		mag_on = check_magnet(dir+'/relax_'+pot_type,inp_yaml['magnetic_ordering']['Minimum_moment'])
+		mag_on = check_magnet(dir+'/relax_'+pot_type,inp_yaml['magnetic_ordering']['minimum_moment'])
 
-	incar_from_yaml(dir_band,inp_band['INCAR'])
+	incar_from_yaml(dir_band,inp_band['incar'])
 	vasprun = make_incar_for_ncl(dir_band,mag_on,kpar,npar,vasp_std,vasp_gam,vasp_ncl)
 
 	# Band stucture calculation
-	out = run_vasp(dir_band,nproc,vasprun)
+	out = run_vasp(dir_band,nproc,vasprun,mpi)
 	if out == 1:  # error in vasp calculation
 		print 0
 		sys.exit() 
@@ -127,16 +128,16 @@ else:
 		shutil.copy(dir+'/INPUT0/sym',dir_band+'/.')
 
 		# make INCAR for CHGCAR
-		incar_from_yaml(dir_band,inp_band['INCAR'])
+		incar_from_yaml(dir_band,inp_band['incar'])
 		if no_rlx == 1:
 			mag_on = 2
 		else:
-			mag_on = check_magnet(dir+'/relax_'+pot_type,inp_yaml['magnetic_ordering']['Minimum_moment'])
+			mag_on = check_magnet(dir+'/relax_'+pot_type,inp_yaml['magnetic_ordering']['minimum_moment'])
 		vasprun = make_incar_for_ncl(dir_band,mag_on,kpar,npar,vasp_std,vasp_gam,vasp_ncl)
 		wincar(dir_band+'/INCAR',dir_band+'/INCAR',[['NSW','0'],['LCHARG','.T.']],[])
 
 		# VASP calculation for CHGCAR
-		out = run_vasp(dir_band,nproc,vasprun)
+		out = run_vasp(dir_band,nproc,vasprun,mpi)
 		if out == 1:  # error in vasp calculation
 			print 0
 			sys.exit() 
@@ -150,14 +151,14 @@ else:
 	if no_rlx == 1:
 		mag_on = 2
 	else:
-		mag_on = check_magnet(dir+'/relax_'+pot_type,inp_yaml['magnetic_ordering']['Minimum_moment'])
+		mag_on = check_magnet(dir+'/relax_'+pot_type,inp_yaml['magnetic_ordering']['minimum_moment'])
 
-	incar_from_yaml(dir_band,inp_band['INCAR'])
+	incar_from_yaml(dir_band,inp_band['incar'])
 	vasprun = make_incar_for_ncl(dir_band,mag_on,kpar,npar,vasp_std,vasp_gam,vasp_ncl)
 	wincar(dir_band+'/INCAR',dir_band+'/INCAR',[['ISTART','1'],['ICHARG','11'],['LCHARG','.F.'],['LWAVE','.T.']],[])
 
 	# Band stucture calculation
-	out = run_vasp(dir_band,nproc,vasprun)
+	out = run_vasp(dir_band,nproc,vasprun,mpi)
 	if out == 1:  # error in vasp calculation
 		print 0
 		sys.exit() 

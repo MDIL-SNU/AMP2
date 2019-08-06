@@ -21,10 +21,11 @@ src_path = inp_yaml['directory']['src_path']
 vasp_std = inp_yaml['program']['vasp_std']
 vasp_gam = inp_yaml['program']['vasp_gam']
 vasp_ncl = inp_yaml['program']['vasp_ncl']
+mpi = inp_yaml['program']['mpi_command']
 gnuplot = inp_yaml['program']['gnuplot']
 npar = inp_yaml['vasp_parallel']['npar']
 kpar = inp_yaml['vasp_parallel']['kpar']
-inp_hse = inp_yaml['Hybrid_oneshot']
+inp_hse = inp_yaml['hybrid_oneshot']
 inp_band = inp_yaml['band_calculation']
 node = node_simple(sys.argv[3])
 nproc = sys.argv[4]
@@ -107,7 +108,7 @@ if spin == '1' and int(float(nelect))%2 == 1 and ncl == 'F':
 # Identify the candidates of which band gap can open in hse calculation.
 if 'etal' in gap_log and os.path.isdir(dir+'/dos_'+pot_point) and os.path.isdir(dir+'/dos_'+pot_point+'/Pdos_dat'):
 	DF_DVB = round(DOS_ratio_fermi_to_vb(dir+'/dos_'+pot_point+'/DOSCAR',inp_hse['fermi_width'],[inp_hse['vb_dos_min'],inp_hse['vb_dos_max']]),4)
-	if DF_DVB < inp_hse['cutoff_DF_DVB']:
+	if DF_DVB < inp_hse['cutoff_df_dvb']:
 		make_amp2_log(dir_hse,'DF/DVB is '+str(DF_DVB)+'. Band_gap can open.')
 		find_extreme_kpt_for_hse(dir+'/band_GGA',inp_hse['energy_width_for_extreme'],inp_hse['search_space_for_extreme'])
 	else:
@@ -128,12 +129,12 @@ if os.path.isfile(dir+'/band_'+pot_point+'/KPT') and count_line(dir+'/band_'+pot
 		wincar(dir_hse+'/INCAR',dir_hse+'/INCAR',[['NSW','0'],['ALGO',''],['LDA',''],['LMAXMIX',''],['ISYM','3']],['\n\nHybrid calculation:\n   LHFCALC= .T.\n   HFSCREEN = 0.0\n   PRECFOCK = Normal\n   ALGO = ALL\n   AEXX = '+str(inp_hse['alpha'])+'\n'])
 	else:
 		wincar(dir_hse+'/INCAR',dir_hse+'/INCAR',[['NSW','0'],['ALGO',''],['LDA',''],['LMAXMIX',''],['ISYM','3']],['\n\nHybrid calculation:\n   LHFCALC= .T.\n   HFSCREEN = 0.2\n   PRECFOCK = Normal\n   ALGO = ALL\n   AEXX = '+str(inp_hse['alpha'])+'\n'])
-	incar_from_yaml(dir_hse,inp_hse['INCAR'])
-	mag_on = check_magnet(dir+'/relax_'+pot_cell,inp_yaml['magnetic_ordering']['Minimum_moment'])
+	incar_from_yaml(dir_hse,inp_hse['incar'])
+	mag_on = check_magnet(dir+'/relax_'+pot_cell,inp_yaml['magnetic_ordering']['minimum_moment'])
 	vasprun = make_incar_for_ncl(dir_hse,mag_on,kpar,npar,vasp_std,vasp_gam,vasp_ncl)
 	make_amp2_log(dir_hse,'Run VASP calculation.')
 	# VASP calculation for HSE
-	out = run_vasp(dir_hse,nproc,vasprun)
+	out = run_vasp(dir_hse,nproc,vasprun,mpi)
 	if out == 1:  # error in vasp calculation
 		print 0
 		sys.exit() 

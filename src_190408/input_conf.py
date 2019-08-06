@@ -7,6 +7,7 @@ def input_conf(conf):
 	home = os.getcwd()
 	with open(conf,'r') as inp:
 		inp_yaml = yaml.load(inp)
+	inp_yaml = dic_to_lowercase(inp_yaml)
 	conf0 = inp_yaml['directory']['src_path']
 	with open(conf0+'/config_def.yaml','r') as inp0:
 		inp0_yaml = yaml.load(inp0)
@@ -31,8 +32,9 @@ def input_conf(conf):
 			if not os.path.isdir(inp0_yaml['directory'][dir_key]):
 				os.mkdir(inp0_yaml['directory'][dir_key])
 	for dir_key in inp0_yaml['program'].keys():
-		inp0_yaml['program'][dir_key] = os.path.expanduser(inp0_yaml['program'][dir_key])	# home to absolute path
-		inp0_yaml['program'][dir_key] = os.path.abspath(inp0_yaml['program'][dir_key])	# absolute path
+		if not dir_key in ['mpi_command']:
+			inp0_yaml['program'][dir_key] = os.path.expanduser(inp0_yaml['program'][dir_key])	# home to absolute path
+			inp0_yaml['program'][dir_key] = os.path.abspath(inp0_yaml['program'][dir_key])	# absolute path
 
 	if not os.path.isfile(inp0_yaml['program']['gnuplot']):	# gnuplot path check, if not, do not plot the figure
 		inp0_yaml['calculation']['plot'] = 0
@@ -72,7 +74,32 @@ def inp_override(source,override):
 	return source
 
 def set_on_off(set_val):
-	if set_val in ['F','f',0,'.f.','.F.']:
+	if set_val in ['F','f',0,'.f.','.F.','off','OFF','Off']:
 		return 0
 	else:
 		return 1
+
+def dic_to_lowercase(data):
+	if isinstance(data,dict):
+		t = type(data)()
+		for k, v in data.items():
+			if k.lower() in ['pot_name','incar','u_value']:
+				t[k.lower()] = v
+			elif k.lower() in ['potential_type']:
+				if isinstance(v,list):
+					t[k.lower()] = [x for x in v]
+					for i in range(len(v)):
+						if isinstance(v[i],list):
+							t[k.lower()][i]= [x.upper() for x in v[i]]
+						else:
+							t[k.lower()][i] = v[i].upper()
+				elif isinstance(v,str):
+					t[k.lower()] = v.upper()
+				else:
+					t[k.lower()] = v
+			else:
+				t[k.lower()] = dic_to_lowercase(v)
+		return t
+	else:
+		return data
+

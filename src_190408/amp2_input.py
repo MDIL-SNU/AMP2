@@ -17,8 +17,8 @@ Submit_path = inp_yaml['directory']['submit']
 Output_path = inp_yaml['directory']['output']
 ERROR_path = inp_yaml['directory']['error']
 src_path = inp_yaml['directory']['src_path']
-pot_path_gga = inp_yaml['directory']['pot_path_GGA']
-pot_path_lda = inp_yaml['directory']['pot_path_LDA']
+pot_path_gga = inp_yaml['directory']['pot_path_gga']
+pot_path_lda = inp_yaml['directory']['pot_path_lda']
 
 node = node_simple(sys.argv[2])
 
@@ -45,12 +45,12 @@ elif target_idx == '1': # cifs
 	[prim_axis,prim_atom_pos,sym] = get_primitive_cell(axis,atom_pos)
 	write_file(str(sym),target+'/INPUT0/sym')
 	write_poscar(prim_axis,prim_atom_pos,target+'/INPUT0/POSCAR','Primitive Cell')
-	out_mk_potcar = make_potcar(target+'/INPUT0/POSCAR',pot_path_gga,pot_path_lda,target,src_path,inp_yaml['cif2vasp']['POT_name'])
+	out_mk_potcar = make_potcar(target+'/INPUT0/POSCAR',pot_path_gga,pot_path_lda,target,src_path,inp_yaml['cif2vasp']['pot_name'])
 	if out_mk_potcar == 1:
 		shutil.move(target,ERROR_path+'/'+target.split('/')[-1])
 		print 0
 		sys.exit()
-	out_mk_in_note = make_incar_note(target+'/INPUT0/POSCAR',target,inp_yaml['cif2vasp']['SOC_target'],inp_yaml['cif2vasp']['U_value'],inp_yaml['cif2vasp']['magmom'],src_path)
+	out_mk_in_note = make_incar_note(target+'/INPUT0/POSCAR',target,inp_yaml['cif2vasp']['soc_target'],inp_yaml['cif2vasp']['u_value'],inp_yaml['cif2vasp']['magmom'],src_path)
 	make_incar(target+'/INPUT0/POSCAR',target,src_path,inp_yaml['cif2vasp']['max_nelm'])
 
 	# if KPOINTS, POTCAR, INCAR are provided.
@@ -59,7 +59,7 @@ elif target_idx == '1': # cifs
 		if os.path.isfile(Submit_path+'/'+sub_file+'_'+title):
 			shutil.move(Submit_path+'/'+sub_file+'_'+title, target+'/INPUT0/'+sub_file)
 
-	incar_from_yaml(target+'/INPUT0',inp_yaml['cif2vasp']['INCAR'])
+	incar_from_yaml(target+'/INPUT0',inp_yaml['cif2vasp']['incar'])
 	shutil.move(target_mat, target+'/'+target_mat.split('/')[-1])
 
 else:	## For POSCAR type input
@@ -80,12 +80,12 @@ else:	## For POSCAR type input
 	write_file(str(sym),target+'/INPUT0/sym')
 	write_poscar(prim_axis,prim_atom_pos,target+'/INPUT0/POSCAR','Primitive Cell')
 
-	out_mk_potcar = make_potcar(target+'/INPUT0/POSCAR',pot_path_gga,pot_path_lda,target,src_path,inp_yaml['cif2vasp']['POT_name'])
+	out_mk_potcar = make_potcar(target+'/INPUT0/POSCAR',pot_path_gga,pot_path_lda,target,src_path,inp_yaml['cif2vasp']['pot_name'])
 	if out_mk_potcar == 1:
 		shutil.move(target,ERROR_path+'/'+target.split('/')[-1])
 		print 0
 		sys.exit()
-	out_mk_in_note = make_incar_note(target+'/INPUT0/POSCAR',target,inp_yaml['cif2vasp']['SOC_target'],inp_yaml['cif2vasp']['U_value'],inp_yaml['cif2vasp']['magmom'],src_path)
+	out_mk_in_note = make_incar_note(target+'/INPUT0/POSCAR',target,inp_yaml['cif2vasp']['soc_target'],inp_yaml['cif2vasp']['u_value'],inp_yaml['cif2vasp']['magmom'],src_path)
 	make_incar(target+'/INPUT0/POSCAR',target,src_path,inp_yaml['cif2vasp']['max_nelm'])
 
 	# if KPOINTS, POTCAR, INCAR are provided.
@@ -94,7 +94,7 @@ else:	## For POSCAR type input
 		if os.path.isfile(Submit_path+'/'+sub_file+'_'+title):
 			shutil.move(Submit_path+'/'+sub_file+'_'+title, target+'/INPUT0/'+sub_file)
 
-	incar_from_yaml(target+'/INPUT0',inp_yaml['cif2vasp']['INCAR'])
+	incar_from_yaml(target+'/INPUT0',inp_yaml['cif2vasp']['incar'])
 	shutil.move(target_mat, target+'/'+target_mat.split('/')[-1])
 
 if not target_idx == '0':

@@ -17,6 +17,7 @@ src_path = inp_yaml['directory']['src_path']
 vasp_std = inp_yaml['program']['vasp_std']
 vasp_gam = inp_yaml['program']['vasp_gam']
 vasp_ncl = inp_yaml['program']['vasp_ncl']
+mpi = inp_yaml['program']['mpi_command']
 gnuplot = inp_yaml['program']['gnuplot']
 npar = inp_yaml['vasp_parallel']['npar']
 kpar = inp_yaml['vasp_parallel']['kpar']
@@ -67,16 +68,16 @@ else:
 	subprocess.call(['cp',dir+'/INPUT0/sym',dir_chg+'/.'])
 
 	# make INCAR for CHGCAR
-	incar_from_yaml(dir_chg,inp_relax['INCAR'])
+	incar_from_yaml(dir_chg,inp_relax['incar'])
 	if no_rlx == 1:
 		mag_on = 2
 	else:
-		mag_on = check_magnet(dir+'/relax_'+POT,inp_yaml['magnetic_ordering']['Minimum_moment'])
+		mag_on = check_magnet(dir+'/relax_'+POT,inp_yaml['magnetic_ordering']['minimum_moment'])
 	vasprun = make_incar_for_ncl(dir_chg,mag_on,kpar,npar,vasp_std,vasp_gam,vasp_ncl)
 	wincar(dir_chg+'/INCAR',dir_chg+'/INCAR',[['NSW','0'],['LCHARG','.T.']],[])
 
 	# VASP calculation for CHGCAR
-	out = run_vasp(dir_chg,nproc,vasprun)
+	out = run_vasp(dir_chg,nproc,vasprun,mpi)
 	if out == 1:  # error in vasp calculation
 		print 0
 		sys.exit() 

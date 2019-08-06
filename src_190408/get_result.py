@@ -2,6 +2,22 @@ import os,sys,json,shutil
 from module_vector import *
 from module_vasprun import poscar_to_axis
 
+def write_formatted_band_log(band_log,band_log_form):
+	with open(band_log,'r') as f:
+		lines = f.readlines()
+	with open(band_log_form,'w') as g:
+		if 'etal' in lines[0]:
+			for line in lines:
+				g.write(line)
+		else:
+			gap = float(lines[0].split()[2])
+			E_vb = float(lines[2].split()[5])
+			E_cb = float(lines[3].split()[5])
+			g.write('Band gap: '+'{:10.3f}'.format(gap)+' eV '+lines[0].split()[4]+'\n\n')
+			g.write('VBM:'+lines[2].split(':')[1]+': '+'{:10.3f}'.format(E_vb)+' eV\n')
+			g.write('CBM:'+lines[3].split(':')[1]+': '+'{:10.3f}'.format(E_cb)+' eV\n\n')
+			g.write(lines[5]+lines[6])
+
 target = os.path.abspath(sys.argv[1])
 
 if not os.path.isdir(target+'/Results'):
@@ -40,7 +56,8 @@ for POT in pot_list:
 			gga_eg_type = str(gap_log.split()[4])
 		DB['Band_gap_'+POT] = gga_gap
 		DB['Band_gap_D/I_'+POT] = gga_eg_type
-		shutil.copy(target+'/band_'+POT+'/Band_gap.log',res_path+'/Band_gap_'+POT+'.log')
+		write_formatted_band_log(target+'/band_'+POT+'/Band_gap.log',res_path+'/Band_gap_'+POT+'.log')
+#		shutil.copy(target+'/band_'+POT+'/Band_gap.log',res_path+'/Band_gap_'+POT+'.log')
 
 	# Band_structure
 	if os.path.isfile(target+'/band_'+POT+'/'+name+'.png'):
@@ -60,7 +77,8 @@ for POT in pot_list:
 				hse_eg_type = str(gap_log.split()[4])
 			DB['Band_gap_hybrid_'+POT+'_'+POT2] = hse_gap
 			DB['Band_gap_D/I_hybrid_'+POT+'_'+POT2] = hse_eg_type
-			shutil.copy(target+'/hybrid_'+POT+'_'+POT2+'/Band_gap.log',res_path+'/Band_gap_hybrid_'+POT+'_'+POT2+'.log')
+			write_formatted_band_log(target+'/hybrid_'+POT+'_'+POT2+'/Band_gap.log',res_path+'/Band_gap_hybrid_'+POT+'_'+POT2+'.log')
+#			shutil.copy(target+'/hybrid_'+POT+'_'+POT2+'/Band_gap.log',res_path+'/Band_gap_hybrid_'+POT+'_'+POT2+'.log')
 
 	# Corrected band_structure
 	if os.path.isfile(target+'/band_'+POT+'/'+name+'_corrected.png'):

@@ -20,17 +20,18 @@ ERROR_path = inp_yaml['directory']['error']
 src_path = inp_yaml['directory']['src_path']
 vasp_std = inp_yaml['program']['vasp_std']
 vasp_gam = inp_yaml['program']['vasp_gam']
+mpi = inp_yaml['program']['mpi_command']
 gnuplot = inp_yaml['program']['gnuplot']
 npar = inp_yaml['vasp_parallel']['npar']
 kpar = inp_yaml['vasp_parallel']['kpar']
 
-inp_conv = inp_yaml['converge_test']
-ENCONV = inp_conv['ENCONV']
-PRCONV = inp_conv['PRCONV']
-FOCONV = inp_conv['FOCONV']
-ENSTART = inp_conv['ENSTART']
-ENSTEP = inp_conv['ENSTEP']
-ENMAX = inp_conv['ENMAX']
+inp_conv = inp_yaml['convergence_test']
+ENCONV = inp_conv['enconv']
+PRCONV = inp_conv['prconv']
+FOCONV = inp_conv['foconv']
+ENSTART = inp_conv['enstart']
+ENSTEP = inp_conv['enstep']
+ENMAX = inp_conv['enmax']
 pot_type = inp_conv['potential_type']
 if pot_type == 'LDA':
 	POT = 'LDA'
@@ -103,10 +104,10 @@ while convergence == 1 :
 
 		if pot_type == 'HSE':
 			incar_for_hse(now_path+'/INCAR')
-		incar_from_yaml(now_path,inp_conv['INCAR'])
+		incar_from_yaml(now_path,inp_conv['incar'])
 		wincar(now_path+'/INCAR',now_path+'/INCAR',[['ENCUT',str(ENCUT)],['NSW','0'],['LWAVE','F'],['LCHARG','F']],[])
 		# Running vasp
-		out = run_vasp(now_path,nproc,vasprun)
+		out = run_vasp(now_path,nproc,vasprun,mpi)
 		if out == 1:  # error in vasp calculation
 			print 0
 			sys.exit() 
@@ -114,7 +115,7 @@ while convergence == 1 :
 		out = electronic_step_convergence_check(now_path)
 		while out == 1:
 			make_amp2_log(dir+'/cutoff','Calculation options are changed. New calculation starts.')
-			out = run_vasp(now_path,nproc,vasprun)
+			out = run_vasp(now_path,nproc,vasprun,mpi)
 			if out == 1:  # error in vasp calculation
 				print 0
 				sys.exit()
