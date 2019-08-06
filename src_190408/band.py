@@ -41,7 +41,7 @@ dir_band = dir+'/band_'+pot_type
 
 # Check existing data
 if os.path.isdir(dir_band) and os.path.isfile(dir_band+'/Band_gap.log') :
-	make_amp2_log_default(dir,src_path,'Band calculation',node,code_data)
+	make_amp2_log_default(dir,src_path,'Band calculation with '+pot_type+' potential.',node,code_data)
 	gap = pyhead(dir_band+'/Band_gap.log',1).split()[2]
 #	gap = subprocess.check_output(['head','-n','1',dir_band+'/Band_gap.log']).split()[2]
 #	print('Success! Band gap: '+gap)
@@ -57,7 +57,7 @@ if not os.path.isdir(dir_band):
 
 os.chdir(dir_band)
 
-make_amp2_log_default(dir_band,src_path,'Band calculation',node,code_data)
+make_amp2_log_default(dir_band,src_path,'Band calculation with '+pot_type+' potential.',node,code_data)
 
 # check relax calculation
 no_rlx = 0

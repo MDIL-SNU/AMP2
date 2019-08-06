@@ -29,17 +29,12 @@ inp_hse = inp_yaml['hybrid_oneshot']
 inp_band = inp_yaml['band_calculation']
 node = node_simple(sys.argv[3])
 nproc = sys.argv[4]
-pot_type = sys.argv[5]
-if isinstance(pot_type,list):
-	if len(pot_type) == 1:
-		pot_cell = pot_type[0]
-		pot_point = pot_type[0]
-	else:
-		pot_cell = pot_type[0]
-		pot_point = pot_type[1]
-else:
-	pot_cell = pot_type
-	pot_point = pot_type
+pot_cell = sys.argv[5]
+pot_point = sys.argv[6]
+
+if pot_cell == 'HSE' and pot_point = 'HSE':
+	print 1
+	sys.exit()
 
 # Set directory for input structure and INCAR
 dir_hse = dir+'/hybrid_'+pot_cell+'_'+pot_point
@@ -115,6 +110,8 @@ if 'etal' in gap_log and os.path.isdir(dir+'/dos_'+pot_point) and os.path.isdir(
 		make_amp2_log(dir_hse,'DF/DVB is '+str(DF_DVB)+'. It is difficult for band gap to open.')
 		print 1
 		sys.exit()
+
+make_amp2_log(dir_hse,'This hybrid calculation is performed in the cell with '+pot_cell+' potential at the VBM and CBM with '+pot_point+' potential.')
 
 # we perform the hse calculation only for the materials of which band gap can open.
 if os.path.isfile(dir+'/band_'+pot_point+'/KPT') and count_line(dir+'/band_'+pot_point+'/KPT') > 3 :

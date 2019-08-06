@@ -39,7 +39,7 @@ dir_dos = dir+'/dos_'+pot_type
 
 # Check existing data
 if os.path.isdir(dir_dos) and os.path.isfile(dir_dos+'/Pdos_dat/Tot_dos.dat') :
-	make_amp2_log_default(dir,src_path,'DOS calculation',node,code_data)
+	make_amp2_log_default(dir,src_path,'DOS calculation with '+pot_type+' potential.',node,code_data)
 	make_amp2_log(dir,'DOS calculation is already done.\n')
 	print 1
 	sys.exit()
@@ -49,7 +49,7 @@ if not os.path.isdir(dir_dos):
 
 os.chdir(dir_dos)
 
-make_amp2_log_default(dir_dos,src_path,'DOS calculation',node,code_data)
+make_amp2_log_default(dir_dos,src_path,'DOS calculation with '+pot_type+' potential.',node,code_data)
 
 # check band or relax calculation
 no_rlx = 0

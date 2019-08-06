@@ -160,7 +160,17 @@ if cal_dic['dielectric'] == 1:
 		sys.exit()
 if cal_dic['hse_oneshot'] == 1:
 	for pot_type in inp_yaml['hybrid_oneshot']['potential_type']:
-		notice = subprocess.check_output(['python',src_path+'/hse_gap.py',target,inp_file,node,nproc,pot_type])
+		if isinstance(pot_type,list):
+			if len(pot_type) == 1:
+				pot_cell = pot_type[0]
+				pot_point = pot_type[0]
+			else:
+				pot_cell = pot_type[0]
+				pot_point = pot_type[1]
+		else:
+			pot_cell = pot_type
+			pot_point = pot_type
+		notice = subprocess.check_output(['python',src_path+'/hse_gap.py',target,inp_file,node,nproc,pot_cell,pot_point])
 		if not notice.splitlines()[-1][0] == '1':
 			shutil.move(target,ERROR_path+'/'+target.split('/')[-1])
 			sys.exit()
