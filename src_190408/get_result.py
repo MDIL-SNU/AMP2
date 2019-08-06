@@ -119,7 +119,7 @@ for POT in pot_list:
 			if lines[4].split() == 3:
 				effm = [float(x) for x in lines[4].split()]
 			else:
-				effm = [float(x) for x in lines[4].split()[1:4]]
+				effm = [float(x) for x in lines[4].split()[-3:]]
 			for i in range(3):
 				effm_ten.append([float(x) for x in lines[i+1].split()])
 				effm_avg = effm_avg+1.0/effm[i]
