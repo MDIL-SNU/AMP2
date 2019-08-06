@@ -32,7 +32,7 @@ nproc = sys.argv[4]
 pot_cell = sys.argv[5]
 pot_point = sys.argv[6]
 
-if pot_cell == 'HSE' and pot_point = 'HSE':
+if pot_cell == 'HSE' and pot_point == 'HSE':
 	print 1
 	sys.exit()
 
