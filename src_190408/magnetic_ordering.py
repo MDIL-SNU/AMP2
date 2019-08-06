@@ -2,7 +2,7 @@
 # date : 2019-04-08                #
 # Author : yybbyb@snu.ac.kr        #
 ####################################
-import os, sys, subprocess, yaml, glob
+import os, sys, subprocess, yaml, glob, shutil
 from module_log import *
 from module_vasprun import *
 from module_converge import *
@@ -244,7 +244,7 @@ for i in range(len(POSCARs)):
 	calc_path = ground_path+'/Stable'+str(i)
 	if not pos_atom_num[i] == min(pos_atom_num):
 		make_amp2_log(target,'There is smaller primitive cell than POSCAR_spin'+str(i)+'.')
-		os.rmdir(calc_path)
+		shutil.rmtree(calc_path)
 	else:
 		os.chdir(calc_path)
 		if os.path.isfile(calc_path+'/CONTCAR') and os.path.isfile(calc_path+'/free') and len(pygrep('free  ',calc_path+'/free',0,0).splitlines()) > 0 and len(pygrep('free  ',calc_path+'/free',0,0).splitlines()) <= inp_rlx['converged_ionic_step'] :
