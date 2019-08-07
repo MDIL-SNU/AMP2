@@ -20,7 +20,7 @@ def input_conf(conf):
 	for dir_key in inp0_yaml['directory'].keys():
 		inp0_yaml['directory'][dir_key] = os.path.expanduser(inp0_yaml['directory'][dir_key])	# home to absolute path
 		inp0_yaml['directory'][dir_key] = os.path.abspath(inp0_yaml['directory'][dir_key])	# absolute path
-		if dir_key == 'src_path' or dir_key == 'pot_path':
+		if dir_key in ['src_path','pot_path_gga','pot_path_lda']:
 			if not os.path.isdir(inp0_yaml['directory'][dir_key]):
 				print('ERROR. check the config_directory')
 				sys.exit()
