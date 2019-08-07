@@ -672,10 +672,10 @@ def gap_estimation(target,fermi,spin,ncl,KPT,Band,nelect):
 		gap_log.write('This system is metallic.\n')
 		gap_simple.write('     metal\n')
 		if metal == 2 :
-			gap_log.write('! Additional search is required for HSE0\n')
-			gap_simple.write('! Additional search is required for HSE0\n')
+			gap_log.write('! If it is not hybrid calculation, additional search is required for hybrid calculation.\n')
+			gap_simple.write('! If it is not hybrid calculation, Additional search is required for hybrid calculation.\n')
 		else :
-			gap_log.write("Use the 'KPT' file for HSE0 calculation\n")
+			gap_log.write("Use the 'KPT' file for hybrid calculation\n")
 			kpt_out.write("Example file\n               0\nReciprocal\n")
 			kpt_out.write('    '+'    '.join(total_VBM_kpt)+'\t0\n')
 			kpt_out.write('    '+'    '.join(total_CBM_kpt)+'\t0\n')

@@ -151,7 +151,11 @@ if os.path.isfile(dir+'/band_'+pot_point+'/KPT') and count_line(dir+'/band_'+pot
 
 	# Band gap calculation
 	gap = gap_estimation(dir_hse,fermi,spin,ncl,KPT,Band,nelect)
-	make_amp2_log(dir_hse,'HSE band gap calculaton is done.\nBand gap is '+gap)
+	if gap == 'metal':
+		make_amp2_log(dir_hse,'HSE band gap calculaton is done but it is metallic.')
+		gap = '0.0'
+	else:
+		make_amp2_log(dir_hse,'HSE band gap calculaton is done.\nBand gap is '+gap)
 
 	# Small gap correction
 	if set_on_off(inp_hse['band_structure_correction']) == 1 and float(gap) > 0.01:
