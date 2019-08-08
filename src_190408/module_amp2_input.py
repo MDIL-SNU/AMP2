@@ -1,6 +1,6 @@
 ####################################
 # Modifier : yybbyb@snu.ac.kr      #
-# data : 2019-04-08                #
+# data : 2019-08-08                #
 ####################################
 import os, sys, yaml, shutil, glob, math, subprocess
 from operator import itemgetter
@@ -392,6 +392,12 @@ def make_incar_note(poscar,target,soc_target,u_value,magmom_def,src_path):
 			u_val2 = u_val2 + ' 0.0'
 		if atom_z[j] in SOC :
 			soc_on = 1
+
+	# Checking metallic compounds (If all components are metallic elements, we do not impose +U.)
+	non_metal = ['H','He','B','C','N','O','F','Ne','Si','P','S','Cl','Ar','Ge','As','Se','Br','Kr','Sb','Te','I','Xe','At','Rn']
+	if not any([x in non_metal for x in atom_z]):
+		u_on = 0
+
 	maxmix = str(2+2*u_on)
 	with open(target+'/INPUT0/U_note', 'w') as out:
 		if not u_on == 0 :
