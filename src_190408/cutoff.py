@@ -91,7 +91,7 @@ while convergence == 1 :
 
 	rerun = 0 
 	if os.path.isfile(now_path+'/OUTCAR'):
-		if 'Voluntary' in pytail(now_path+'/OUTCAR',1):
+		if 'Voluntary' in pytail(now_path+'/OUTCAR'):
 #		if 'Voluntary' in subprocess.check_output(['tail','-n','1',now_path+'/OUTCAR']):
 			rerun = 1
 	if rerun == 0:

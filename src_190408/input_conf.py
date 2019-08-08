@@ -74,7 +74,7 @@ def inp_override(source,override):
 	return source
 
 def set_on_off(set_val):
-	if set_val in ['F','f',0,'.f.','.F.','off','OFF','Off']:
+	if str(set_val).lower() in ['f','0','.f.','off','false']:
 		return 0
 	else:
 		return 1
