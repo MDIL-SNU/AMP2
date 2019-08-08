@@ -51,13 +51,10 @@ if not os.path.isdir(dir_hse):
 
 # Alpha auto setting (From dielectric constant)
 PBE0_on = 0
-if inp_hse['alpha'] in ['Auto','auto'] or inp_hse['alpha'] == 0:
-	if os.path.isdir(dir+'/dielectric_GGA'):
+if inp_hse['alpha'] in ['Auto','auto','AUTO','A','.A.'] or inp_hse['alpha'] == 0:
+	if os.path.isdir(dir+'/dielectric_'+pot_point):
 		PBE0_on = 1
-		diel_path = dir+'/dielectric_GGA'
-	elif os.path.isdir(dir+'/dielectric_LDA'):
-		PBE0_on = 1
-		diel_path = dir+'/dielectric_LDA'
+		diel_path = dir+'/dielectric_'+pot_point
 	else:
 		inp_hse['alpha'] = 0.25
 
@@ -105,7 +102,7 @@ if 'etal' in gap_log and os.path.isdir(dir+'/dos_'+pot_point) and os.path.isdir(
 	DF_DVB = round(DOS_ratio_fermi_to_vb(dir+'/dos_'+pot_point+'/DOSCAR',inp_hse['fermi_width'],[inp_hse['vb_dos_min'],inp_hse['vb_dos_max']]),4)
 	if DF_DVB < inp_hse['cutoff_df_dvb']:
 		make_amp2_log(dir_hse,'DF/DVB is '+str(DF_DVB)+'. Band_gap can open.')
-		find_extreme_kpt_for_hse(dir+'/band_GGA',inp_hse['energy_width_for_extreme'],inp_hse['search_space_for_extreme'])
+		find_extreme_kpt_for_hse(dir+'/band_'+pot_point,inp_hse['energy_width_for_extreme'],inp_hse['search_space_for_extreme'])
 	else:
 		make_amp2_log(dir_hse,'DF/DVB is '+str(DF_DVB)+'. It is difficult for band gap to open.')
 		print 1
