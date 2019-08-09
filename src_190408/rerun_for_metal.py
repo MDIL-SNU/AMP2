@@ -54,11 +54,15 @@ if U_on == 0 :
 backup_path = target+'/'+target.split('/')[-1]+'_with_U'
 if not os.path.isdir(backup_path):
 	os.mkdir(backup_path,0755)
-shutil.copytree(target+'/INPUT0',backup_path+'/INPUT0')
 path_list = glob.glob(target+'/*')
 for path1 in path_list:
-	if os.path.isdir(path1) and not path1.split('/')[-1] == 'INPUT0' and not path1 == backup_path:
+	if os.path.isdir(path1) and not path1 == backup_path:
 		shutil.move(path1,backup_path+'/'+path1.split('/')[-1])
+
+if os.path.isdir(backup_path+'/INPUT0_old'):
+	shutil.copytree(backup_path+'/INPUT0_old',target+'/INPUT0')
+else:
+	shutil.copytree(backup_path+'/INPUT0',target+'/INPUT0')
 
 make_amp2_log_default(target,src_path,'Checking metal with U.',node,code_data)
 make_amp2_log(target,'It is metallic system. We rerun the calculation without U.')

@@ -13,7 +13,6 @@ code_data = 'Version xx. Modified at 2019-07-18'
 inp_file = sys.argv[1]
 with open(inp_file,'r') as f:
 	inp_yaml = yaml.load(f)
-Submit_path = inp_yaml['directory']['submit']
 Output_path = inp_yaml['directory']['output']
 ERROR_path = inp_yaml['directory']['error']
 src_path = inp_yaml['directory']['src_path']
@@ -24,6 +23,11 @@ node = node_simple(sys.argv[2])
 
 target_mat = sys.argv[3]
 target_idx = sys.argv[4]
+
+# In this step, if user give a specific material as Submit_path, Submit_path is not given directory.
+# Instead, we set to be the directory where the file is being as Submit_path.
+Submit_path = '/'.join(target_mat.split('/')[:-1])
+
 if target_idx == '0':	# directories
 	title = target_mat.split('/')[-1]
 	target = Output_path+'/'+title
