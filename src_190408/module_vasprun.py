@@ -122,7 +122,7 @@ def electronic_step_convergence_check(target):
 		elec_step = elec_step+1
 	if elec_step == int(pygrep('NELM',target+'/OUTCAR',0,0).split(';')[0].split()[2]):
 #	if elec_step == int(subprocess.check_output(['grep','NELM',target+'/OUTCAR']).split(';')[0].split()[2]):
-		make_amp2_log(target,'Electronic step is not conversed.')
+		make_amp2_log(target,'Electronic step is not converged.')
 		algo = pygrep('ALGO',target+'/INCAR',0,0).split()[2]
 #		algo = subprocess.check_output(['grep','ALGO',target+'/INCAR']).split()[2]
 		if algo == 'Normal' or algo == 'All':

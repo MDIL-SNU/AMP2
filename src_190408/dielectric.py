@@ -89,6 +89,10 @@ else:
 		sym = int(symf.readline().split()[0])
 	make_multiple_kpts(dir+'/kptest/kpoint.log',dir_diel+'/KPOINTS',dir_diel+'/POSCAR',inp_diel['kp_multiplier'],sym)
 	incar_from_yaml(dir_diel,inp_diel['incar'])
+	if not no_rlx == 1:
+		mag_on = check_magnet(dir+'/relax_'+POT,inp_yaml['magnetic_ordering']['minimum_moment'])
+		if mag_on == 0:
+			wincar(dir_diel+'/INCAR',dir_diel+'/INCAR',[['ISPIN','1'],['MAGMOM','']],[])
 	wincar(dir_diel+'/INCAR',dir_diel+'/INCAR',[['NSW','#'],['IBRION','8'],['NPAR','#'],['KPAR',kpar],['LEPSILON','.T.']],[])
 	vasprun = vasp_std
 	# VASP calculation
