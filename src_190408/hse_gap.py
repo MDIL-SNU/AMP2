@@ -118,11 +118,13 @@ if os.path.isfile(dir+'/band_'+pot_point+'/KPT') and count_line(dir+'/band_'+pot
 	# make KPOINTS
 	make_kpts_for_hse(dir+'/relax_'+pot_cell+'/IBZKPT',dir+'/band_'+pot_point+'/KPT',dir_hse,'oneshot')
 	# make INCAR
+	# delete LDAU tag
+	wincar(dir_hse+'/INCAR',dir_hse+'/INCAR',[['LDAU',''],['LDAUTYPE',''],['LDAUL',''],['LDAUU',''],['LDAUJ',''],['LDAUPRINT','']],[])
 	if PBE0_on == 1:
 		inp_hse['alpha'] = calc_alpha_auto(diel_path+'/dielectric.log')
-		wincar(dir_hse+'/INCAR',dir_hse+'/INCAR',[['NSW','0'],['ALGO',''],['LDA',''],['LMAXMIX',''],['ISYM','3']],['\n\nHybrid calculation:\n   LHFCALC= .T.\n   HFSCREEN = 0.0\n   PRECFOCK = Normal\n   ALGO = ALL\n   AEXX = '+str(inp_hse['alpha'])+'\n'])
+		wincar(dir_hse+'/INCAR',dir_hse+'/INCAR',[['NSW','0'],['ALGO',''],['LMAXMIX',''],['ISYM','3']],['\n\nHybrid calculation:\n   LHFCALC= .T.\n   HFSCREEN = 0.0\n   PRECFOCK = Normal\n   ALGO = ALL\n   AEXX = '+str(inp_hse['alpha'])+'\n'])
 	else:
-		wincar(dir_hse+'/INCAR',dir_hse+'/INCAR',[['NSW','0'],['ALGO',''],['LDA',''],['LMAXMIX',''],['ISYM','3']],['\n\nHybrid calculation:\n   LHFCALC= .T.\n   HFSCREEN = 0.2\n   PRECFOCK = Normal\n   ALGO = ALL\n   AEXX = '+str(inp_hse['alpha'])+'\n'])
+		wincar(dir_hse+'/INCAR',dir_hse+'/INCAR',[['NSW','0'],['ALGO',''],['LMAXMIX',''],['ISYM','3']],['\n\nHybrid calculation:\n   LHFCALC= .T.\n   HFSCREEN = 0.2\n   PRECFOCK = Normal\n   ALGO = ALL\n   AEXX = '+str(inp_hse['alpha'])+'\n'])
 	incar_from_yaml(dir_hse,inp_hse['incar'])
 	mag_on = check_magnet(dir+'/relax_'+pot_cell,inp_yaml['magnetic_ordering']['minimum_moment'])
 	vasprun = make_incar_for_ncl(dir_hse,mag_on,kpar,npar,vasp_std,vasp_gam,vasp_ncl)
