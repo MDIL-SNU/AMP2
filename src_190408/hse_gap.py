@@ -119,7 +119,7 @@ if os.path.isfile(dir+'/band_'+pot_point+'/KPT') and count_line(dir+'/band_'+pot
 	make_kpts_for_hse(dir+'/relax_'+pot_cell+'/IBZKPT',dir+'/band_'+pot_point+'/KPT',dir_hse,'oneshot')
 	# make INCAR
 	# delete LDAU tag
-	wincar(dir_hse+'/INCAR',dir_hse+'/INCAR',[['LDAU',''],['LDAUTYPE',''],['LDAUL',''],['LDAUU',''],['LDAUJ',''],['LDAUPRINT','']],[])
+	wincar(dir_hse+'/INCAR',dir_hse+'/INCAR',[['LDA+U',''],['LDAU',''],['LDAUTYPE',''],['LDAUL',''],['LDAUU',''],['LDAUJ',''],['LDAUPRINT','']],[])
 	if PBE0_on == 1:
 		inp_hse['alpha'] = calc_alpha_auto(diel_path+'/dielectric.log')
 		wincar(dir_hse+'/INCAR',dir_hse+'/INCAR',[['NSW','0'],['ALGO',''],['LMAXMIX',''],['ISYM','3']],['\n\nHybrid calculation:\n   LHFCALC= .T.\n   HFSCREEN = 0.0\n   PRECFOCK = Normal\n   ALGO = ALL\n   AEXX = '+str(inp_hse['alpha'])+'\n'])
