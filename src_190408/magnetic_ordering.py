@@ -27,6 +27,8 @@ gnuplot = inp_yaml['program']['gnuplot']
 npar = inp_yaml['vasp_parallel']['npar']
 kpar = inp_yaml['vasp_parallel']['kpar']
 
+max_nelm = str(inp_yaml['cif2vasp']['max_nelm'] * 2)
+
 inp_af = inp_yaml['magnetic_ordering']
 inp_rlx = inp_yaml['relaxation']
 cutoff_length = inp_af['cutoff_for_parameter']
@@ -146,7 +148,7 @@ for i in range(len(tot_mag_list)):
 		copy_input_no_kp(dir+'/INPUT0',targ_dir,POT)
 		subprocess.call(['cp',target+'/POSCAR_param',targ_dir+'/POSCAR'])
 		subprocess.call(['cp',src_path+'/KPOINTS_gamma',targ_dir+'/KPOINTS'])
-		wincar(targ_dir+'/INCAR',targ_dir+'/INCAR',[['LCHARG','F'],['LWAVE','F'],['ALGO','Normal'],['NELM','200']],[])
+		wincar(targ_dir+'/INCAR',targ_dir+'/INCAR',[['LCHARG','F'],['LWAVE','F'],['ALGO','Normal'],['NELM',max_nelm]],[])
 		if pot_type == 'HSE':
 			incar_for_hse(targ_dir+'/INCAR')
 			wincar(targ_dir+'/INCAR',targ_dir+'/INCAR',[['ALGO','All']],[])
@@ -270,7 +272,7 @@ for i in range(len(POSCARs)):
 				converge_condition = set_ediffg(calc_path+'/POSCAR',inp_rlx['force'],inp_rlx['pressure'],inp_rlx['energy'])
 				if not converge_condition == 0:
 					wincar(calc_path+'/INCAR',calc_path+'/INCAR',[['EDIFFG',str(converge_condition)]],[])
-				wincar(calc_path+'/INCAR',calc_path+'/INCAR',[['LCHARG','.F.'],['ALGO','Normal'],['NELM','200']],[])
+				wincar(calc_path+'/INCAR',calc_path+'/INCAR',[['LCHARG','.F.'],['ALGO','Normal'],['NELM',max_nelm]],[])
 				if pot_type == 'HSE':
 					incar_for_hse(calc_path+'/INCAR')
 					wincar(calc_path+'/INCAR',calc_path+'/INCAR',[['ALGO','All']],[])
