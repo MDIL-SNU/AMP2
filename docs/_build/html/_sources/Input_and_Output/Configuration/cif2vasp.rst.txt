@@ -10,25 +10,27 @@ the preset pseudopotential. (Preset pseudopotential: :doc:`/Input_and_Output/Con
   is performed only for band structure and density of states.
 
   Usage:
-    ::
-      cif2vasp:
-        soc_target:
-          - [element name]
-          - Bi
+  ::
+    cif2vasp:
+      soc_target:
+        - [element name]
+        - Bi
   Default:
-    ::
-      cif2vasp:
-        soc_target:
+  ::
+    cif2vasp:
+      soc_target:
 
 - u_value:
   u_value tag controls :math:`U` values for PBE + Hubbard :math:`U` method. By default, AMP2 imposes :math:`U` parameters for 3d
   transition metal. If all tag is used instead of element name, every :math:`U` value is set to be the target value.
 
   Usage:
+  ::
     cif2vasp:
       u_value:
-        - [element name]: real
+        - [element name]: real     
   Default:
+  ::
     cif2vasp:
       u_value:
         V: 3.1
@@ -46,13 +48,13 @@ the preset pseudopotential. (Preset pseudopotential: :doc:`/Input_and_Output/Con
   For magnetic ordering calculation, AMP2 uses two times of given value.
 
   Usage:
-    ::
-        cif2vasp:
-          max_nelm: [integer]
+  ::
+    cif2vasp:
+      max_nelm: [integer]
   Default:
-    ::
-        cif2vasp:
-          max_nelm: 100
+  ::
+    cif2vasp:
+      max_nelm: 100
 
 - incar:
 

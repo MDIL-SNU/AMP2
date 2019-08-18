@@ -183,102 +183,55 @@ the preset pseudopotential. (Preset pseudopotential: <a class="reference interna
 <li><p class="first">soc_target:
 soc_target tag determines the elements to carry out spin-orbit coupling calculation. In AMP2, spin-orbit coupling calculation
 is performed only for band structure and density of states.</p>
-<dl class="docutils">
-<dt>Usage:</dt>
-<dd><dl class="first last docutils">
-<dt>::</dt>
-<dd><dl class="first last docutils">
-<dt>cif2vasp:</dt>
-<dd><dl class="first last docutils">
-<dt>soc_target:</dt>
-<dd><ul class="first last simple">
-<li>[element name]</li>
-<li>Bi</li>
-</ul>
-</dd>
-</dl>
-</dd>
-</dl>
-</dd>
-</dl>
-</dd>
-<dt>Default:</dt>
-<dd><dl class="first last docutils">
-<dt>::</dt>
-<dd><dl class="first last docutils">
-<dt>cif2vasp:</dt>
-<dd><p class="first last">soc_target:</p>
-</dd>
-</dl>
-</dd>
-</dl>
-</dd>
-</dl>
+<p>Usage:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">cif2vasp</span><span class="p">:</span>
+  <span class="n">soc_target</span><span class="p">:</span>
+    <span class="o">-</span> <span class="p">[</span><span class="n">element</span> <span class="n">name</span><span class="p">]</span>
+    <span class="o">-</span> <span class="n">Bi</span>
+</pre></div>
+</div>
+<p>Default:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">cif2vasp</span><span class="p">:</span>
+  <span class="n">soc_target</span><span class="p">:</span>
+</pre></div>
+</div>
 </li>
 <li><p class="first">u_value:
 u_value tag controls <span class="math notranslate nohighlight">\(U\)</span> values for PBE + Hubbard <span class="math notranslate nohighlight">\(U\)</span> method. By default, AMP2 imposes <span class="math notranslate nohighlight">\(U\)</span> parameters for 3d
 transition metal. If all tag is used instead of element name, every <span class="math notranslate nohighlight">\(U\)</span> value is set to be the target value.</p>
-<dl class="docutils">
-<dt>Usage:</dt>
-<dd><dl class="first last docutils">
-<dt>cif2vasp:</dt>
-<dd><dl class="first last docutils">
-<dt>u_value:</dt>
-<dd><ul class="first last simple">
-<li>[element name]: real</li>
-</ul>
-</dd>
-</dl>
-</dd>
-</dl>
-</dd>
-<dt>Default:</dt>
-<dd><dl class="first last docutils">
-<dt>cif2vasp:</dt>
-<dd><dl class="first last docutils">
-<dt>u_value:</dt>
-<dd><p class="first last">V: 3.1
-Cr: 3.5
-Mn: 4
-Fe: 4
-Co: 3.3
-Ni: 6.4
-Cu: 4
-Zn: 7.5</p>
-</dd>
-</dl>
-</dd>
-</dl>
-</dd>
-</dl>
+<p>Usage:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">cif2vasp</span><span class="p">:</span>
+  <span class="n">u_value</span><span class="p">:</span>
+    <span class="o">-</span> <span class="p">[</span><span class="n">element</span> <span class="n">name</span><span class="p">]:</span> <span class="n">real</span>
+</pre></div>
+</div>
+<p>Default:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">cif2vasp</span><span class="p">:</span>
+  <span class="n">u_value</span><span class="p">:</span>
+    <span class="n">V</span><span class="p">:</span> <span class="mf">3.1</span>
+    <span class="n">Cr</span><span class="p">:</span> <span class="mf">3.5</span>
+    <span class="n">Mn</span><span class="p">:</span> <span class="mi">4</span>
+    <span class="n">Fe</span><span class="p">:</span> <span class="mi">4</span>
+    <span class="n">Co</span><span class="p">:</span> <span class="mf">3.3</span>
+    <span class="n">Ni</span><span class="p">:</span> <span class="mf">6.4</span>
+    <span class="n">Cu</span><span class="p">:</span> <span class="mi">4</span>
+    <span class="n">Zn</span><span class="p">:</span> <span class="mf">7.5</span>
+</pre></div>
+</div>
 </li>
 <li><p class="first">max_nelm:
 max_nelm tag control the maximum electronic selfconsistency steps. It is same to NELM tag in VASP.
 For magnetic ordering calculation, AMP2 uses two times of given value.</p>
-<dl class="docutils">
-<dt>Usage:</dt>
-<dd><dl class="first last docutils">
-<dt>::</dt>
-<dd><dl class="first last docutils">
-<dt>cif2vasp:</dt>
-<dd><p class="first last">max_nelm: [integer]</p>
-</dd>
-</dl>
-</dd>
-</dl>
-</dd>
-<dt>Default:</dt>
-<dd><dl class="first last docutils">
-<dt>::</dt>
-<dd><dl class="first last docutils">
-<dt>cif2vasp:</dt>
-<dd><p class="first last">max_nelm: 100</p>
-</dd>
-</dl>
-</dd>
-</dl>
-</dd>
-</dl>
+<p>Usage:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">cif2vasp</span><span class="p">:</span>
+  <span class="n">max_nelm</span><span class="p">:</span> <span class="p">[</span><span class="n">integer</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>Default:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">cif2vasp</span><span class="p">:</span>
+  <span class="n">max_nelm</span><span class="p">:</span> <span class="mi">100</span>
+</pre></div>
+</div>
 </li>
 <li><p class="first">incar:</p>
 <p>User can additionally modulate the INCAR for VASP calculation using this tag.</p>
