@@ -22,6 +22,7 @@ gnuplot = inp_yaml['program']['gnuplot']
 npar = inp_yaml['vasp_parallel']['npar']
 kpar = inp_yaml['vasp_parallel']['kpar']
 inp_relax = inp_yaml['relaxation']
+inp_band = inp_yaml['band_calculation']
 
 node = node_simple(sys.argv[3])
 nproc = sys.argv[4]

@@ -114,9 +114,9 @@ if pot_type == 'HSE':
 else:
 	# check CHGCAR
 	if os.path.isfile(dir_dos+'/CHGCAR') and os.path.getsize(dir_dos+'/CHGCAR') > 0 :
-		make_amp2_log(dir_dos,'DOS calculaton is performed by using existing CHGCAR file.')
+		make_amp2_log(dir_dos,'DOS calculation is performed by using existing CHGCAR file.')
 	elif os.path.isdir(dir_band) and os.path.isfile(dir_band+'/CHGCAR') and os.path.getsize(dir_band+'/CHGCAR') > 0 :
-		make_amp2_log(dir_dos,'DOS calculaton is performed by using existing CHGCAR file for band calculation.')
+		make_amp2_log(dir_dos,'DOS calculation is performed by using existing CHGCAR file for band calculation.')
 		# Copy input data and write CHGCAR
 		if no_rlx == 1:
 			copy_input(dir+'/INPUT0',dir_dos,POT)

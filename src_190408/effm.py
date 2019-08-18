@@ -99,12 +99,12 @@ else:
 	if not pot_type == 'HSE':
 		# check CHGCAR
 		if os.path.isfile(dir_effm+'/CHGCAR') and os.path.getsize(dir_effm+'/CHGCAR') > 0 :
-			make_amp2_log(dir_effm,'Effective mass calculaton is performed by using existing CHGCAR file.')
+			make_amp2_log(dir_effm,'Effective mass calculation is performed by using existing CHGCAR file.')
 		elif os.path.isfile(dir+'/band_'+pot_type+'/CHGCAR') and os.path.getsize(dir+'/band_'+pot_type+'/CHGCAR') > 0 :
 			copy_input_cont(dir+'/band_'+pot_type,dir_effm)
 			shutil.copy(dir+'/INPUT0/INCAR',dir_effm+'/INCAR')
 			subprocess.call(['cp',dir+'/band_'+pot_type+'/CHGCAR',dir_effm+'/.'])
-			make_amp2_log(dir_effm,'Effective mass calculaton is performed by using existing CHGCAR file in band calculation.')
+			make_amp2_log(dir_effm,'Effective mass calculation is performed by using existing CHGCAR file in band calculation.')
 		else:
 			make_amp2_log(dir_effm,'Do vasp calculation for CHGCAR file.')
 			# Copy input data and write CHGCAR

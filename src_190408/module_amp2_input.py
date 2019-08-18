@@ -412,7 +412,7 @@ def make_incar_note(poscar,target,soc_target,u_value,magmom_def,src_path):
 	tot_atom = sum([int(x) for x in atom_cnt])
 
 	if mag_on == 1 and os.path.isfile(target+'/INPUT0/final.dat'):
-		make_amp2_log(target+'/INPUT0','MAGMOM is determined by cif file\n')
+		make_amp2_log(target+'/INPUT0','MAGMOM is set by cif file\n')
 		with open(target+'/INPUT0/final.dat','r') as fin_file:
 			final = []
 			for line in fin_file.readlines():
@@ -452,7 +452,7 @@ def make_incar_note(poscar,target,soc_target,u_value,magmom_def,src_path):
 	# write spin note for unpaired spin electrons
 	if mag_on == 1:
 		if not os.path.isfile(target+'/INPUT0/final.dat') or not len(final[0]) == 3 or oxi_check == 2:
-			make_amp2_log(target+'/INPUT0','MAGMOM is determined by magmom default value\n')
+			make_amp2_log(target+'/INPUT0','MAGMOM is set by magmom default value\n')
 			oxi_check = 1
 			mag = []
 			for j in range(len(atom_z)) :

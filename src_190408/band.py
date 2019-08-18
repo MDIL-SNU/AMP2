@@ -117,7 +117,7 @@ if pot_type == 'HSE':
 else:
 	# check CHGCAR
 	if os.path.isfile(dir_band+'/CHGCAR') and os.path.getsize(dir_band+'/CHGCAR') > 0 :
-		make_amp2_log(dir_band,'Band calculaton is performed by using existing CHGCAR file.')
+		make_amp2_log(dir_band,'Band calculation is performed by using existing CHGCAR file.')
 	else:
 		make_amp2_log(dir_band,'VASP calculation for CHGCAR file.')
 		# Copy input data and write CHGCAR
@@ -186,7 +186,7 @@ if gap == 'metal':
 		fermi = float(pyhead(dir+'/relax_'+POT+'/DOSCAR',6).splitlines()[-1].split()[3])
 #		fermi = float(subprocess.check_output(['head',dir+'/relax_'+POT+'/DOSCAR','-n','6']).splitlines()[-1].split()[3])
 else:
-	make_amp2_log(dir_band,'Band calculaton is done.\nBand gap is '+gap+' eV.')
+	make_amp2_log(dir_band,'Band calculation is done.\nBand gap is '+gap+' eV.')
 	os.remove(dir_band+'/WAVECAR')
 with open(dir_band+'/KPOINTS_band','r') as kpt_inp:
 	nkpt_for_band = int(kpt_inp.readlines()[1].split()[0])
