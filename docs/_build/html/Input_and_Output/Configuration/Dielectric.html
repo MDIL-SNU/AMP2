@@ -1,0 +1,297 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Dielectric &mdash; AMP2  documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../_static/doctools.js"></script>
+        <script type="text/javascript" src="../../_static/language_data.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Effective_mass" href="Effective_mass.html" />
+    <link rel="prev" title="Density_of_states" href="Density_of_states.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> AMP2
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../Installation/Installation.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Tutorials/Tutorials.html">Tutorials</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../Input_and_Output.html">Input and Output</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="Configuration.html">Configuration</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="Directory.html">Directory</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Program.html">Program</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Calculation.html">Calculation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Vasp_parallel.html">Vasp_parallel</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cif2vasp.html">cif2vasp</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Convergence_test.html">Convergence_test</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Relaxation.html">Relaxation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Magnetic_ordering.html">Magnetic_ordering</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Band_calculation.html">Band_calculation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Hybrid_oneshot.html">Hybrid_oneshot</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Density_of_states.html">Density_of_states</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Dielectric</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Effective_mass.html">Effective_mass</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../Input_files.html">Input files</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../Output_files.html">Output files</a></li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">AMP2</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../Input_and_Output.html">Input and Output</a> &raquo;</li>
+        
+          <li><a href="Configuration.html">Configuration</a> &raquo;</li>
+        
+      <li>Dielectric</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../../_sources/Input_and_Output/Configuration/Dielectric.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="dielectric">
+<h1>Dielectric<a class="headerlink" href="#dielectric" title="Permalink to this headline">¶</a></h1>
+<p>Dielectric tensor is calculated using density functional perturbation theory calculation
+with twice of k-points in structure optimization. Dielectic calculation for metallic system is unphysical.
+Thus, AMP2 conducts the calculation for semi-conducting or insulating materials.
+The hybrid scheme and spin-orbit coupling calculation can not be used for dielectric calculation.</p>
+<ul>
+<li><p class="first">potential_type:</p>
+<p>potential_type tag determines the functional scheme (LDA or GGA) for dielectric calculation.
+Multiple functionals can be chosen.</p>
+<p>Usage:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">dielectric</span><span class="p">:</span>
+  <span class="n">potential_type</span><span class="p">:</span>
+    <span class="o">-</span> <span class="n">GGA</span> <span class="o">|</span> <span class="n">LDA</span>
+    <span class="o">-</span> <span class="n">GGA</span> <span class="o">|</span> <span class="n">LDA</span>
+</pre></div>
+</div>
+<p>Default:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">dielectric</span><span class="p">:</span>
+  <span class="n">potential_type</span><span class="p">:</span>
+    <span class="o">-</span> <span class="n">GGA</span>
+</pre></div>
+</div>
+</li>
+<li><p class="first">relax_check:</p>
+<p>Relax_check tag determines whether the dielectric calculation is not conducted without optimized structure or
+the dielectric calculation is performed without optimized structure (using initial configuration). If relax_check is True
+and no optimization has been performed, AMP2 gives an error message.</p>
+<p>Usage:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">dielectric</span><span class="p">:</span>
+  <span class="n">relax_check</span><span class="p">:</span> <span class="kc">True</span> <span class="o">|</span> <span class="kc">False</span>
+</pre></div>
+</div>
+<p>Default:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">dielectric</span><span class="p">:</span>
+  <span class="n">relax_check</span><span class="p">:</span> <span class="kc">True</span>
+</pre></div>
+</div>
+</li>
+<li><p class="first">metal_check:</p>
+<p>metal_check tag determines whether the dielectric calculation is conducted without band gap or not. If metal_check is True
+and no band calculation has been performed, AMP2 gives an error message.</p>
+<p>Usage:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">dielectric</span><span class="p">:</span>
+  <span class="n">metal_check</span><span class="p">:</span> <span class="kc">True</span> <span class="o">|</span> <span class="kc">False</span>
+</pre></div>
+</div>
+<p>Default:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">dielectric</span><span class="p">:</span>
+  <span class="n">metal_check</span><span class="p">:</span> <span class="kc">True</span>
+</pre></div>
+</div>
+</li>
+<li><p class="first">incar:</p>
+<p>User can additionally modulate the INCAR for VASP calculation using this tag.</p>
+<p>Usage:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">dielectric</span><span class="p">:</span>
+  <span class="n">incar</span><span class="p">:</span>
+    <span class="p">[</span><span class="n">INCAR</span> <span class="n">tag</span> <span class="ow">in</span> <span class="n">VASP</span><span class="p">]</span> <span class="p">:</span> <span class="p">[</span><span class="n">INCAR</span> <span class="n">command</span> <span class="ow">in</span> <span class="n">VASP</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>Default:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">dielectric</span><span class="p">:</span>
+  <span class="n">incar</span><span class="p">:</span>
+    <span class="n">EDIFF</span><span class="p">:</span> <span class="mf">1e-08</span>
+</pre></div>
+</div>
+</li>
+</ul>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="Effective_mass.html" class="btn btn-neutral float-right" title="Effective_mass" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="Density_of_states.html" class="btn btn-neutral float-left" title="Density_of_states" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019, Author
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
