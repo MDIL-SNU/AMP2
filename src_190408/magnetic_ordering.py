@@ -377,7 +377,7 @@ if ferro == 0:
 else:
 	if os.path.isdir(dir+'/relax_'+pot_type):
 		make_amp2_log(dir,'We changed the files in relax_'+pot_type+' from magnetic calculation.')
-		shutil.move(dir+'/relax_GGA',dir+'/relax_'+pot_type+'_old')
+		shutil.move(dir+'/relax_'+pot_type,dir+'/relax_'+pot_type+'_old')
 		shutil.copytree(stable_path,dir+'/relax_'+pot_type)
 	else:
 		make_amp2_log(dir,'We changed the files in relax_'+pot_type+' from magnetic calculation.')
