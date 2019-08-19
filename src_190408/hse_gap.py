@@ -37,7 +37,10 @@ if pot_cell == 'HSE' and pot_point == 'HSE':
 	sys.exit()
 
 # Set directory for input structure and INCAR
-dir_hse = dir+'/hybrid_'+pot_cell+'_'+pot_point
+if pot_cell == pot_point:
+	dir_hse = dir+'/hybrid_'+pot_cell
+else:
+	dir_hse = dir+'/hybrid_'+pot_cell+'_'+pot_point
 
 # Check existing data
 if os.path.isdir(dir_hse) and os.path.isfile(dir_hse+'/Band_gap.log') :
@@ -115,6 +118,7 @@ if os.path.isfile(dir+'/band_'+pot_point+'/KPT') and count_line(dir+'/band_'+pot
 	if not os.path.isfile(dir_hse+'/POSCAR'):
 		# copy VASP input
 		copy_input_cont(dir+'/relax_'+pot_cell,dir_hse)
+		subprocess.call(['cp',dir+'INPUT0/POTCAR_GGA',dir_hse+'/POTCAR'])
 	# make KPOINTS
 	make_kpts_for_hse(dir+'/relax_'+pot_cell+'/IBZKPT',dir+'/band_'+pot_point+'/KPT',dir_hse,'oneshot')
 	# make INCAR
