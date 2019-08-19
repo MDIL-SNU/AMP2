@@ -212,7 +212,7 @@ if inp_yaml['calculation']['plot'] == 1:
 	os.chdir(dir_dos+'/Pdos_dat')
 	subprocess.call([gnuplot,dir_dos+'/Pdos_dat/dos.in'])
 
-make_amp2_log(dir_dos,'DOS calcuation is done.')
+make_amp2_log(dir_dos,'DOS calculation is done.')
 
 with open(dir_dos+'/amp2.log','r') as amp2_log:
 	with open(dir+'/amp2.log','a') as amp2_log_tot:
