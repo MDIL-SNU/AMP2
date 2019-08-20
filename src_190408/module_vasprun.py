@@ -90,7 +90,7 @@ def set_parallel(kpoints,incar,npar,kpar):
 # run vasp	
 def run_vasp(target,nproc,vasprun,mpi):
 	# 0: well done, 1: error in vasp calculation
-	mpi_core = {'mpirun':'-np'}
+	mpi_core = {'mpirun':'-np','jsrun':'--np','srun':'-np','mpiexec':'-np','mpiexec.hydra':'-np','mpich':'-np'}
 	os.chdir(target)
 	out = subprocess.call([mpi+' '+mpi_core[mpi]+' '+nproc+' '+vasprun+' >& stdout.x'], stdout=subprocess.PIPE, shell=True)
 	if out == 0:

@@ -534,6 +534,24 @@ def get_band_reorder(Band,KPT,fermi,spin,target):
 
 	return Band_reorder
 
+def find_cb_gap(Band,fermi,dir_band):
+	cb_idx = []
+	vb_idx = []
+	for i in range(len(Band[0][0])):
+		cb_idx.append([])
+		vb_idx.append([])
+		for n in range(len(Band)):
+			if Band[n][0][i] > fermi:
+				cb_idx[i].append(n)
+			else:
+				vb_idx[i].append(n)
+
+	eVBM = max([max([Band[vb_idx[i][-1]][x][y] for x in range(len(Band[0]))]) for y in range(len(Band[0][0]))])
+	eCBM = min([min([Band[cb_idx[i][0]][x][y] for x in range(len(Band[0]))]) for y in range(len(Band[0][0]))])
+
+	return [vb_idx,cb_idx,eVBM,eCBM]
+	
+
 def find_cb(Band,Band_re,KPT,fermi,hse_path,target):
 	[gap_hse,vbm_kp,cbm_kp] = read_band_log(hse_path+'/Band_gap.log')
 	ref_kp_idx = []
@@ -562,6 +580,9 @@ def find_cb(Band,Band_re,KPT,fermi,hse_path,target):
 					else:					
 						ref_kp_search[i].append([k,n,1])
 					break
+		if len(ref_kp_search[i]) == 0:
+			# If band correction is difficult,
+			return [-1,-1,0,0]
 		ref_kp_search[i] = sorted(ref_kp_search[i],key=lambda x:x[2],reverse=True)
 		ref_kp_idx[i] = ref_kp_search[i][0][0]
 
