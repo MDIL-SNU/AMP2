@@ -2,10 +2,15 @@
 ### Date: 2019-01-23			###
 ### yybbyb@snu.ac.kr			###
 ###########################################
-import os, sys, subprocess, yaml, shutil
+import os, sys, subprocess, yaml, shutil, platform
 from input_conf import *
 from module_amp2_input import *
 from module_log import *
+# Check python version
+if not '2.7.' in platform.sys.version.split()[0]:
+	print ('You must use python 2.7 version. Please check your system.')
+	sys.exit()
+
 # input from shell
 conf_file = sys.argv[1]
 node = sys.argv[2]
