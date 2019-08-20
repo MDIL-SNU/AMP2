@@ -37,7 +37,10 @@ if pot_cell == 'HSE' and pot_point == 'HSE':
 	sys.exit()
 
 # Set directory for input structure and INCAR
-dir_hse = dir+'/hybrid_'+pot_cell+'_'+pot_point
+if pot_cell == pot_point:
+	dir_hse = dir+'/hybrid_'+pot_cell
+else:
+	dir_hse = dir+'/hybrid_'+pot_cell+'_'+pot_point
 
 # Check existing data
 if os.path.isdir(dir_hse) and os.path.isfile(dir_hse+'/Band_gap.log') :
@@ -115,6 +118,7 @@ if os.path.isfile(dir+'/band_'+pot_point+'/KPT') and count_line(dir+'/band_'+pot
 	if not os.path.isfile(dir_hse+'/POSCAR'):
 		# copy VASP input
 		copy_input_cont(dir+'/relax_'+pot_cell,dir_hse)
+		subprocess.call(['cp',dir+'INPUT0/POTCAR_GGA',dir_hse+'/POTCAR'])
 	# make KPOINTS
 	make_kpts_for_hse(dir+'/relax_'+pot_cell+'/IBZKPT',dir+'/band_'+pot_point+'/KPT',dir_hse,'oneshot')
 	# make INCAR
@@ -167,7 +171,7 @@ if os.path.isfile(dir+'/band_'+pot_point+'/KPT') and count_line(dir+'/band_'+pot
 #			spin = subprocess.check_output(['grep','ISPIN',dir_band+'/OUTCAR']).split()[2]
 			[KPT,Band,nelect] = EIGEN_to_array(dir_band+'/EIGENVAL',spin)
 			fermi = get_fermi_level(Band,nelect,ncl)
-			[vb_idx,cb_idx,eVBM,eCBM] = find_cb(Band,Band,KPT,fermi,dir_hse,dir_band)
+			[vb_idx,cb_idx,eVBM,eCBM] = find_cb_gap(Band,fermi,dir_band)
 			E_shift = float(gap)+eVBM-eCBM
 			for i in range(len(Band[0][0])):
 				for n in cb_idx[i]:
@@ -198,21 +202,24 @@ if os.path.isfile(dir+'/band_'+pot_point+'/KPT') and count_line(dir+'/band_'+pot
 				fermi = get_fermi_level(Band,nelect,ncl)
 				Band_reorder = get_band_reorder(Band,KPT,fermi,spin,dir_band)
 				[vb_idx,cb_idx,eVBM,eCBM] = find_cb(Band,Band_reorder,KPT,fermi,dir_hse,dir_band)
+				if isinstance(vb_idx[0],list):
+					E_shift = float(gap)+eVBM-eCBM
 
-				E_shift = float(gap)+eVBM-eCBM
-
-				for i in range(len(Band[0][0])):
-					for n in cb_idx[i]:
-						for k in range(len(KPT)):
-							Band_reorder[n][k][i] = Band_reorder[n][k][i] + E_shift
-				fermi = get_fermi_level(Band_reorder,nelect,ncl)
-				if calc_gap(fermi,spin,ncl,KPT,Band_reorder,nelect) > 0.01:
-					plot_band_corrected_structure(spin,Band_reorder,eVBM,dir_band+'/xtic.dat',dir_band+'/xlabel.dat',[inp_band['y_min'],inp_band['y_max']+float(gap)],dir_band)
-					if inp_yaml['calculation']['plot'] == 1:
-						os.chdir(dir_band)
-						subprocess.call([gnuplot,dir_band+'/band_corrected.in'])
+					for i in range(len(Band[0][0])):
+						for n in cb_idx[i]:
+							for k in range(len(KPT)):
+								Band_reorder[n][k][i] = Band_reorder[n][k][i] + E_shift
+					fermi = get_fermi_level(Band_reorder,nelect,ncl)
+					if calc_gap(fermi,spin,ncl,KPT,Band_reorder,nelect) > 0.01:
+						plot_band_corrected_structure(spin,Band_reorder,eVBM,dir_band+'/xtic.dat',dir_band+'/xlabel.dat',[inp_band['y_min'],inp_band['y_max']+float(gap)],dir_band)
+						if inp_yaml['calculation']['plot'] == 1:
+							os.chdir(dir_band)
+							subprocess.call([gnuplot,dir_band+'/band_corrected.in'])
+					else:
+						make_amp2_log(dir_hse,'Warning. We cannot correct the band structure.')
 				else:
-					make_amp2_log(dir_hse,'ERROR. We cannot correct the band structure.')
+					make_amp2_log(dir_hse,'Warning. We cannot correct the band structure.')
+
 			else:
 				make_amp2_log(dir_hse,'WAVECAR file is missing in band directory')
 else:

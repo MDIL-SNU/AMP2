@@ -39,8 +39,8 @@ dir_effm = dir+'/effm_'+pot_type+'/'+carrier_type
 
 # Check existing data
 if os.path.isdir(dir_effm) and os.path.isfile(dir_effm+'/effective_mass.log') :
-	make_amp2_log_default(dir,src_path,carrier_type+' effective mass calculation with '+pot_type,node,code_data)
-	make_amp2_log(dir,carrier_type+' effective mass calculation with '+pot_type+' is already done.')
+	make_amp2_log_default(dir,src_path,'Effective mass for '+carrier_type+' calculation with '+pot_type,node,code_data)
+	make_amp2_log(dir,'Effective mass for '+carrier_type+' calculation with '+pot_type+' is already done.')
 	print 1
 	sys.exit()
 
@@ -51,7 +51,7 @@ if not os.path.isdir(dir_effm):
 
 os.chdir(dir_effm)
 
-make_amp2_log_default(dir_effm,src_path,carrier_type+' effective mass calculation with '+pot_type,node,code_data)
+make_amp2_log_default(dir_effm,src_path,'Effective mass for '+carrier_type+' calculation with '+pot_type,node,code_data)
 ########
 if pot_type == 'HSE':
 	make_amp2_log(dir_effm,'Effective mass calculation with HSE is not supported yet.')
@@ -106,7 +106,7 @@ else:
 			subprocess.call(['cp',dir+'/band_'+pot_type+'/CHGCAR',dir_effm+'/.'])
 			make_amp2_log(dir_effm,'Effective mass calculation is performed by using existing CHGCAR file in band calculation.')
 		else:
-			make_amp2_log(dir_effm,'Do vasp calculation for CHGCAR file.')
+			make_amp2_log(dir_effm,'VASP calculation is conducted for CHGCAR file.')
 			# Copy input data and write CHGCAR
 			copy_input_cont(dir+'/band_'+pot_type,dir_effm)
 			shutil.copy(dir+'/INPUT0/INCAR',dir_effm+'/INCAR')
@@ -130,25 +130,25 @@ else:
 
 	# make pocket.log
 	if os.path.isfile(dir_effm+'/pocket.log') and os.path.getsize(dir_effm+'/pocket.log') > 0 :
-		make_amp2_log(dir_effm,'Using existing pocket.log')
+		make_amp2_log(dir_effm,'Existing pocket.log is used.')
 	else:
 		pocket(dir_effm,dir+'/band_'+pot_type,carrier_type,max_E_diff,inp_effm['pocket_search_dist'])
-		make_amp2_log(dir_effm,'Generate new pocket.log')
+		make_amp2_log(dir_effm,'New pocket.log is generated.')
 
 	# make k-points to determine searching space
 	if os.path.isfile(dir_effm+'/NKPT') and os.path.getsize(dir_effm+'/NKPT') > 0 :
-		make_amp2_log(dir_effm,'Using existing NKPT')
+		make_amp2_log(dir_effm,'Existing NKPT is used.')
 	else:
 		make_kpts_for_searching_space(dir_effm,inp_effm['grid_size_for_searching'])
 		if pot_type == 'HSE':
 			make_kpts_for_hse(dir+'/relax_'+pot_type+'/IBZKPT',dir_effm+'/KPOINTS_searching',dir_effm,'band')
 		else:
 			shutil.copy(dir_effm+'/KPOINTS_searching',dir_effm+'/KPOINTS')
-		make_amp2_log(dir_effm,'Generate new NKPT')
+		make_amp2_log(dir_effm,'New NKPT is generated.')
 
 	# make k-points to calculate effective mass	
 	if os.path.isfile(dir_effm+'/inp_grid') and os.path.getsize(dir_effm+'/inp_grid') > 0 :
-		make_amp2_log(dir_effm,'Using existing inp_grid')
+		make_amp2_log(dir_effm,'Existing inp_grid is used.')
 	else:
 		# check the vasp calculation to determine searching space
 		if not check_vasp_done(dir_effm) == 1:
@@ -171,7 +171,7 @@ else:
 		else:
 			make_amp2_log(dir_effm,'VASP calculation is already done.')
 		make_kpts_for_calculation(dir_effm,inp_effm['grid_size_for_calculation'],max_E_diff)
-		make_amp2_log(dir_effm,'Generate new inp_grid')
+		make_amp2_log(dir_effm,'New inp_grid is generated.')
 
 	# check the vasp calculation to calculate effective mass
 	if not check_vasp_done(dir_effm) == 1:
@@ -196,7 +196,7 @@ else:
 	[effm_dia,effm] = calc_effm(dir_effm,carrier_type,inp_effm['temperature_for_fermi'],oper)
 	write_effm(effm_dia,effm,dir_effm,carrier_type)
 
-	make_amp2_log(dir_effm,carrier_type+' effective mass calcuation is done.')
+	make_amp2_log(dir_effm,'Effective mass for '+carrier_type+' calculation is done.')
 
 with open(dir_effm+'/amp2.log','r') as amp2_log:
 	with open(dir+'/amp2.log','a') as amp2_log_tot:

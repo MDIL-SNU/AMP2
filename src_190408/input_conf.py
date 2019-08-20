@@ -17,6 +17,16 @@ def input_conf(conf):
 	
 	inp_override(inp0_yaml,inp_yaml)
 
+	if 'potential_type' in inp0_yaml['calculation'].keys() and not inp0_yaml['calculation']['potential_type'] is None:
+		for cal_key in inp0_yaml.keys():
+			if 'potential_type' in inp0_yaml[cal_key].keys():
+				# list type
+				if isinstance(inp0_yaml[cal_key]['potential_type'],list):
+					inp0_yaml[cal_key]['potential_type'] = [inp0_yaml['calculation']['potential_type']]
+				# str type
+				elif isinstance(inp0_yaml[cal_key]['potential_type'],str):
+					inp0_yaml[cal_key]['potential_type'] = inp0_yaml['calculation']['potential_type']
+
 	for dir_key in inp0_yaml['directory'].keys():
 		inp0_yaml['directory'][dir_key] = os.path.expanduser(inp0_yaml['directory'][dir_key])	# home to absolute path
 		inp0_yaml['directory'][dir_key] = os.path.abspath(inp0_yaml['directory'][dir_key])	# absolute path

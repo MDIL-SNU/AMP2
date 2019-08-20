@@ -114,7 +114,7 @@ else:
 		print 0
 		sys.exit()
 	write_diel_log(dir_diel+'/OUTCAR',dir_diel)
-	make_amp2_log(dir_diel,'Dielectric calcuation is done.')
+	make_amp2_log(dir_diel,'Dielectric calculation is done.')
 
 with open(dir_diel+'/amp2.log','r') as amp2_log:
 	with open(dir+'/amp2.log','a') as amp2_log_tot:

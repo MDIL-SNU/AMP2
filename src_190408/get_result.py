@@ -66,6 +66,19 @@ for POT in pot_list:
 		shutil.copy(target+'/band_'+POT+'/'+name+'.pdf',res_path+'/band_'+POT+'.pdf')
 
 	# HSE band gap
+	if os.path.isfile(target+'/hybrid_'+POT+'/Band_gap.log'):
+		with open(target+'/hybrid_'+POT+'/Band_gap.log','r') as inp:
+			gap_log = inp.readline()
+		if 'etal' in gap_log:
+			hse_gap = 0.0
+			hse_eg_type = 'Null'
+		else:
+			hse_gap = float(gap_log.split()[2])
+			hse_eg_type = str(gap_log.split()[4])
+		DB['Band_gap_hybrid_'+POT] = hse_gap
+		DB['Band_gap_D/I_hybrid_'+POT] = hse_eg_type
+		write_formatted_band_log(target+'/hybrid_'+POT+'/Band_gap.log',res_path+'/Band_gap_hybrid_'+POT+'.log')
+
 	for POT2 in pot_list:
 		if os.path.isfile(target+'/hybrid_'+POT+'_'+POT2+'/Band_gap.log'):
 			with open(target+'/hybrid_'+POT+'_'+POT2+'/Band_gap.log','r') as inp:

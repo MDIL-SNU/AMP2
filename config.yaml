@@ -1,162 +1,46 @@
 directory:
-  submit: ./Submit
-  output: ./Output
-  done: ./Done
-  error: ./ERROR
-  src_path: ./src
-  pot_path_gga: /data/vasp4us/pot/PBE52
-  pot_path_lda: /data/vasp4us/pot/LDA52
+  submit: ./Submit                      # a path of structure file or a directory containg structure files
+  output: ./Output                      # a path of a directory where calculation is conducted
+  done: ./Done                          # a path of a directory where results are saved
+  error: ./ERROR                        # a path of a directory where the materials with error are saved
+  src_path: ./src                       # a path of the directory of AMP2 source codes
+  pot_path_gga: /data/vasp4us/pot/PBE52 # a path of directory for GGA pseudopotential
+  pot_path_lda: /data/vasp4us/pot/LDA52 # a path of directory for GGA pseudopotential
 
 program:
-  vasp_std: /data/vasp4us/vasp_std
-  vasp_gam: /data/vasp4us/vasp_gam
-  vasp_ncl: /data/vasp4us/vasp_ncl
-  gnuplot: /gnuplot
-  mpi_command: mpirun
+  vasp_std: /data/vasp4us/vasp_std      # a path of standard version of VASP
+  vasp_gam: /data/vasp4us/vasp_gam      # a path of gamma-only version of VASP
+  vasp_ncl: /data/vasp4us/vasp_ncl      # a path of noncollinear version of VASP
+  gnuplot: /gnuplot                     # a path of executable file for gnuplot
+  mpi_command: mpirun                   # mpi command (ex. mpirun, mpiexec, ...)
 
 calculation:
-  kp_test: 1
-  encut_test: 1
-  relaxation: 1
-  band: 1
-  density_of_states: 1
-  hse_oneshot: 1
-  dielectric: 1
-  effective_mass: 1
-  plot: 1
-  magnetic_ordering: 1
-  large_off: -1
-
-cif2vasp:
-  pot_name:
-    GGA:
-#      Ge: Ge
-    LDA: 
-#      Ge: Ge
-  soc_target:
-#    - Bi
-#    - Tl
-#    - Pb
-  u_value:
-#    La: 7.5
-#    Ce: 4.5
-#    All: 0.0
-  magmom: 3
-  max_nelm: 100
-  incar:
+  magnetic_ordering: T                  # On/Off for the calculation to idetify most stable magnetic spin ordering
+  band: T                               # On/Off for the calculation for band structure and band gap
+  density_of_states: T                  # On/Off for the calculation for density of states
+  hse_oneshot: T                        # On/Off for the calculation for HSE@PBE
+  dielectric: T                         # On/Off for the calculation for dielectric constant
+  effective_mass: T                     # On/Off for the calculation for effective mass
+  potential_type: GGA                   # calculation scheme (LDA or GGA)
 
 vasp_parallel:
-  npar: 2
-  kpar: 2
+  npar: 2                               # the number of bands that are treated in parallel. It is same to NPAR tag in VASP.
+  kpar: 2                               # the number of kpoints that are treated in parallel. It is same to NPAR tag in VASP.
 
-convergence_test:
-  enconv: 0.01
-  prconv: 10
-  foconv: -1
-  initial_kpl: 1
-  max_kpl: 20
-  enstart: 200
-  enstep: 50
-  enmax: 1000
-  potential_type: GGA # Choose on potential in GGA, LDA, HSE
-  incar:
-
-relaxation:
-  potential_type:
-    - GGA
-#    - LDA
-#    - HSE
-  max_iteration: 10
-  converged_ionic_step: 5
-  pos_warning_percent: 1
-  energy: -1
-  pressure: 10
-  force: 0.02
-#  soc_on: 1
-  incar:
-#    EDIFF: 1e-08
-
-band_calculation:
-  kspacing_for_band: 0.01
-  type_of_kpt: all              # band (only for band structure plot)
-  y_min: 3                      # set plot region, downward from VBM
-  y_max: 2                      # set plot region, upward from CBM
-  potential_type:
-    - GGA
-#    - LDA
-#    - HSE
-  relax_check: 1
-  incar:
-    EDIFF: 1e-08 # For band correction, high precision is required.
+cif2vasp:
+  pot_name:                             # the pseudopotential potential for element.
+    GGA:                                # (Ex. GGA:\n    Ge:Ge_d\n    Cu:Cu_pv) 
+    LDA: 
+  soc_target:                           # the elements to carry out spin-orbit coupling calculation (Ex. soc_target:\n    - Bi\n    -Pb)
+  u_value:                              # U values for PBE+U calculation (Ex. u_value:\n    La: 7.5\n    Ce: 8.5)
 
 hybrid_oneshot:
-  alpha: 0.25
-  potential_type: # The potential used for lattice parameter optimization
-    - GGA # If one variable is inserted, we use the lattice parameter and the points of VBM and CBM with that potential.
-#   - - HSE # If two variables are inserted, we use the lattice parameter with above potential and the points of VBM and CBM with below potential.
-#     - GGA
-  fermi_width: 0.3
-  vb_dos_min: 1
-  vb_dos_max: 3
-  energy_width_for_extreme: 0.5
-  search_space_for_extreme: 0.05
-  cutoff_df_dvb: 0.3
-  band_structure_correction: 1
-  incar:
-
-density_of_states:
-  potential_type:
-    - GGA
-#    - LDA
-#    - HSE
-  relax_check: 1
-  kp_multiplier: 2
-  y_min: 3      # set plot region, downward from VBM
-  y_max: 2      # set plot region, upward from CBM
-  incar:
-
-dielectric:
-  kp_multiplier: 2
-  potential_type:
-    - GGA
-#    - LDA
-  incar:
-    EDIFF: 1e-08
-#    EDIFFG: 1e-04
-  metal_check: 1
-  relax_check: 1
+  alpha: 0.25                           # a mixing parameter for hybrid calculation. If "Auto" is set, the mixing parameter is set to be one of permittivity and PBE0 calualation is performed.
+  cutoff_df_dvb: 0.3                    # DF/DVB used to classify semiconductor candidates. (See paper)
+  band_structure_correction: True       # On/Off for the band structure correction
 
 effective_mass:
-  carrier_type:
+  carrier_type:                         # carrier type of effective mass to be estimated
     - hole
     - electron
-  pocket_search_dist: 0.02
-  grid_size_for_searching: 0.02
-  grid_size_for_calculation: 0.02
-  temperature_for_fermi: 300
-  fermi_for_cutoff: 0.99
-  potential_type:
-    - GGA
-#    - LDA
-#    - HSE
-  incar:
 
-magnetic_ordering:
-  potential_type: GGA # Choose on potential in GGA, LDA, HSE (If from relax:0, it must be same to potential_type in convergence.)
-  minimum_moment: 0.2
-  from_relax: 1
-  cutoff_for_parameter: 5.0
-  tolerance: 0.01 # Tolerance to define identical pair for Ising coefficient
-  energy_tolerance: 0.00001 # Tolerance to find lowest energy spin ordering candidates
-  maximum_atoms_number: -1
-  maximum_pair_type: -1
-  genetic_algorithm:
-    min_iteration: 0
-    max_iteration: -1
-    selection_coeff: 2
-    population:
-      best: 15
-      crossover: 30
-      mutation: 30
-      random: 15
-  incar:

@@ -62,7 +62,7 @@ make_amp2_log_default(dir_band,src_path,'Band calculation with '+pot_type+' pote
 # check relax calculation
 no_rlx = 0
 if not os.path.isdir(dir+'/relax_'+pot_type):
-	make_amp2_log(dir_band,'Relax directory does not exist.')
+	make_amp2_log(dir_band,'Directory of relaxation does not exist.')
 	no_rlx = 1
 else:
 	if not os.path.isfile(dir+'/relax_'+pot_type+'/CONTCAR'):

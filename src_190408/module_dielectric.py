@@ -68,15 +68,15 @@ def check_imaginary(outcar_file,target):
 #	lines = subprocess.check_output(['grep','f/i',outcar_file]).splitlines()
 	max_mode = 0
 	if len(lines) > 3:
-		make_amp2_log(dir_diel,'Warning!! Imaginary phonon mode is observed.')
+		make_amp2_log(target,'Warning!! Imaginary phonon mode is observed.')
 		for line in lines:
 			if float(line.split()[-2]) > max_mode:
 				max_mode = float(line.split()[-2])
 			if float(line.split()[-2]) > 0.1 :
-				make_amp2_log(dir_diel,'Warning!! Maximum frequency of imaginary mode is over 0.1 meV.')
+				make_amp2_log(target,'Warning!! Maximum frequency of imaginary mode is over 0.1 meV.')
 				return 2
 	else:
 		return 0
-	make_amp2_log(dir_diel,'Maximum frequency of imaginary mode is '+str(max_mode)+'. The results should be used cautiously.')
+	make_amp2_log(target,'Maximum frequency of imaginary mode is '+str(max_mode)+'. The results should be used cautiously.')
 	return 1
 
