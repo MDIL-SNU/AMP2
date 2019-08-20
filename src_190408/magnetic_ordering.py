@@ -132,6 +132,14 @@ if isinstance(inp_af['maximum_atoms_number'],int) and inp_af['maximum_atoms_numb
 	sys.exit()
 
 [pair_list,sole_list,mag_list] = find_pair(target+'/POSCAR_param',cutoff_length,mag_atom_list,mag_val,inp_af['tolerance'])
+if len(pair_list) == 0:
+	make_amp2_log(target,'There is no magnetic atom pair within cutoff radius.')
+	with open(target+'/amp2.log','r') as amp2_log:
+		with open(dir+'/amp2.log','a') as amp2_log_tot:
+			amp2_log_tot.write(amp2_log.read())
+	print 1
+	sys.exit()
+
 if isinstance(inp_af['maximum_pair_type'],int) and inp_af['maximum_pair_type'] > 0 and len(pair_list) > inp_af['maximum_pair_type']:
 	make_amp2_log(target,'The number of pairs is larger than the criteria.')
 	print 0
