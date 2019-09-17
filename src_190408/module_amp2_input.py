@@ -34,7 +34,7 @@ def make_list(inp_file):
 		dirs = []
 		for ll in dir_list:
 			title = ll.split('/')[-1]
-			if os.path.isdir(ll) and len(title.split('_')) >= 2:
+			if os.path.isdir(ll):
 				if os.path.isdir(ll+'/INPUT0'):
 					dirs.append(Submit_path+'/'+title)
 				else:
@@ -129,6 +129,7 @@ def make_poscar_from_cif(cif,target):
 				tmp = f.readline()
 				tmp = tmp.replace('\n','').replace('\r','')
 				if not "'" in tmp:
+					line=tmp
 					break
 				tmp = tmp.split("'")[1]
 				tmp = tmp.replace(" ","")
@@ -144,6 +145,7 @@ def make_poscar_from_cif(cif,target):
 				if not len(tmp.split()) > 0:
 					break
 				if not tmp.split()[0][0] == "'":
+					line=tmp
 					break
 				tmp = ''.join(tmp.split())
 				tmp = tmp.replace("'","")

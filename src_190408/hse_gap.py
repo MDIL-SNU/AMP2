@@ -202,7 +202,7 @@ if os.path.isfile(dir+'/band_'+pot_point+'/KPT') and count_line(dir+'/band_'+pot
 				fermi = get_fermi_level(Band,nelect,ncl)
 				Band_reorder = get_band_reorder(Band,KPT,fermi,spin,dir_band)
 				[vb_idx,cb_idx,eVBM,eCBM] = find_cb(Band,Band_reorder,KPT,fermi,dir_hse,dir_band)
-				if isinstance(vb_idx[0],list):
+				if isinstance(vb_idx,list):
 					E_shift = float(gap)+eVBM-eCBM
 
 					for i in range(len(Band[0][0])):

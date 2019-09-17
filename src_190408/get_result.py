@@ -43,7 +43,10 @@ for POT in pot_list:
 		ang_pos.append(calc_angle(axis[1],axis[0]))
 		DB['Lattice_parameter_'+POT] = lat_pos
 		DB['Angle_parameter_'+POT] = ang_pos
-		shutil.copy(target+'/relax_'+POT+'/CONTCAR',res_path+'/POSCAR_'+POT)
+		if os.path.isfile(target+'/INPUT0/POSCAR_rlx_'+POT):
+			shutil.copy(target+'/INPUT0/POSCAR_rlx_'+POT,res_path+'/POSCAR_'+POT)
+		else:
+			shutil.copy(target+'/relax_'+POT+'/CONTCAR',res_path+'/POSCAR_'+POT)
 
 	# Band_gap
 	if os.path.isfile(target+'/band_'+POT+'/Band_gap.log'):

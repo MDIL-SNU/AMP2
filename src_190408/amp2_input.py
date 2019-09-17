@@ -12,7 +12,7 @@ code_data = 'Version xx. Modified at 2019-07-18'
 # set file path from input file
 inp_file = sys.argv[1]
 with open(inp_file,'r') as f:
-	inp_yaml = yaml.load(f)
+	inp_yaml = yaml.safe_load(f)
 Output_path = inp_yaml['directory']['output']
 ERROR_path = inp_yaml['directory']['error']
 src_path = inp_yaml['directory']['src_path']
