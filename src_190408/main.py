@@ -20,7 +20,7 @@ home = os.getcwd()
 
 inp_file = input_conf(conf_file)
 with open(inp_file,'r') as f:
-	inp_yaml = yaml.load(f)
+	inp_yaml = yaml.safe_load(f)
 cal_dic = inp_yaml['calculation']
 src_path = inp_yaml['directory']['src_path']
 ERROR_path = inp_yaml['directory']['error']

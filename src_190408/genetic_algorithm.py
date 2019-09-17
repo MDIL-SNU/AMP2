@@ -14,7 +14,7 @@ from copy import deepcopy as dcopy
 ## read input
 inp_file = sys.argv[1]
 with open(inp_file,'r') as f:
-	inp_yaml = yaml.load(f)
+	inp_yaml = yaml.safe_load(f)
 
 mag_atom_list = inp_yaml['mag_atom_list']
 [axis,atom_pos] = read_poscar(sys.argv[2])

@@ -12,7 +12,7 @@ dir = sys.argv[1]
 
 inp_file = sys.argv[2]
 with open(inp_file,'r') as f:
-	inp_yaml = yaml.load(f)
+	inp_yaml = yaml.safe_load(f)
 ERROR_path = inp_yaml['directory']['error']
 src_path = inp_yaml['directory']['src_path']
 vasp_std = inp_yaml['program']['vasp_std']

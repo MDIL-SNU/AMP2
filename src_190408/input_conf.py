@@ -6,11 +6,11 @@ import os,sys,subprocess,yaml,collections
 def input_conf(conf):
 	home = os.getcwd()
 	with open(conf,'r') as inp:
-		inp_yaml = yaml.load(inp)
+		inp_yaml = yaml.safe_load(inp)
 	inp_yaml = dic_to_lowercase(inp_yaml)
 	conf0 = inp_yaml['directory']['src_path']
 	with open(conf0+'/config_def.yaml','r') as inp0:
-		inp0_yaml = yaml.load(inp0)
+		inp0_yaml = yaml.safe_load(inp0)
 	## default setting
 #	for dir_key in inp0_yaml['directory'].keys():
 #		inp0_yaml['directory'][dir_key] = home+inp0_yaml['directory'][dir_key]

@@ -10,7 +10,7 @@ from module_vasprun import pygrep,pyhead,pytail
 
 def make_list(inp_file):
 	with open(inp_file,'r') as f:
-		inp_yaml = yaml.load(f)
+		inp_yaml = yaml.safe_load(f)
 	Submit_path = inp_yaml['directory']['submit']
 	ERROR_path = inp_yaml['directory']['error']
 	# Submit_path is file (cif or POSCAR)
@@ -271,8 +271,8 @@ def poscar_error_check(poscar_full,target):
 
 # make potcar
 def make_potcar(poscar,pot_path_gga,pot_path_lda,target,src_path,pot_name):
-	POT_LDA = yaml.load(open(src_path+'/pot_table.yaml','r'))['LDA']
-	POT_GGA = yaml.load(open(src_path+'/pot_table.yaml','r'))['GGA']
+	POT_LDA = yaml.safe_load(open(src_path+'/pot_table.yaml','r'))['LDA']
+	POT_GGA = yaml.safe_load(open(src_path+'/pot_table.yaml','r'))['GGA']
 	if not pot_name['GGA'] is None:
 		for pot_key in pot_name['GGA'].keys() :
 			POT_GGA[pot_key] = pot_name['GGA'][pot_key]
@@ -317,7 +317,7 @@ def make_potcar(poscar,pot_path_gga,pot_path_lda,target,src_path,pot_name):
 # make incar note file including spin, +u and soc information.
 def make_incar_note(poscar,target,soc_target,u_value,magmom_def,src_path):
 	# U-J values for LDA+U method
-	TMU = yaml.load(open(src_path+'/U_table.yaml','r'))
+	TMU = yaml.safe_load(open(src_path+'/U_table.yaml','r'))
 	if not u_value is None:
 		if 'All' in u_value.keys() :
 			for u_key in TMU.keys():
