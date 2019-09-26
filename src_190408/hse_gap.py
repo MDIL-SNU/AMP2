@@ -118,7 +118,7 @@ if os.path.isfile(dir+'/band_'+pot_point+'/KPT') and count_line(dir+'/band_'+pot
 	if not os.path.isfile(dir_hse+'/POSCAR'):
 		# copy VASP input
 		copy_input_cont(dir+'/relax_'+pot_cell,dir_hse)
-		subprocess.call(['cp',dir+'INPUT0/POTCAR_GGA',dir_hse+'/POTCAR'])
+#		subprocess.call(['cp',dir+'/INPUT0/POTCAR_GGA',dir_hse+'/POTCAR'])  # copy_input_cont already copy POTCAR
 	# make KPOINTS
 	make_kpts_for_hse(dir+'/relax_'+pot_cell+'/IBZKPT',dir+'/band_'+pot_point+'/KPT',dir_hse,'oneshot')
 	# make INCAR
