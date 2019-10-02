@@ -100,13 +100,15 @@ if out == 2:  # electronic step is not converged. (algo = normal)
 	print 0
 	sys.exit()
 
+with open(dir_relax+'/OUT_TOT','a') as out_log:
+	out_log.write(open(dir_relax+'/OUTCAR','r').read())
 ionic_converge = 0
 iteration = 1
 energy = pygrep('free  ','OUTCAR',0,0).splitlines()
 #energy = subprocess.check_output(['grep','free  ','OUTCAR']).splitlines()
 while iteration < inp_rlx['max_iteration']:
-	with open(dir_relax+'/OUT_TOT','a') as out_log:
-		out_log.write(open(dir_relax+'/OUTCAR','r').read())
+#	with open(dir_relax+'/OUT_TOT','a') as out_log:
+#		out_log.write(open(dir_relax+'/OUTCAR','r').read())
 #	if len(energy) <= inp_rlx['converged_ionic_step']:
 #		ionic_converge = 1
 #		make_amp2_log(dir_relax,'Relaxation is done.')
@@ -135,15 +137,17 @@ while iteration < inp_rlx['max_iteration']:
 		make_amp2_log(dir_relax,'The calculation stops but electronic step is not converged.')
 		print 0
 		sys.exit()
-	if len(energy) <= inp_rlx['converged_ionic_step']:
-		ionic_converge = 1
-		make_amp2_log(dir_relax,'Relaxation is done.')
-		break
 
 	energy = pygrep('free  ','OUTCAR',0,0).splitlines()
 #	energy = subprocess.check_output(['grep','free  ','OUTCAR']).splitlines()
 	iteration = iteration+1
 	make_amp2_log(dir_relax,'Iteration number is '+str(iteration))
+	with open(dir_relax+'/OUT_TOT','a') as out_log:
+		out_log.write(open(dir_relax+'/OUTCAR','r').read())
+	if len(energy) <= inp_rlx['converged_ionic_step']:
+		ionic_converge = 1
+		make_amp2_log(dir_relax,'Relaxation is done.')
+		break
 
 if ionic_converge == 0 and len(energy) <= inp_rlx['converged_ionic_step']:
 	ionic_converge = 1
