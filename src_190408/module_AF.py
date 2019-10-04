@@ -187,12 +187,12 @@ def resized_kpoints(ref_path,targ_path):
 	
 	kpoint = open(targ_path+'/KPOINTS','w')
 	# Gamma-centred mesh for hexagoanl symmetry
-	if sym==6 or sym==12 or sym==13 or sym==14 or sym==10 or sym==15:
-		KPset = 'Gamma-centred'
+	if sym==12 or sym==13 or sym==14:
+		KPset = 'Gamma-centered'
 	else :
 		KPset = 'Monk-horst'
 	for i in range(3) :
-		if sym == 5: # symmetry BCT
+		if sym in [5,6,10]: # symmetry BCT
 			KP.append(str(max([int(round(x/min_dk)) for x in l])))
 		else:
 			KP.append(str(int(round(l[i]/min_dk))))
