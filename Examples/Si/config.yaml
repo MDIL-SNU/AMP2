@@ -1,5 +1,5 @@
 directory:
-  submit: ./Submit                     
+  submit: ./POSCAR_Si
   output: ./Output                     
   done: ./Done                         
   error: ./ERROR                       

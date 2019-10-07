@@ -1,0 +1,156 @@
+###############################################
+#                Introduction                 #
+###############################################
+
+Automated Ab initio Modeling of Materials
+Property Package (AMP2)
+
+###############################################
+#              File description               #
+###############################################
+
+Overall list of files in AMP2 is described 
+below:
+-----------------------------------------------
+run.sh
+README
+AMP2_manual.pdf
+config.yaml
+src/
+    amp2_input.py
+    band.py
+    cutoff.py
+    dielectric.py
+    dos.py
+    effm.py
+    genetic_algorithm.py
+    genetic_operator.py
+    get_result.py
+    hse_gap.py
+    input_conf.py
+    kpoint.py
+    magnetic_ordering.py
+    main.py
+    relax.py
+    rerun_for_metal.py
+    z_subr.py
+    make_supercell.py
+    mk_supercell.py
+    module_AF.py
+    module_GA.py
+    module_amp2_input.py
+    module_band.py
+    module_converge.py
+    module_dielectric.py
+    module_dos.py
+    module_effm.py
+    module_hse.py
+    module_log.py
+    module_relax.py
+    module_vasprun.py
+    module_vector.py
+    pot_table.yaml
+    INCAR0
+    KPOINTS_gamma
+    U_table.yaml
+    config_def.yaml
+Examples/
+    Si/
+        POSCAR_Si
+        config.yaml
+    Ge/
+        Ge.cif
+        config.yaml
+    NiO/
+        POSCAR_NiO
+        config.yaml
+----------------------------------------------
+Brief description of each file:
+- run.sh: shell script file for execution
+- README: brief description of code
+- AMP2_manual.pdf: manual file for detail description
+- config.yaml: configuration file for execution
+- src/: path for source file of AMP2
+- Examples/: path for examples
+
+##############################################
+#               Installation                 #
+##############################################
+
+AMP2 is written in Python 2.7. Currently, the
+package is not compatible with lower or higher
+version than 2.7. AMP2 is utilizes Python modules
+in the following with link to each site.
+  - numpy [https://www.numpy.org]
+  - scipy [https://www.scipy.org]
+  - spglib [https://atztogo.github.io/spglib]
+These modules should be pre-installed. In addition,
+AMP2 needs gnuplot to draw various figures.
+
+##############################################
+#                Basic setup                 #
+##############################################
+
+As we mentioned, AMP2 was written in Python 2.7. 
+Thus, to use AMP2, you should set to execute Python
+2.7 from 'python' command.
+----------------------------------------------
+AMP2 uses YAML style configuration file. All 
+setting parameters used in AMP2 can be controlled
+in 'config.yaml'. Before using AMP2, proper pathes
+and mpi program command should be set to be suitable
+for your system. Following commands are the
+essential directories and programs to be set.
+
+================ config.yaml =================
+  Directory:  
+    submit:		# the path of structure file
+    src:		# the path of source directory
+    pot_path_gga:	# the path of potential directory (PBE)
+    pot_path_lda:	# the path of potential directory (LDA)
+  Program:
+    vasp_std:		# the path of vasp binary file (standard)
+    vasp_gam:		# the path of vasp binary file (gamma-only)
+    vasp_ncl:		# the path of vasp binary file (noncollinear)
+    gnuplot:		# the path of gnuplot binary file
+    mpi_command:	# mpi command (ex. mpirun, mpiexec)
+==============================================
+
+##############################################
+#                Execution                   #
+##############################################
+
+You can execute AMP2 using Python command as following.
+
+=============================================
+python [src_path]/main.py [path for configuration file] [path for nodefile] [the number of cores]
+=============================================
+
+- [src_path] is the path for directory of source codes for AMP2.
+- [path for configuration file] is the path for configuration file (config.yaml).
+- [path for nodefile] is used to record the information of computing nodes.
+- [the number of cores] is the number of cores to be used in parallel computing.
+For the convenience, we provide the shell script file (run.sh) as following.
+
+================= run.sh ===================
+echo 'node information' > nodefile
+NPROC=16 # The number of cores for parallel computing
+### set path of config.yaml ###
+conf=./config.yaml
+################################
+#### Do not change #############
+src_path=`grep 'src_path' $conf | tr -s ' ' | cut -d " " -f 3`
+################################
+python $src_path/main.py $conf nodefile $NPROC >& stdout.x
+==========================================
+
+Before execution, you need to modify 'node information',
+NPROC and conf. Then, you can execute AMP2 using shell
+script as following.
+
+==========================================
+sh run.sh
+==========================================
+
+The shell script file can be easily integrated with 
+job scheduler program such as portable batch system (PBS).

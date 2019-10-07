@@ -1,5 +1,5 @@
 directory:
-  submit: ./Submit                     
+  submit: ./Ge.cif
   output: ./Output                     
   done: ./Done                         
   error: ./ERROR                       
@@ -18,3 +18,10 @@ vasp_parallel:
   npar: 2                              
   kpar: 2                              
 
+calculation:
+  magnetic_ordering: F
+  band: T
+  density_of_states: T
+  hse_oneshot: T
+  dielectric: F
+  effective_mass: F
