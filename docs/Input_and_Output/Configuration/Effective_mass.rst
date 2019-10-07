@@ -1,4 +1,0 @@
-Effective_mass
---------------
-
-sagasg
