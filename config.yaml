@@ -16,5 +16,5 @@ program:
 
 vasp_parallel:
   npar: 2                              
-  kpar: 2                              
+  kpar: 2
 
