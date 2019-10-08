@@ -169,7 +169,7 @@ def get_bond_matrix(poscar):
 	return sorted_bond_matrix
 
 def resized_kpoints(ref_path,targ_path):
-	sym = int(open(ref_path+'/sym','r').readline())
+	sym = int(open(targ_path+'/sym','r').readline())
 	KPT_ref = [float(x) for x in open(ref_path+'/KPOINTS','r').readlines()[3].split()]
 	axis = poscar_to_axis(ref_path+'/POSCAR')
 	recipro_latt = reciprocal_lattice(axis)
