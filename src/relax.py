@@ -105,12 +105,12 @@ iteration = 1
 energy = pygrep('free  ','OUTCAR',0,0).splitlines()
 #energy = subprocess.check_output(['grep','free  ','OUTCAR']).splitlines()
 while iteration < inp_rlx['max_iteration']:
-	with open(dir_relax+'/OUT_TOT','a') as out_log:
-		out_log.write(open(dir_relax+'/OUTCAR','r').read())
-	if len(energy) <= inp_rlx['converged_ionic_step']:
-		ionic_converge = 1
-		make_amp2_log(dir_relax,'Relaxation is done.')
-		break
+#	with open(dir_relax+'/OUT_TOT','a') as out_log:
+#		out_log.write(open(dir_relax+'/OUTCAR','r').read())
+#	if len(energy) <= inp_rlx['converged_ionic_step']:
+#		ionic_converge = 1
+#		make_amp2_log(dir_relax,'Relaxation is done.')
+#		break
 	shutil.copyfile(dir_relax+'/CONTCAR',dir_relax+'/POSCAR')
 	if bool(inp_rlx['incar']) and not 'EDIFFG' in inp_rlx['incar'].keys():
 		converge_condition = set_ediffg(dir_relax+'/POSCAR',inp_rlx['force'],inp_rlx['pressure'],inp_rlx['energy'])
@@ -140,6 +140,12 @@ while iteration < inp_rlx['max_iteration']:
 #	energy = subprocess.check_output(['grep','free  ','OUTCAR']).splitlines()
 	iteration = iteration+1
 	make_amp2_log(dir_relax,'Iteration number is '+str(iteration))
+	with open(dir_relax+'/OUT_TOT','a') as out_log:
+		out_log.write(open(dir_relax+'/OUTCAR','r').read())
+	if len(energy) <= inp_rlx['converged_ionic_step']:
+		ionic_converge = 1
+		make_amp2_log(dir_relax,'Relaxation is done.')
+		break
 
 if ionic_converge == 0 and len(energy) <= inp_rlx['converged_ionic_step']:
 	ionic_converge = 1
