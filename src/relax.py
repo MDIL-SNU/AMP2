@@ -6,7 +6,7 @@ import shutil, os, sys, subprocess, yaml
 from module_log import *
 from module_vasprun import *
 from module_relax import *
-code_data = 'Version 0.9.0. Modified at 2019-07-17'
+code_data = 'Version 0.9.1. Modified at 2019-11-12'
 
 dir = sys.argv[1]
 
@@ -81,7 +81,7 @@ if gam == 1:
 else:
 	vasprun = vasp_std
 
-out = run_vasp(dir_relax,nproc,vasprun,mpi)
+out = run_vasp_rlx(dir_relax,nproc,vasprun,mpi)
 if out == 1:  # error in vasp calculation
 	print 0
 	sys.exit() 
@@ -89,7 +89,7 @@ if out == 1:  # error in vasp calculation
 out = electronic_step_convergence_check(dir_relax)
 while out == 1:
 	make_amp2_log(dir_relax,'Calculation options are changed. New calculation starts.')
-	out = run_vasp(dir_relax,nproc,vasprun,mpi)
+	out = run_vasp_rlx(dir_relax,nproc,vasprun,mpi)
 	if out == 1:  # error in vasp calculation
 		print 0
 		sys.exit()
@@ -100,26 +100,24 @@ if out == 2:  # electronic step is not converged. (algo = normal)
 	print 0
 	sys.exit()
 
-with open(dir_relax+'/OUT_TOT','a') as out_log:
-	out_log.write(open(dir_relax+'/OUTCAR','r').read())
 ionic_converge = 0
 iteration = 1
 energy = pygrep('free  ','OUTCAR',0,0).splitlines()
 #energy = subprocess.check_output(['grep','free  ','OUTCAR']).splitlines()
 while iteration < inp_rlx['max_iteration']:
-#	with open(dir_relax+'/OUT_TOT','a') as out_log:
-#		out_log.write(open(dir_relax+'/OUTCAR','r').read())
-#	if len(energy) <= inp_rlx['converged_ionic_step']:
-#		ionic_converge = 1
-#		make_amp2_log(dir_relax,'Relaxation is done.')
-#		break
+	with open(dir_relax+'/OUT_TOT','a') as out_log:
+		out_log.write(open(dir_relax+'/OUTCAR','r').read())
+	if len(energy) <= inp_rlx['converged_ionic_step']:
+		ionic_converge = 1
+		make_amp2_log(dir_relax,'Relaxation is done.')
+		break
 	shutil.copyfile(dir_relax+'/CONTCAR',dir_relax+'/POSCAR')
 	if bool(inp_rlx['incar']) and not 'EDIFFG' in inp_rlx['incar'].keys():
 		converge_condition = set_ediffg(dir_relax+'/POSCAR',inp_rlx['force'],inp_rlx['pressure'],inp_rlx['energy'])
 		if not converge_condition == 0:
 			wincar(dir_relax+'/INCAR',dir_relax+'/INCAR',[['EDIFFG',str(converge_condition)]],[])
 
-	out = run_vasp(dir_relax,nproc,vasprun,mpi)
+	out = run_vasp_rlx(dir_relax,nproc,vasprun,mpi)
 	if out == 1:  # error in vasp calculation
 		print 0
 		sys.exit() 
@@ -127,7 +125,7 @@ while iteration < inp_rlx['max_iteration']:
 	out = electronic_step_convergence_check(dir_relax)
 	while out == 1:
 		make_amp2_log(dir_relax,'Calculation options are changed. New calculation starts.')
-		out = run_vasp(dir_relax,nproc,vasprun,mpi)
+		out = run_vasp_rlx(dir_relax,nproc,vasprun,mpi)
 		if out == 1:  # error in vasp calculation
 			print 0
 			sys.exit()
@@ -142,12 +140,6 @@ while iteration < inp_rlx['max_iteration']:
 #	energy = subprocess.check_output(['grep','free  ','OUTCAR']).splitlines()
 	iteration = iteration+1
 	make_amp2_log(dir_relax,'Iteration number is '+str(iteration))
-	with open(dir_relax+'/OUT_TOT','a') as out_log:
-		out_log.write(open(dir_relax+'/OUTCAR','r').read())
-	if len(energy) <= inp_rlx['converged_ionic_step']:
-		ionic_converge = 1
-		make_amp2_log(dir_relax,'Relaxation is done.')
-		break
 
 if ionic_converge == 0 and len(energy) <= inp_rlx['converged_ionic_step']:
 	ionic_converge = 1

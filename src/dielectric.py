@@ -7,7 +7,7 @@ from module_log import *
 from module_vasprun import *
 from module_dielectric import *
 from input_conf import set_on_off
-code_data = 'Version 0.9.0. Modified at 2019-07-29.'
+code_data = 'Version 0.9.1. Modified at 2019-11-12'
 
 dir = sys.argv[1]
 

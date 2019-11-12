@@ -169,7 +169,7 @@ def get_bond_matrix(poscar):
 	return sorted_bond_matrix
 
 def resized_kpoints(ref_path,targ_path):
-	sym = int(open(targ_path+'/sym','r').readline())
+	sym = int(open(ref_path+'/sym','r').readline())
 	KPT_ref = [float(x) for x in open(ref_path+'/KPOINTS','r').readlines()[3].split()]
 	axis = poscar_to_axis(ref_path+'/POSCAR')
 	recipro_latt = reciprocal_lattice(axis)
@@ -187,12 +187,12 @@ def resized_kpoints(ref_path,targ_path):
 	
 	kpoint = open(targ_path+'/KPOINTS','w')
 	# Gamma-centred mesh for hexagoanl symmetry
-	if sym==12 or sym==13 or sym==14:
-		KPset = 'Gamma-centered'
+	if sym==6 or sym==12 or sym==13 or sym==14 or sym==10 or sym==15:
+		KPset = 'Gamma-centred'
 	else :
 		KPset = 'Monk-horst'
 	for i in range(3) :
-		if sym in [5,6,10]: # symmetry BCT
+		if sym == 5: # symmetry BCT
 			KP.append(str(max([int(round(x/min_dk)) for x in l])))
 		else:
 			KP.append(str(int(round(l[i]/min_dk))))

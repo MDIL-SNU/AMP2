@@ -8,7 +8,7 @@ from module_log import *
 from module_vasprun import *
 from module_converge import *
 import math
-code_data = 'Version 0.9.0. Modified at 2019-07-17'
+code_data = 'Version 0.9.1. Modified at 2019-11-12'
 
 # Set input
 dir = sys.argv[1]

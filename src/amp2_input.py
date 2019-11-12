@@ -7,7 +7,7 @@ import yaml
 from module_vasprun import wincar,incar_from_yaml
 from module_log import *
 from module_amp2_input import *
-code_data = 'Version 0.9.0. Modified at 2019-07-18'
+code_data = 'Version 0.9.1. Modified at 2019-11-12'
 
 # set file path from input file
 inp_file = sys.argv[1]

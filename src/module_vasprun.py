@@ -32,7 +32,7 @@ def kpt_generation_for_relax(target,KPL,sym):
 	# Gamma-centred mesh for hexagoanl and rhombohedral symmetry
 	if sym==12 or sym==13 or sym==14:
 #	if sym==6 or sym==12 or sym==13 or sym==14 or sym==10 or sym==15:
-		KPset = 'Gamma-centered'
+		KPset = 'Gamma-centred'
 	else :
 		KPset = 'Monk-horst'
 	axis = poscar_to_axis(target+'/POSCAR')
@@ -97,6 +97,33 @@ def run_vasp(target,nproc,vasprun,mpi):
 		out_res = pytail(target+'/OUTCAR').split()
 #		out_res = subprocess.check_output(['tail','-1',target+'/OUTCAR']).split()
 		if len(out_res) > 0 and out_res[0] == 'Voluntary':
+			make_amp2_log(target,'VASP calculation is performed successfully.')
+			subprocess.call(['rm',target+'/vasprun.xml'])
+			write_log_in_outcar(target+'/OUTCAR',target+'/amp2.log')
+			return 0
+		else:
+			make_amp2_log(target,'ERROR occurs during vasp calculation. Check the calculation.')
+			return 1
+	else:
+		make_amp2_log(target,'ERROR occurs. vasp calculation may be not started. Check the calculation.')
+		return 1
+
+# run vasp for relax (+check stdout.x)	
+def run_vasp_rlx(target,nproc,vasprun,mpi):
+	# 0: well done, 1: error in vasp calculation
+	mpi_core = {'mpirun':'-np','jsrun':'--np','srun':'-np','mpiexec':'-np','mpiexec.hydra':'-np','mpich':'-np'}
+	os.chdir(target)
+	out = subprocess.call([mpi+' '+mpi_core[mpi]+' '+nproc+' '+vasprun+' >& stdout.x'], stdout=subprocess.PIPE, shell=True)
+	if out == 0:
+		out_res = pytail(target+'/OUTCAR').split()
+		std_res = pytail(target+'/stdout.x').split()
+#		out_res = subprocess.check_output(['tail','-1',target+'/OUTCAR']).split()
+		if len(out_res) > 0 and out_res[0] == 'Voluntary':
+			make_amp2_log(target,'VASP calculation is performed successfully.')
+			subprocess.call(['rm',target+'/vasprun.xml'])
+			write_log_in_outcar(target+'/OUTCAR',target+'/amp2.log')
+			return 0
+		elif (std_res[1] == 'POSCAR') and (std_res[3] == 'continue'):
 			make_amp2_log(target,'VASP calculation is performed successfully.')
 			subprocess.call(['rm',target+'/vasprun.xml'])
 			write_log_in_outcar(target+'/OUTCAR',target+'/amp2.log')

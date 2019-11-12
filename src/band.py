@@ -9,7 +9,7 @@ from module_band import *
 from module_hse import *
 from input_conf import set_on_off
 
-code_data = 'Version 0.9.0. Modified at 2019-07-17.'
+code_data = 'Version 0.9.1. Modified at 2019-11-12'
 
 dir = sys.argv[1]
 
