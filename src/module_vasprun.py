@@ -32,7 +32,7 @@ def kpt_generation_for_relax(target,KPL,sym):
 	# Gamma-centred mesh for hexagoanl and rhombohedral symmetry
 	if sym==12 or sym==13 or sym==14:
 #	if sym==6 or sym==12 or sym==13 or sym==14 or sym==10 or sym==15:
-		KPset = 'Gamma-centred'
+		KPset = 'Gamma-centered'
 	else :
 		KPset = 'Monk-horst'
 	axis = poscar_to_axis(target+'/POSCAR')
