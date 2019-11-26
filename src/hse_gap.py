@@ -9,7 +9,7 @@ from module_band import *
 from module_hse import *
 from input_conf import set_on_off
 from module_relax import *
-code_data = 'Version 0.9.1. Modified at 2019-11-12'
+code_data = 'Version 0.9.3. Modified at 2019-11-22'
 
 dir = sys.argv[1]
 
@@ -119,8 +119,9 @@ if os.path.isfile(dir+'/band_'+pot_point+'/KPT') and count_line(dir+'/band_'+pot
 		# copy VASP input
 		copy_input_cont(dir+'/relax_'+pot_cell,dir_hse)
 		subprocess.call(['cp',dir+'/INPUT0/POTCAR_GGA',dir_hse+'/POTCAR'])  #HSE always needs POTCAR_GGA
-	# make KPOINTS
-	make_kpts_for_hse(dir+'/relax_'+pot_cell+'/IBZKPT',dir+'/band_'+pot_point+'/KPT',dir_hse,'oneshot')
+	# make reduce_KPOINTS
+	reduce_kpt =  convergence_check_E(dir)
+	make_kpts_for_hse(reduce_kpt+'/IBZKPT',dir+'/band_'+pot_point+'/KPT',dir_hse,'oneshot')
 	# make INCAR
 	# delete LDAU tag
 	wincar(dir_hse+'/INCAR',dir_hse+'/INCAR',[['LDA+U',''],['LDAU',''],['LDAUTYPE',''],['LDAUL',''],['LDAUU',''],['LDAUJ',''],['LDAUPRINT','']],[])

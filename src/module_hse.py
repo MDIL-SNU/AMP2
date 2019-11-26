@@ -6,7 +6,7 @@ from module_band import *
 from module_vector import *
 from module_vasprun import *
 import numpy as np
-import sys,binascii,os,subprocess
+import sys,binascii,os,subprocess, glob
 
 def make_kpts_for_hse(kpt_rlx_file,kpt_band_file,target,calc_type):
 	# calc_type is band or oneshot
@@ -598,3 +598,29 @@ def find_cb(Band,Band_re,KPT,fermi,hse_path,target):
 	eCBM = min([min([Band_re[x][cb_kp_idx][y] for x in cb_idx[y]]) for y in range(len(Band_re[0][0]))])
 
 	return [vb_idx,cb_idx,eVBM,eCBM]
+
+
+# check convergence for hse calculaton (only check energy)
+def convergence_check_E(target):
+    path_list = glob.glob(target+'/kptest/KP*')
+    if os.path.isfile(target+'/kptest/KPOINTS_converged'):
+        path_list.remove(target+'/kptest/KPOINTS_converged')
+    path_list.sort()
+    if os.path.isfile(target+'/kptest/kpoint.log'):
+        ENCONV = float(pygrep('E/atom',target+'/kptest/kpoint.log',0,0).split()[-2])
+    else:
+        ENCONV = 0.01
+    nion = int(pygrep('NION',path_list[0]+'/OUTCAR',0,0).splitlines()[-1].split()[11])
+    check = 0
+    for i in range(len(path_list[:-2])):
+        ENERGY = []
+        if ENCONV > 0:
+            for j in range(3):
+                ENERGY.append(float(pygrep('free  ',path_list[i+j]+'/OUTCAR',0,0).splitlines()[-1].split()[4]))
+        converge = 0
+        # Convergence check for energy/atom
+        if (abs(ENERGY[0]-ENERGY[1])/nion < ENCONV and abs(ENERGY[0]-ENERGY[2])/nion < ENCONV) and check == 0:
+#            print path_list[i]
+            E_conv_kp = path_list[i]
+            check = 1
+    return E_conv_kp

@@ -10,7 +10,7 @@ from module_AF import *
 from module_amp2_input import *
 from module_relax import *
 from input_conf import set_on_off
-code_data = 'Version 0.9.1. Modified at 2019-11-12'
+code_data = 'Version 0.9.3. Modified at 2019-11-22'
 
 # Set input
 dir = sys.argv[1]

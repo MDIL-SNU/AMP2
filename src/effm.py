@@ -6,7 +6,7 @@ import shutil, os, sys, subprocess, yaml
 from module_log import *
 from module_vasprun import *
 from module_effm import *
-code_data = 'Version 0.9.1. Modified at 2019-11-12'
+code_data = 'Version 0.9.3. Modified at 2019-11-22'
 
 dir = sys.argv[1]
 
@@ -186,6 +186,22 @@ else:
 		if out == 1:  # error in vasp calculation
 			print 0
 			sys.exit() 
+
+        out = electronic_step_convergence_check(dir_band)
+
+        while out == 1:
+            make_amp2_log(dir_band,'Calculation options are changed. New calculation starts.')
+            out = run_vasp(dir_band,nproc,vasprun,mpi)
+            if out == 1:  # error in vasp calculation
+                print 0
+                sys.exit()
+            out = electronic_step_convergence_check(dir_band)
+
+        if out == 2:  # electronic step is not converged. (algo = normal)
+            make_amp2_log(dir_band,'The calculation stops but electronic step is not converged.')
+            print 0
+            sys.exit()
+
 	else:
 		make_amp2_log(dir_effm,'VASP calculation is already done.')
 

@@ -26,7 +26,7 @@ if not os.path.isdir(target+'/Results'):
 res_path = target+'/Results'
 DB = {}
 name =  target.split('/')[-1]
-DB['Version'] = '0.9.1'
+DB['Version'] = '0.9.3'
 DB['Material_name'] = name
 
 pot_list = ['GGA','LDA','HSE']

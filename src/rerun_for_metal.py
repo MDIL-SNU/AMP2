@@ -6,7 +6,7 @@ import os, sys, subprocess, yaml, shutil, glob
 from input_conf import input_conf
 from module_amp2_input import *
 from module_log import *
-code_data = 'Version 0.9.1. Modified at 2019-11-12'
+code_data = 'Version 0.9.3. Modified at 2019-11-22'
 
 # input from shell
 inp_file = sys.argv[1]
