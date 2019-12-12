@@ -212,9 +212,6 @@ def make_poscar_from_cif(cif,target):
 	c3 = (c**2.0-c1**2.0-c2**2.0)**0.5
 	cc = [c1,c2,c3]
 	# atomic postion from symmetry information
-	with open(target+'/INPUT0/final.dat','w') as out_final:
-		for i in range(len(atoms)):
-			out_final.write('\t'.join([str(x) for x in atoms[i][:3]])+'\n')
 
 	atom_z = []		# Final atom names
 	atom_cnt = []	# Final atom counts
@@ -246,6 +243,15 @@ def make_poscar_from_cif(cif,target):
 
 	# Write POSCAR & POTCAR
 	write_poscar([aa,bb,cc],atom_pos,target+'/INPUT0/POSCAR_conv','cif to poscar')
+	[axis,atom_pos] = read_poscar(target+'/INPUT0/POSCAR_conv')
+
+	with open(target+'/INPUT0/final.dat','w') as out_final:
+		for i in range(len(atom_pos)):
+			if i == 0 or atom_pos[i][4] != atom_pos[i-1][4]:
+				for j in range(len(atoms)):
+					if atoms[j][1] == atom_pos[i][4]:
+						out_final.write('\t'.join([str(x) for x in atoms[j][:3]])+'\n')
+	
 	return 0
 
 # poscar file error check
@@ -637,16 +643,19 @@ def impose_atom_type_index(axis,atom_pos):
 	return new_atom_pos
 
 def write_poscar(axis,atom_pos,out_pos,title):
-	atom_type = []
-	atom_num = []
-	atom_type.append(atom_pos[0][3])
-	atom_num.append(1)
+	new_atom_pos = {}
+	new_atom_pos[atom_pos[0][3]] = [atom_pos[0]]
+	atom_num = {}
+	atom_num[atom_pos[0][3]] = 1
+	atom_type = [atom_pos[0][3]]
 	for i in range(1,len(atom_pos)):
-		if atom_type[-1] == atom_pos[i][3]:
-			atom_num[-1] = atom_num[-1] + 1
+		if atom_pos[i][3] in new_atom_pos.keys():
+			new_atom_pos[atom_pos[i][3]].append(atom_pos[i])
+			atom_num[atom_pos[i][3]] = atom_num[atom_pos[i][3]] + 1
 		else:
+			new_atom_pos[atom_pos[i][3]] = [atom_pos[i]]
+			atom_num[atom_pos[i][3]] = 1
 			atom_type.append(atom_pos[i][3])
-			atom_num.append(1)
 
 	with open(out_pos,'w') as pos:
 		pos.write(title+'\n')
@@ -654,11 +663,12 @@ def write_poscar(axis,atom_pos,out_pos,title):
 		for i in range(3):
 			pos.write('      '+'    '.join([str(x) for x in axis[i]])+'\n')
 		pos.write('    '+'    '.join(atom_type)+'\n')
-		pos.write('    '+'    '.join([str(x) for x in atom_num])+'\n')
+		pos.write('    '+'    '.join([str(atom_num[x]) for x in atom_type])+'\n')
 		pos.write('Selective dynamics\n')
 		pos.write('Direct\n')
-		for line in atom_pos:
-			pos.write('    '+'    '.join([str(x) for x in line[0:3]])+'  T  T  T ! '+line[4]+'\n')
+		for atom_name in atom_type:
+			for line in new_atom_pos[atom_name]:
+				pos.write('    '+'    '.join([str(x) for x in line[0:3]])+'  T  T  T ! '+line[4]+'\n')
 
 def get_primitive_cell(axis,atom_pos):
 	import spglib
