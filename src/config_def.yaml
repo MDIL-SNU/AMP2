@@ -87,7 +87,7 @@ band_calculation:
 #    - HSE
   relax_check: 1
   incar:
-    EDIFF: 1e-08 # For band correction, high precision is required.
+    EDIFF: 1e-06
 
 hybrid_oneshot:
   alpha: 0.25
