@@ -6,7 +6,7 @@ import shutil, os, sys, subprocess, yaml
 from module_log import *
 from module_vasprun import *
 from module_effm import *
-code_data = 'Version 0.9.3. Modified at 2019-11-22'
+code_data = 'Version 0.9.4. Modified at 2019-11-28'
 
 dir = sys.argv[1]
 
