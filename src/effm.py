@@ -187,18 +187,18 @@ else:
 			print 0
 			sys.exit() 
 
-        out = electronic_step_convergence_check(dir_band)
+        out = electronic_step_convergence_check(dir_effm)
 
         while out == 1:
-            make_amp2_log(dir_band,'Calculation options are changed. New calculation starts.')
-            out = run_vasp(dir_band,nproc,vasprun,mpi)
+            make_amp2_log(dir_effm,'Calculation options are changed. New calculation starts.')
+            out = run_vasp(dir_effm,nproc,vasprun,mpi)
             if out == 1:  # error in vasp calculation
                 print 0
                 sys.exit()
-            out = electronic_step_convergence_check(dir_band)
+            out = electronic_step_convergence_check(dir_effm)
 
         if out == 2:  # electronic step is not converged. (algo = normal)
-            make_amp2_log(dir_band,'The calculation stops but electronic step is not converged.')
+            make_amp2_log(dir_effm,'The calculation stops but electronic step is not converged.')
             print 0
             sys.exit()
 
