@@ -9,7 +9,7 @@ from module_band import *
 from module_hse import *
 from input_conf import set_on_off
 
-code_data = 'Version 0.9.3. Modified at 2019-11-22'
+code_data = 'Version 0.9.4. Modified at 2019-11-28'
 
 dir = sys.argv[1]
 
@@ -134,7 +134,7 @@ else:
         else:
             mag_on = check_magnet(dir+'/relax_'+pot_type,inp_yaml['magnetic_ordering']['minimum_moment'])
         vasprun = make_incar_for_ncl(dir_band,mag_on,kpar,npar,vasp_std,vasp_gam,vasp_ncl)
-        wincar(dir_band+'/INCAR',dir_band+'/INCAR',[['NSW','0'],['LCHARG','.T.']],[])
+        wincar(dir_band+'/INCAR',dir_band+'/INCAR',[['NSW','0'],['LCHARG','.T.'],['ALGO','Normal']],[])
 
         # VASP calculation for CHGCAR
         out = run_vasp(dir_band,nproc,vasprun,mpi)
@@ -157,7 +157,7 @@ else:
 
     incar_from_yaml(dir_band,inp_band['incar'])
     vasprun = make_incar_for_ncl(dir_band,mag_on,kpar,npar,vasp_std,vasp_gam,vasp_ncl)
-    wincar(dir_band+'/INCAR',dir_band+'/INCAR',[['ISTART','1'],['ICHARG','11'],['LCHARG','.F.'],['LWAVE','.T.']],[])
+    wincar(dir_band+'/INCAR',dir_band+'/INCAR',[['ISTART','1'],['ICHARG','11'],['LCHARG','.F.'],['LWAVE','.T.'],['ALGO','Normal']],[])
 
     # Band stucture calculation
     out = run_vasp(dir_band,nproc,vasprun,mpi)
