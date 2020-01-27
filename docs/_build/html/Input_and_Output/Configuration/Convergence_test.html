@@ -1,0 +1,410 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Convergence_test &mdash; AMP2  documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../_static/doctools.js"></script>
+        <script type="text/javascript" src="../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> AMP2
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.9.5
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../Installation/Installation.html">Installation and execution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Overview/Overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Input/Input.html">Input</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Output/Output.html">Output</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Examples/Examples.html">Examples</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">AMP2</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html">Docs</a> &raquo;</li>
+        
+      <li>Convergence_test</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../../_sources/Input_and_Output/Configuration/Convergence_test.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="convergence-test">
+<h1>Convergence_test<a class="headerlink" href="#convergence-test" title="Permalink to this headline">¶</a></h1>
+<p>For the accuracy and efficiency, AMP<sup>2</sup>carries out a convergence test for kpoint and cutoff energy.
+In AMP<sup>2</sup>, converged kpoints and cutoff energy are searched by increasing the number of kpoints and cutoff energy.
+Then, if the differences of energy, pressure and force between specific point and its next two points are within
+convergence criteria, the specific point is determined as converged kpoints or cutoff energy.
+AMP<sup>2</sup>determine the k-points along each direction by an integer <img class="math" src="../../_images/math/e956c35f8be9e237b2d9e9859ad4751b7865a2ac.png" alt="n_{\textrm{k}}"/> as follows;</p>
+<div class="system-message">
+<p class="system-message-title">System Message: WARNING/2 (<span class="docutils literal">\begin{align}
+    N_{i} &amp;= \textrm{ceil}[b_{i}/(b_{\textrm{max}}/n_{k})] &amp;&amp; (1)\\
+    k_{i} &amp;= {{2m-N_{i}-1} \over {2N_{i}}} &amp;&amp; (2)
+\end{align}
+
+</span>)</p>
+<p>latex exited with error
+[stdout]
+This is pdfTeX, Version 3.14159265-2.6-1.40.20 (TeX Live 2019) (preloaded format=latex)
+ restricted \write18 enabled.
+entering extended mode
+(./math.tex
+LaTeX2e &lt;2019-10-01&gt; patch level 3
+(/usr/local/texlive/2019/texmf-dist/tex/latex/base/article.cls
+Document Class: article 2019/10/25 v1.4k Standard LaTeX document class
+(/usr/local/texlive/2019/texmf-dist/tex/latex/base/size12.clo))
+(/usr/local/texlive/2019/texmf-dist/tex/latex/base/inputenc.sty)
+(/usr/local/texlive/2019/texmf-dist/tex/latex/amsmath/amsmath.sty
+For additional information on amsmath, use the `?' option.
+(/usr/local/texlive/2019/texmf-dist/tex/latex/amsmath/amstext.sty
+(/usr/local/texlive/2019/texmf-dist/tex/latex/amsmath/amsgen.sty))
+(/usr/local/texlive/2019/texmf-dist/tex/latex/amsmath/amsbsy.sty)
+(/usr/local/texlive/2019/texmf-dist/tex/latex/amsmath/amsopn.sty))
+(/usr/local/texlive/2019/texmf-dist/tex/latex/amscls/amsthm.sty)
+(/usr/local/texlive/2019/texmf-dist/tex/latex/amsfonts/amssymb.sty
+(/usr/local/texlive/2019/texmf-dist/tex/latex/amsfonts/amsfonts.sty))
+(/usr/local/texlive/2019/texmf-dist/tex/latex/anyfontsize/anyfontsize.sty)
+(/usr/local/texlive/2019/texmf-dist/tex/latex/tools/bm.sty) (./math.aux)
+(/usr/local/texlive/2019/texmf-dist/tex/latex/amsfonts/umsa.fd)
+(/usr/local/texlive/2019/texmf-dist/tex/latex/amsfonts/umsb.fd)
+
+Package amsmath Warning: Foreign command \over;
+(amsmath)                \frac or \genfrac should be used instead
+(amsmath)                 on input line 17.
+
+! Misplaced \omit.
+\math&#64;cr&#64;&#64;&#64; ...&#64; \&#64;ne \add&#64;amps \maxfields&#64; \omit 
+                                                  \kern -\alignsep&#64; \iftag&#64; ...
+l.17 \end{align}\end{split}
+                           
+! Misplaced \omit.
+\math&#64;cr&#64;&#64;&#64; ...&#64; \&#64;ne \add&#64;amps \maxfields&#64; \omit 
+                                                  \kern -\alignsep&#64; \iftag&#64; ...
+l.17 \end{align}\end{split}
+                           
+[1] (./math.aux) )
+(see the transcript file for additional information)
+Output written on math.dvi (1 page, 684 bytes).
+Transcript written on math.log.
+</p>
+</div>
+<p>where <img class="math" src="../../_images/math/5aa339d4daf45a810dda332e3c80a0698e526e04.png" alt="i"/> is the axis index, <img class="math" src="../../_images/math/cdd5ca0dc9282a633e0062b1f59a862e5b1cd267.png" alt="b_{i}"/> is the length of ith reciprocal lattice,
+<img class="math" src="../../_images/math/fa248368c4fd2085e4b9c444558cfc8091aef8bb.png" alt="b_{\textrm{max}}"/> is the maximum among <img class="math" src="../../_images/math/cdd5ca0dc9282a633e0062b1f59a862e5b1cd267.png" alt="b_{i}"/>.</p>
+<ul>
+<li><dl>
+<dt>potential_type:</dt><dd><p>potential_type tag determines the functional scheme (LDA, GGA or HSE) for convergence test. Only one of them should be chosen.</p>
+<p>Usage:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">convergence_test</span><span class="p">:</span>
+  <span class="n">potential_type</span><span class="p">:</span> <span class="n">GGA</span> <span class="o">|</span> <span class="n">LDA</span> <span class="o">|</span> <span class="n">HSE</span>
+</pre></div>
+</div>
+<p>Default:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">convergence_test</span><span class="p">:</span>
+  <span class="n">potential_type</span><span class="p">:</span> <span class="n">GGA</span>
+</pre></div>
+</div>
+</dd>
+</dl>
+</li>
+<li><dl>
+<dt>enconv:</dt><dd><p>enconv tag is convergence criteria for energy. The unit is ‘eV/atom’.
+If a negative value is inserted, AMP2 does not check the energy convergence.</p>
+<p>Usage:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">convergence_test</span><span class="p">:</span>
+  <span class="n">enconv</span><span class="p">:</span> <span class="n">real</span>
+</pre></div>
+</div>
+<p>Default:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">convergence_test</span><span class="p">:</span>
+  <span class="n">enconv</span><span class="p">:</span> <span class="mf">0.01</span>
+</pre></div>
+</div>
+</dd>
+</dl>
+</li>
+<li><dl>
+<dt>prconv:</dt><dd><p>enconv tag is convergence criteria for pressure. The unit is ‘kbar’.
+If a negative value is inserted, AMP2 does not check the pressure convergence.</p>
+<p>Usage:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">convergence_test</span><span class="p">:</span>
+  <span class="n">prconv</span><span class="p">:</span> <span class="n">real</span>
+</pre></div>
+</div>
+<p>Default:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">convergence_test</span><span class="p">:</span>
+  <span class="n">prconv</span><span class="p">:</span> <span class="mi">10</span>
+</pre></div>
+</div>
+</dd>
+</dl>
+</li>
+<li><dl>
+<dt>foconv:</dt><dd><p>foconv tag is convergence criteria for maximum difference in atomic force. The unit is ‘eV/<img class="math" src="../../_images/math/f6e602c08a6f1d5f196918c208aaf8018620898a.png" alt="\textrm{\AA}"/>’.
+If a negative value is inserted, AMP2 does not check the pressure convergence.</p>
+<p>Usage:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">convergence_test</span><span class="p">:</span>
+  <span class="n">foconv</span><span class="p">:</span> <span class="n">real</span>
+</pre></div>
+</div>
+<p>Default:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">convergence_test</span><span class="p">:</span>
+  <span class="n">foconv</span><span class="p">:</span> <span class="o">-</span><span class="mi">1</span>
+</pre></div>
+</div>
+</dd>
+</dl>
+</li>
+<li><dl>
+<dt>initial_kpl:</dt><dd><p>initial_kpl tag determines the initial <img class="math" src="../../_images/math/64dff3700011d42a536d3f6d9552778fc921e6fd.png" alt="n_{k}"/> for convergence test in the equation (1).</p>
+<p>Usage:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">convergence_test</span><span class="p">:</span>
+  <span class="n">initial_kpl</span><span class="p">:</span> <span class="p">[</span><span class="n">integer</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>Default:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">convergence_test</span><span class="p">:</span>
+  <span class="n">initial_kpl</span><span class="p">:</span> <span class="mi">1</span>
+</pre></div>
+</div>
+</dd>
+</dl>
+</li>
+<li><dl>
+<dt>max_kpl:</dt><dd><p>max_kpl tag determines the maximum <img class="math" src="../../_images/math/64dff3700011d42a536d3f6d9552778fc921e6fd.png" alt="n_{k}"/> for convergence test in the equation (1).</p>
+<p>Usage:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">convergence_test</span><span class="p">:</span>
+  <span class="n">max_kpl</span><span class="p">:</span> <span class="p">[</span><span class="n">integer</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>Default:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">convergence_test</span><span class="p">:</span>
+  <span class="n">max_kpl</span><span class="p">:</span> <span class="mi">20</span>
+</pre></div>
+</div>
+</dd>
+</dl>
+</li>
+<li><dl>
+<dt>enstart:</dt><dd><p>enstart tag determines the initial cutoff energy for convergence test.</p>
+<p>Usage:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">convergence_test</span><span class="p">:</span>
+  <span class="n">enstart</span><span class="p">:</span> <span class="p">[</span><span class="n">integer</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>Default:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">convergence_test</span><span class="p">:</span>
+  <span class="n">enstart</span><span class="p">:</span> <span class="mi">200</span>
+</pre></div>
+</div>
+</dd>
+</dl>
+</li>
+<li><dl>
+<dt>enstep:</dt><dd><p>enstep tag determines the interval between cutoff energy for convergence test.</p>
+<p>Usage:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">convergence_test</span><span class="p">:</span>
+  <span class="n">enstep</span><span class="p">:</span> <span class="p">[</span><span class="n">integer</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>Default:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">convergence_test</span><span class="p">:</span>
+  <span class="n">enstep</span><span class="p">:</span> <span class="mi">50</span>
+</pre></div>
+</div>
+</dd>
+</dl>
+</li>
+<li><dl>
+<dt>enmax:</dt><dd><p>enmax tag determines the maximum cutoff energy for convergence test.</p>
+<p>Usage:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">convergence_test</span><span class="p">:</span>
+  <span class="n">enmax</span><span class="p">:</span> <span class="p">[</span><span class="n">integer</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>Default:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">convergence_test</span><span class="p">:</span>
+  <span class="n">enmax</span><span class="p">:</span> <span class="mi">1000</span>
+</pre></div>
+</div>
+</dd>
+</dl>
+</li>
+<li><dl>
+<dt>incar:</dt><dd><p>User can additionally modulate the INCAR for VASP calculation using this tag.</p>
+<p>Ex) If you want to change ALGO as normal,</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">convergence_test</span><span class="p">:</span>
+  <span class="n">incar</span><span class="p">:</span>
+    <span class="n">ALGO</span><span class="p">:</span> <span class="n">Normal</span>
+</pre></div>
+</div>
+</dd>
+</dl>
+</li>
+</ul>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019, Materials Data and Informatics Labarotary
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

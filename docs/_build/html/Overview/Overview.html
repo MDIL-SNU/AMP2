@@ -1,0 +1,505 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Overview &mdash; AMP2  documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../_static/jquery.js"></script>
+        <script type="text/javascript" src="../_static/underscore.js"></script>
+        <script type="text/javascript" src="../_static/doctools.js"></script>
+        <script type="text/javascript" src="../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Input" href="../Input/Input.html" />
+    <link rel="prev" title="Installation and execution" href="../Installation/Installation.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> AMP2
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.9.5
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../Installation/Installation.html">Installation and execution</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Overview</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#preparing-input-files">Preparing input files</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#running-amp2">Running AMP<sup>2</sup></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#outputs">Outputs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#list-of-source-codes">List of source codes</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../Input/Input.html">Input</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Output/Output.html">Output</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Examples/Examples.html">Examples</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">AMP2</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+      <li>Overview</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/Overview/Overview.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="overview">
+<h1>Overview<a class="headerlink" href="#overview" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="preparing-input-files">
+<h2>Preparing input files<a class="headerlink" href="#preparing-input-files" title="Permalink to this headline">¶</a></h2>
+<p>Before running AMP<sup>2</sup>, two input files should be prepared such as YAML style configuration
+file (config.yaml) and structure file. The details for input files are explained in <a class="reference internal" href="../Input/Input_files.html"><span class="doc">Input files</span></a>.
+The basic format of config.yaml and structure files are like below:</p>
+<blockquote>
+<div><p>config.yaml:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">directory</span><span class="p">:</span>
+  <span class="n">submit</span><span class="p">:</span> <span class="o">./</span><span class="n">Submit</span>                      <span class="c1"># the path of structure file or the directory containg structure files</span>
+  <span class="n">output</span><span class="p">:</span> <span class="o">./</span><span class="n">Output</span>                      <span class="c1"># the path of the directory where calculation is conducted</span>
+  <span class="n">done</span><span class="p">:</span> <span class="o">./</span><span class="n">Done</span>                          <span class="c1"># the path of the directory where results are saved</span>
+  <span class="n">error</span><span class="p">:</span> <span class="o">./</span><span class="n">ERROR</span>                        <span class="c1"># the path of the directory where the materials with error are saved</span>
+  <span class="n">src_path</span><span class="p">:</span> <span class="o">./</span><span class="n">src</span>                       <span class="c1"># the path of the directory of AMP2 source codes</span>
+  <span class="n">pot_path_gga</span><span class="p">:</span> <span class="o">/</span><span class="n">data</span><span class="o">/</span><span class="n">vasp4us</span><span class="o">/</span><span class="n">pot</span><span class="o">/</span><span class="n">PBE52</span> <span class="c1"># the path of directory for GGA pseudopotential</span>
+  <span class="n">pot_path_lda</span><span class="p">:</span> <span class="o">/</span><span class="n">data</span><span class="o">/</span><span class="n">vasp4us</span><span class="o">/</span><span class="n">pot</span><span class="o">/</span><span class="n">LDA52</span> <span class="c1"># the path of directory for LDA pseudopotential</span>
+
+<span class="n">program</span><span class="p">:</span>
+  <span class="n">vasp_std</span><span class="p">:</span> <span class="o">/</span><span class="n">data</span><span class="o">/</span><span class="n">vasp4us</span><span class="o">/</span><span class="n">vasp_std</span>      <span class="c1"># the path of standard version of VASP</span>
+  <span class="n">vasp_gam</span><span class="p">:</span> <span class="o">/</span><span class="n">data</span><span class="o">/</span><span class="n">vasp4us</span><span class="o">/</span><span class="n">vasp_gam</span>      <span class="c1"># the path of gamma-only version of VASP</span>
+  <span class="n">vasp_ncl</span><span class="p">:</span> <span class="o">/</span><span class="n">data</span><span class="o">/</span><span class="n">vasp4us</span><span class="o">/</span><span class="n">vasp_ncl</span>      <span class="c1"># the path of noncollinear version of VASP</span>
+  <span class="n">gnuplot</span><span class="p">:</span> <span class="o">/</span><span class="n">gnuplot</span>                     <span class="c1"># the path of executable file for gnuplot</span>
+  <span class="n">mpi_command</span><span class="p">:</span> <span class="n">mpirun</span>                   <span class="c1"># mpi command (ex. mpirun, mpiexec, ...)</span>
+
+<span class="n">vasp_parallel</span><span class="p">:</span>
+  <span class="n">npar</span><span class="p">:</span> <span class="mi">2</span>                               <span class="c1"># the number of bands that are treated in parallel. It is same to NPAR tag in VASP.</span>
+  <span class="n">kpar</span><span class="p">:</span> <span class="mi">2</span>                               <span class="c1"># the number of kpoints that are treated in parallel. It is same to NPAR tag in VASP.</span>
+</pre></div>
+</div>
+<p>Structure file (VASP structure file format):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>Primitive Cell
+   1.000000000
+      0.0    2.714895    2.714895
+      2.714895    0.0    2.714895
+      2.714895    2.714895    0.0
+    Si
+    2
+Selective dynamics
+Direct
+    0.5    0.5    0.5  T  T  T ! Si1
+    0.75    0.75    0.75  T  T  T ! Si1
+</pre></div>
+</div>
+</div></blockquote>
+</div>
+<div class="section" id="running-amp2">
+<h2>Running AMP<sup>2</sup><a class="headerlink" href="#running-amp2" title="Permalink to this headline">¶</a></h2>
+<p>You can execute AMP<sup>2</sup> using shell script as following.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sh</span> <span class="n">run</span><span class="o">.</span><span class="n">sh</span>
+</pre></div>
+</div>
+<p>The details for shell script are mentioned in the section, “Execution AMP<sup>2</sup>” in <a class="reference internal" href="../Installation/Installation.html"><span class="doc">Installation and execution</span></a>.</p>
+</div>
+<div class="section" id="outputs">
+<h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this headline">¶</a></h2>
+<p>After starting the calculation, new directory is formed in <em>output_path</em> as the name of the structure
+file. (<em>name</em> directory is formed from <em>name.cif</em> or <em>POSCAR_name</em>.)
+Then, if calculation is well finished, the directory moves to <em>done_path</em>. If not, it moves to <em>error_path</em>.
+The following data are the examples of calculation results for Cr<sub>2</sub>O<sub>3</sub>.
+More details for output files are written in <a class="reference internal" href="../Output/Output.html"><span class="doc">Output</span></a>.</p>
+<blockquote>
+<div><p>POSCAR_GGA:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>relaxed poscar
+1.000000000
+    2.53085784423    1.46119145764    4.60391533726
+    -2.53085784423    1.46119145764    4.60391533726
+    0.0    -2.9223829153    4.60391533726
+    Cr    O
+    4    6
+Selective dynamics
+Direct
+    0.348055231569    0.348055231569    0.348055231569  T  T  T ! Cr1_up
+    0.848055231569    0.848055231569    0.848055231569  T  T  T ! Cr1_up
+    0.151944768431    0.151944768431    0.151944768431  T  T  T ! Cr1_down
+    0.651944768431    0.651944768431    0.651944768431  T  T  T ! Cr1_down
+    0.553903778143    0.946096221857    0.25  T  T  T ! O1
+    0.946096221857    0.25    0.553903778143  T  T  T ! O1
+    0.25    0.553903778143    0.946096221857  T  T  T ! O1
+    0.0539037781426    0.75    0.446096221857  T  T  T ! O1
+    0.75    0.446096221857    0.0539037781426  T  T  T ! O1
+    0.446096221857    0.0539037781426    0.75  T  T  T ! O1
+</pre></div>
+</div>
+<p>Band_gap_GGA.log:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Band</span> <span class="n">gap</span><span class="p">:</span>      <span class="mf">2.734</span> <span class="n">eV</span> <span class="p">(</span><span class="n">Indirect</span><span class="p">)</span>
+
+<span class="n">VBM</span><span class="p">:</span> <span class="mf">0.2916667</span>  <span class="mf">0.0</span>  <span class="mf">0.0</span>   <span class="p">:</span>      <span class="mf">3.366</span> <span class="n">eV</span>
+<span class="n">CBM</span><span class="p">:</span> <span class="mf">0.42206</span>  <span class="mf">0.42206</span>  <span class="o">-</span><span class="mf">0.01078659</span>   <span class="p">:</span>      <span class="mf">6.100</span> <span class="n">eV</span>
+
+<span class="n">nVBM</span><span class="p">:</span> <span class="mi">30</span>  <span class="n">spin</span><span class="p">:</span> <span class="mi">1</span>
+<span class="n">nCBM</span><span class="p">:</span> <span class="mi">31</span>  <span class="n">spin</span><span class="p">:</span> <span class="mi">1</span>
+</pre></div>
+</div>
+<p>band_GGA.png:</p>
+<blockquote>
+<div><a class="reference internal image-reference" href="../_images/band_GGA3.png"><img alt="../_images/band_GGA3.png" src="../_images/band_GGA3.png" style="width: 300px;" /></a>
+</div></blockquote>
+<p>dos_GGA.png:</p>
+<blockquote>
+<div><a class="reference internal image-reference" href="../_images/dos_GGA2.png"><img alt="../_images/dos_GGA2.png" src="../_images/dos_GGA2.png" style="width: 150px;" /></a>
+</div></blockquote>
+</div></blockquote>
+</div>
+<div class="section" id="list-of-source-codes">
+<h2>List of source codes<a class="headerlink" href="#list-of-source-codes" title="Permalink to this headline">¶</a></h2>
+<p>AMP<sup>2</sup> consists of several python codes as follows:</p>
+<ul class="simple">
+<li><dl class="simple">
+<dt>main.py:</dt><dd><p>This is main code to run AMP<sup>2</sup>.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>amp2_input.py:</dt><dd><p>This is for generating input files for VASP from structure file.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>kpoint.py:</dt><dd><p>This is for conducting a convergence test of k-points.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>cutoff.py:</dt><dd><p>This is for conducting a convergence test of cutoff energy.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>relax.py:</dt><dd><p>This is for conducting structure optimization.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>magnetic_ordering.py:</dt><dd><p>This is for identifying the most stable magnetic spin ordering.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>band.py:</dt><dd><p>This is for drawing band structure and estimating band gap.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>dos.py:</dt><dd><p>This is for drawing density of states.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>hse_gap.py:</dt><dd><p>This is for estimating band gap with <a class="reference external" href="mailto:PBE&#37;&#52;&#48;HSE">PBE<span>&#64;</span>HSE</a> scheme.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>effm.py:</dt><dd><p>This is for estimating effective masses of hole and electron.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>dielectric.py:</dt><dd><p>This is for estimating dielectric tensor.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>get_result.py:</dt><dd><p>This is for summarizing the calculation results.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>input_conf.py:</dt><dd><p>This is for handling YAML type configuration.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>rerun_for_metal.py:</dt><dd><p>This is a code to restart the all calculations without the on-site Uterm if the material was found to be metallic and Uwas applied.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>genetic_algorithm.py:</dt><dd><p>This is for performing genetic algorithm to find the most stable magnetic
+spin ordering.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>genetic_operator.py:</dt><dd><p>This is a package of modules for performing genetic algorithm.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>make_supercell.py:</dt><dd><p>This is a code to build supercell to find magnetic primitive cell.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>mk_suprecell.py:</dt><dd><p>This is a code to build supercell for the Ising coefficient.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>z_subr.py:</dt><dd><p>This is a package of modules for ’mk_supercell.py’.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>module_amp2_input.py:</dt><dd><p>This is a package of modules for generating input files for VASP from structure file.</p>
+</dd>
+</dl>
+</li>
+<li><p>module_converge.py: This is a package of modules for convergence test.</p></li>
+<li><dl class="simple">
+<dt>module_relax.py:</dt><dd><p>This is a package of modules for structure optimization.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>module_AF.py:</dt><dd><p>This is a package of modules for identifying the most stable magnetic spin ordering.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>module_GA.py:</dt><dd><p>This is a package of modules for genetic algorithm.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>module_band.py:</dt><dd><p>This is a package of modules for drawing band structure and calculating band gap.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>module_dos.py:</dt><dd><p>This is a package of modules for drawing density of states.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>module_hse.py:</dt><dd><p>This is a package of modules for calculating band gap with <a class="reference external" href="mailto:HSE&#37;&#52;&#48;PBE">HSE<span>&#64;</span>PBE</a> scheme.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>module_effm.py:</dt><dd><p>This is a package of modules for calculating effective mass.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>module_dielectric.py:</dt><dd><p>This is a package of modules for calculating dielectric tensor.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>module_vasprun.py:</dt><dd><p>This is a package of modules to run VASP.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>module_log.py:</dt><dd><p>This is a package of modules to record log.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>module_vector.py:</dt><dd><p>This is a package of modules to calculate several properties such as distance between two points and angle.</p>
+</dd>
+</dl>
+</li>
+</ul>
+<p>Additionally, there are files for predefined variables.</p>
+<ul class="simple">
+<li><dl class="simple">
+<dt>INCAR0:</dt><dd><p>This is for default configuration for ’INCAR’.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>U_table.yaml:</dt><dd><p>This is for default Uparameters.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>pot_table.yaml:</dt><dd><p>This is for default potential files.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>config_def.yaml:</dt><dd><p>This is default configuration for ’config.yaml’.</p>
+</dd>
+</dl>
+</li>
+</ul>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="../Input/Input.html" class="btn btn-neutral float-right" title="Input" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="../Installation/Installation.html" class="btn btn-neutral float-left" title="Installation and execution" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019, Materials Data and Informatics Labarotary
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
