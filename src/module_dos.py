@@ -75,7 +75,7 @@ def make_dos_dat(dos_file,spin,atom_num,ncl):
 
 def write_tot_dos(Ene,Tot_dos,fermi,target):
 	if not os.path.isdir(target+'/Pdos_dat'):
-		os.mkdir(target+'/Pdos_dat',0755)
+		os.mkdir(target+'/Pdos_dat',0o755)
 	with open(target+'/Pdos_dat/Tot_dos.dat','w') as dos_out:
 		dos_out.write('Energy')
 		if len(Tot_dos[0]) == 1:
@@ -91,7 +91,7 @@ def write_tot_dos(Ene,Tot_dos,fermi,target):
 def write_par_dos(Ene,par_dos,atom_name,fermi,target):
 	orb_name = ['s','p','d','f']
 	if not os.path.isdir(target+'/Pdos_dat'):
-		os.mkdir(target+'/Pdos_dat',0755)
+		os.mkdir(target+'/Pdos_dat',0o755)
 	for typ in range(len(atom_name)):
 		with open(target+'/Pdos_dat/'+atom_name[typ]+'_dos.dat','w') as dos_out:
 			dos_out.write('Energy')

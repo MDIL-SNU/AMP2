@@ -6,7 +6,8 @@ import shutil, os, sys, subprocess, yaml
 from module_log import *
 from module_vasprun import *
 from module_effm import *
-code_data = 'Version 0.9.4. Modified at 2019-11-28'
+from _version import __version__
+code_data = 'Version '+__version__+'. Modified at 2019-12-17'
 
 dir = sys.argv[1]
 
@@ -41,13 +42,13 @@ dir_effm = dir+'/effm_'+pot_type+'/'+carrier_type
 if os.path.isdir(dir_effm) and os.path.isfile(dir_effm+'/effective_mass.log') :
 	make_amp2_log_default(dir,src_path,'Effective mass for '+carrier_type+' calculation with '+pot_type,node,code_data)
 	make_amp2_log(dir,'Effective mass for '+carrier_type+' calculation with '+pot_type+' is already done.')
-	print 1
+	print(1)
 	sys.exit()
 
 if not os.path.isdir(dir+'/effm_'+pot_type):
-	os.mkdir(dir+'/effm_'+pot_type,0755)
+	os.mkdir(dir+'/effm_'+pot_type,0o755)
 if not os.path.isdir(dir_effm):
-	os.mkdir(dir_effm,0755)
+	os.mkdir(dir_effm,0o755)
 
 os.chdir(dir_effm)
 
@@ -55,7 +56,7 @@ make_amp2_log_default(dir_effm,src_path,'Effective mass for '+carrier_type+' cal
 ########
 if pot_type == 'HSE':
 	make_amp2_log(dir_effm,'Effective mass calculation with HSE is not supported yet.')
-	print 1
+	print(1)
 	sys.exit()
 
 ########
@@ -63,22 +64,22 @@ with open(dir+'/INPUT0/INCAR','r') as inp:
 	tmp = inp.read()
 if 'LSORBIT' in tmp:
 	make_amp2_log(dir_effm,'Effective mass calculation with SOC is not supported yet.')
-	print 1
+	print(1)
 	sys.exit()
 
 # check band calculation
 if not os.path.isdir(dir+'/band_'+pot_type):
 	make_amp2_log(dir_effm,'Band directory does not exist.')
-	print 0
+	print(0)
 	sys.exit()
 else:
 	if not os.path.isfile(dir+'/band_'+pot_type+'/CONTCAR'):
 		make_amp2_log(dir_effm,'CONTCAR file in band does not exist.')
-		print 0
+		print(0)
 		sys.exit()
 	elif count_line(dir+'/band_'+pot_type+'/CONTCAR') < 9:
 		make_amp2_log(dir_effm,'CONTCAR file in band is invalid.')
-		print 0
+		print(0)
 		sys.exit()
 
 	if os.path.isfile(dir+'/band_'+pot_type+'/Band_gap.log'):
@@ -86,14 +87,14 @@ else:
 			gap_log = inp.readline()
 	else:
 		make_amp2_log(dir_effm,'Band gap calculation should be performed.')
-		print 0
+		print(0)
 		sys.exit()
 
 
 
 if 'etal' in gap_log:
 	make_amp2_log(dir_effm,'It is metallic band structure.\nEffective mass cannot be estimated in metallic system.')
-	print 1
+	print(1)
 	sys.exit()
 else:
 	if not pot_type == 'HSE':
@@ -124,7 +125,7 @@ else:
 			# VASP calculation for CHGCAR
 			out = run_vasp(dir_effm,nproc,vasprun,mpi)
 			if out == 1:  # error in vasp calculation
-				print 0
+				print(0)
 				sys.exit() 
 			make_amp2_log(dir_effm,'CHGCAR file is generated successfully.')
 
@@ -166,7 +167,7 @@ else:
 				wincar(dir_effm+'/INCAR',dir_effm+'/INCAR',[['NSW','0'],['ISTART','1'],['ICHARG','11'],['LCHARG','.F.']],[])
 			out = run_vasp(dir_effm,nproc,vasprun,mpi)
 			if out == 1:  # error in vasp calculation
-				print 0
+				print(0)
 				sys.exit() 
 		else:
 			make_amp2_log(dir_effm,'VASP calculation is already done.')
@@ -184,23 +185,23 @@ else:
 		wincar(dir_effm+'/INCAR',dir_effm+'/INCAR',[['NSW','0'],['ISTART','1'],['ICHARG','11'],['LCHARG','.F.']],[])
 		out = run_vasp(dir_effm,nproc,vasprun,mpi)
 		if out == 1:  # error in vasp calculation
-			print 0
+			print(0)
 			sys.exit() 
 
-        out = electronic_step_convergence_check(dir_effm)
+	out = electronic_step_convergence_check(dir_effm)
 
-        while out == 1:
-            make_amp2_log(dir_effm,'Calculation options are changed. New calculation starts.')
-            out = run_vasp(dir_effm,nproc,vasprun,mpi)
-            if out == 1:  # error in vasp calculation
-                print 0
-                sys.exit()
-            out = electronic_step_convergence_check(dir_effm)
+	while out == 1:
+		make_amp2_log(dir_effm,'Calculation options are changed. New calculation starts.')
+		out = run_vasp(dir_effm,nproc,vasprun,mpi)
+		if out == 1:  # error in vasp calculation
+			print(0)
+			sys.exit()
+		out = electronic_step_convergence_check(dir_effm)
 
-        if out == 2:  # electronic step is not converged. (algo = normal)
-            make_amp2_log(dir_effm,'The calculation stops but electronic step is not converged.')
-            print 0
-            sys.exit()
+	if out == 2:  # electronic step is not converged. (algo = normal)
+		make_amp2_log(dir_effm,'The calculation stops but electronic step is not converged.')
+		print(0)
+		sys.exit()
 
 	else:
 		make_amp2_log(dir_effm,'VASP calculation is already done.')
@@ -218,4 +219,4 @@ with open(dir_effm+'/amp2.log','r') as amp2_log:
 	with open(dir+'/amp2.log','a') as amp2_log_tot:
 		amp2_log_tot.write(amp2_log.read())
 
-print 1
+print(1)

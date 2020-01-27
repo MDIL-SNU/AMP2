@@ -60,7 +60,7 @@ def rotate_mat(lat_prim, rot_mat):
     return lat_rot 
 
 def mk_combination(m):
-    items= [range(-m,m+1)]*3
+    items= [list(range(-m,m+1))]*3
     rot = list(product(*items))
     return rot
 
@@ -113,7 +113,7 @@ def mk_rot_matrix(new_list):
         lat_sum = 0
         for j in range(3):
             lat_sum = lat_sum+sum(lattice[j])
-	if lat_sum > 0:
+        if lat_sum > 0:
             tmp_mat.append([rot_vec, lattice])
     return tmp_mat
 
@@ -197,7 +197,7 @@ def cal_reci_vec(lat):
 
     len_reci = []
     for i in range(3):
-        vector = math.sqrt(sum(map(lambda x: x**2, reci[i][0:3])))
+        vector = math.sqrt(sum([x**2 for x in reci[i][0:3]]))
 #        print vector
         len_reci.append(vector)
     return len_reci

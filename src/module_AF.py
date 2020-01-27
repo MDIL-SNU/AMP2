@@ -11,10 +11,8 @@ from module_amp2_input import *
 def check_spin(ref_dir,inp_pos,min_mom):
 	[axis,atom_pos] = read_poscar(inp_pos)
 	magnet_out = pygrep('magnetization (x)',ref_dir+'/OUTCAR',0,len(atom_pos)+3).splitlines()[-len(atom_pos):]
-#	magnet_out = subprocess.check_output(['grep','-A'+str(len(atom_pos)+3),'magnetization (x)',ref_dir+'/OUTCAR']).splitlines()[-len(atom_pos):]
 	magnet_list = [float(x.split()[-1]) for x in magnet_out]
 	type_name = []
-#	type_num = []
 	mag_val = {}
 	for i in range(len(atom_pos)):
 		over = 0
@@ -64,7 +62,7 @@ def find_pair(poscar,cutoff,mag_atom_list,mag_val,tol):
 									elif atom_pos[i][4] == pair_list[k][2] and atom_pos[j][4] == pair_list[k][1] :
 										dup = 1
 										break
- 							if dup == 0:
+							if dup == 0:
 								pair_list.append([length,atom_pos[i][4],atom_pos[j][4],i,j])
 	return [pair_list,sole_list,mag_list]
 
@@ -124,7 +122,7 @@ def write_ising_param(JJ,target):
 
 def write_inp_for_GA(mag_atom_list,inp_af,target):
 	inp_yaml = {}
-	for key in inp_af['genetic_algorithm'].keys():
+	for key in list(inp_af['genetic_algorithm'].keys()):
 		inp_yaml[key] = inp_af['genetic_algorithm'][key]
 	inp_yaml['mag_atom_list'] = mag_atom_list
 	inp_yaml['cutoff'] = inp_af['cutoff_for_parameter']

@@ -2,7 +2,7 @@ import sys
 from numpy import *
 
 def fixStableGene(list_gene, probab, num_selected):
-	sort_idx = sorted(range(len(probab)), key=lambda x:probab[x], reverse=True)
+	sort_idx = sorted(list(range(len(probab))), key=lambda x:probab[x], reverse=True)
 	fixed_gene = []
 	for i in range(num_selected):
 		fixed_gene.append(list_gene[sort_idx[i]])
@@ -14,7 +14,7 @@ def crossover(gene1, gene2, num_cut):
 	len_gene2 = len(gene2)
 
 	if len_gene1 != len_gene2:
-		print 'length of two genes is different'
+		print('length of two genes is different')
 	else:
 		child_gene = []
 		prev_num = 1
@@ -29,8 +29,8 @@ def crossover(gene1, gene2, num_cut):
 
 		if i%2 == 1:
 			child_gene = child_gene + gene1[prev_num-1:]
-                else:
-                        child_gene = child_gene + gene2[prev_num-1:]
+		else:
+			child_gene = child_gene + gene2[prev_num-1:]
 
 		return child_gene
 

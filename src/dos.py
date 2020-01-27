@@ -7,7 +7,8 @@ from module_log import *
 from module_vasprun import *
 from module_dos import *
 from input_conf import set_on_off
-code_data = 'Version 0.9.4. Modified at 2019-11-28'
+from _version import __version__
+code_data = 'Version '+__version__+'. Modified at 2019-12-17'
 
 dir = sys.argv[1]
 
@@ -41,11 +42,11 @@ dir_dos = dir+'/dos_'+pot_type
 if os.path.isdir(dir_dos) and os.path.isfile(dir_dos+'/Pdos_dat/Tot_dos.dat') :
 	make_amp2_log_default(dir,src_path,'DOS calculation with '+pot_type+' potential.',node,code_data)
 	make_amp2_log(dir,'DOS calculation is already done.\n')
-	print 1
+	print(1)
 	sys.exit()
 
 if not os.path.isdir(dir_dos):
-	os.mkdir(dir_dos,0755)
+	os.mkdir(dir_dos,0o755)
 
 os.chdir(dir_dos)
 
@@ -65,7 +66,7 @@ else:
 		no_rlx = 1
 
 if no_rlx == 1 and set_on_off(inp_dos['relax_check']) == 1:
-	print 0
+	print(0)
 	sys.exit()
 
 dir_band = dir+'/band_'+pot_type
@@ -88,27 +89,26 @@ if pot_type == 'HSE':
 	make_multiple_kpts(dir+'/kptest/kpoint.log',dir_dos+'/KPOINTS',dir_dos+'/POSCAR',inp_dos['kp_multiplier'],sym)
 	incar_for_hse(dir_dos+'/INCAR')
 	hse_algo = pygrep('ALGO',dir+'/relax_'+pot_type+'/INCAR',0,0).split()[2]
-#	hse_algo = subprocess.check_output(['grep','ALGO',dir+'/relax_'+pot_type+'/INCAR']).split()[2]
 	wincar(dir_dos+'/INCAR',dir_dos+'/INCAR',[['NSW','0'],['NEDOS','3001'],['ALGO',hse_algo]],[])
 	incar_from_yaml(dir_dos,inp_dos['incar'])
 	vasprun = vasp_std
 	# VASP calculation
 	out = run_vasp(dir_dos,nproc,vasprun,mpi)
 	if out == 1:  # error in vasp calculation
-		print 0
+		print(0)
 		sys.exit() 
 	out = electronic_step_convergence_check(dir_dos)
 	while out == 1:
 		make_amp2_log(dir_dos,'Calculation options are changed. New calculation starts.')
 		out = run_vasp(dir_dos,nproc,vasprun,mpi)
 		if out == 1:  # error in vasp calculation
-			print 0
+			print(0)
 			sys.exit()
 		out = electronic_step_convergence_check(dir_dos)
 
 	if out == 2:  # electronic step is not converged. (algo = normal)
 		make_amp2_log(dir_dos,'The calculation stops but electronic step is not converged.')
-		print 0
+		print(0)
 		sys.exit()
 
 else:
@@ -147,7 +147,7 @@ else:
 		# VASP calculation for CHGCAR
 		out = run_vasp(dir_dos,nproc,vasprun,mpi)
 		if out == 1:  # error in vasp calculation
-			print 0
+			print(0)
 			sys.exit() 
 		make_amp2_log(dir_dos,'CHGCAR file is generated successfully.')
 
@@ -156,7 +156,7 @@ else:
 	make_multiple_kpts(dir+'/kptest/kpoint.log',dir_dos+'/KPOINTS',dir_dos+'/POSCAR',inp_dos['kp_multiplier'],sym)
 	incar_from_yaml(dir_dos,inp_dos['incar'])
 
-	wincar(dir_dos+'/INCAR',dir_dos+'/INCAR',[['NSW','0'],['ISTART','1'],['ICHARG','11'],['LCHARG','.F.'],['NEDOS','3001']],[])
+	wincar(dir_dos+'/INCAR',dir_dos+'/INCAR',[['NSW','0'],['ISTART','1'],['ICHARG','11'],['LCHARG','.F.'],['NEDOS','3001'],['ISMEAR','-5']],[])
 	# make INCAR for CHGCAR
 	if no_rlx == 1:
 		mag_on = 2
@@ -166,37 +166,31 @@ else:
 	# VASP calculation
 	out = run_vasp(dir_dos,nproc,vasprun,mpi)
 	if out == 1:  # error in vasp calculation
-		print 0
+		print(0)
 		sys.exit() 
 	out = electronic_step_convergence_check(dir_dos)
 	while out == 1:
 		make_amp2_log(dir_dos,'Calculation options are changed. New calculation starts.')
 		out = run_vasp(dir_dos,nproc,vasprun,mpi)
 		if out == 1:  # error in vasp calculation
-			print 0
+			print(0)
 			sys.exit()
 		out = electronic_step_convergence_check(dir_dos)
 
 	if out == 2:  # electronic step is not converged. (algo = normal)
 		make_amp2_log(dir_dos,'The calculation stops but electronic step is not converged.')
-		print 0
+		print(0)
 		sys.exit()
 
 # set fermi level
 fermi = float(pyhead(dir_dos+'/DOSCAR',6).splitlines()[-1].split()[3])
-#fermi = float(subprocess.check_output(['head',dir_dos+'/DOSCAR','-n','6']).splitlines()[-1].split()[3])
 gap = 0
 if os.path.isdir(dir_band) and os.path.isfile(dir_band+'/Band_gap.log'):
 	if not pyhead(dir_band+'/Band_gap.log',1,).split()[2] == 'is' :
-#	if not subprocess.check_output(['head','-n','1',dir_band+'/Band_gap.log']).split()[2] == 'is' :
 		fermi = float(pygrep('VBM',dir_band+'/Band_gap.log',0,0).splitlines()[0].split()[-2])
-#		fermi = float(subprocess.check_output(['grep','VBM',dir_band+'/Band_gap.log']).splitlines()[0].split()[-2])
 		gap = round(float(pyhead(dir_band+'/Band_gap.log',1).split()[2]))
-#		gap = round(float(subprocess.check_output(['head','-n','1',dir_band+'/Band_gap.log']).split()[2]))
 spin = pygrep('ISPIN',dir_dos+'/OUTCAR',0,0).split()[2]
-#spin = subprocess.check_output(['grep','ISPIN',dir_dos+'/OUTCAR']).split()[2]
 ncl = pygrep('NONCOL',dir_dos+'/OUTCAR',0,0).split()[2]
-#ncl = subprocess.check_output(['grep','NONCOL',dir_dos+'/OUTCAR']).split()[2]
 # read atom information from poscar
 [atom_name,atom_num] = poscar_to_atom_inform(dir_dos+'/POSCAR')
 # read dos information from doscar
@@ -217,4 +211,4 @@ make_amp2_log(dir_dos,'DOS calculation is done.')
 with open(dir_dos+'/amp2.log','r') as amp2_log:
 	with open(dir+'/amp2.log','a') as amp2_log_tot:
 		amp2_log_tot.write(amp2_log.read())
-print 1
+print(1)

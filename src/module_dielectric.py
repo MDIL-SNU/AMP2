@@ -11,7 +11,6 @@ def write_diel_log(outcar_file,target):
 	diel_file_error = 0 # 0 is no error
 	try:
 		diel = pygrep('DIELECTRIC TENSOR (including',outcar_file,0,4).splitlines()[-3:]
-#		diel = subprocess.check_output(['grep','-A4','DIELECTRIC TENSOR (including',outcar_file]).splitlines()[-3:]
 		diel_e = []
 		for i in range(3) :
 			diel_e.append(diel[i].split())
@@ -20,7 +19,6 @@ def write_diel_log(outcar_file,target):
 		diel_file_error = 1
 	try:
 		diel = pygrep('DIELECTRIC TENSOR IONIC',outcar_file,0,4).splitlines()[-3:]
-#		diel = subprocess.check_output(['grep','-A4','DIELECTRIC TENSOR IONIC',outcar_file]).splitlines()[-3:]
 		diel_i = []
 		for i in range(3) :
 			diel_i.append(diel[i].split())
@@ -65,7 +63,6 @@ def write_diel_log(outcar_file,target):
 def check_imaginary(outcar_file,target):
 	# return 0: no probelm, return 1: there are imaginary modes.
 	lines = pygrep('f/i',outcar_file,0,0).splitlines()
-#	lines = subprocess.check_output(['grep','f/i',outcar_file]).splitlines()
 	max_mode = 0
 	if len(lines) > 3:
 		make_amp2_log(target,'Warning!! Imaginary phonon mode is observed.')

@@ -8,7 +8,8 @@ from module_log import *
 from module_vasprun import *
 from module_converge import *
 import math
-code_data = 'Version 0.9.4. Modified at 2019-11-28'
+from _version import __version__
+code_data = 'Version '+__version__+'. Modified at 2019-12-17'
 
 # Set input
 dir = sys.argv[1]
@@ -44,14 +45,13 @@ nproc = sys.argv[4]
 # Check existing data
 if os.path.isdir(dir+'/cutoff') and os.path.isfile(dir+'/cutoff/cutoff.log') :
 	if len(pygrep('Converged',dir+'/cutoff/cutoff.log',0,0).splitlines()) > 0 :
-#	if len(subprocess.check_output(['grep','Converged',dir+'/cutoff/cutoff.log']).splitlines()) > 0 :
 		make_amp2_log_default(dir,src_path,'cutoff energy test',node,code_data)
 		make_amp2_log(dir,'Already done')
 #		print('Success!')
-		print 1
+		print(1)
 		sys.exit()
 if not os.path.isdir(dir+'/cutoff') :
-	os.mkdir(dir+'/cutoff', 0755)
+	os.mkdir(dir+'/cutoff', 0o755)
 	make_amp2_log_default(dir+'/cutoff',src_path,'cutoff energy test',node,code_data)
 	make_amp2_log(dir+'/cutoff','New calculation.')
 else:
@@ -65,7 +65,6 @@ if os.path.isfile(enlog):
 
 ### cutoff energy test setting ###
 ENPOT = pygrep('ENMIN',dir+'/INPUT0/POTCAR_'+POT,0,0).splitlines()
-#ENPOT = subprocess.check_output(['grep','ENMIN',dir+'/INPUT0/POTCAR_'+POT]).splitlines()
 for i in range(len(ENPOT)) :
 	if float(ENPOT[i].split()[5]) > ENSTART :
 		ENSTART = int(math.ceil(float(ENPOT[i].split()[5])/ENSTEP))*ENSTEP
@@ -79,11 +78,11 @@ while convergence == 1 :
 	if ENCUT > ENMAX :
 		make_amp2_log(dir+'/cutoff','Too high cut-off energy is required!')
 #		print ("ERROR: Too high cut-off energy is required!")
-		print 0
+		print(0)
 		sys.exit()
 
 	if not os.path.isdir(dir+'/cutoff/EN'+str(ENCUT)) :
-		os.mkdir(dir+'/cutoff/EN'+str(ENCUT), 0755)
+		os.mkdir(dir+'/cutoff/EN'+str(ENCUT), 0o755)
 
 	make_amp2_log(dir+'/cutoff','EN'+str(ENCUT)+' calculation start')
 	now_path = dir+'/cutoff/EN'+str(ENCUT)
@@ -92,7 +91,6 @@ while convergence == 1 :
 	rerun = 0 
 	if os.path.isfile(now_path+'/OUTCAR'):
 		if 'Voluntary' in pytail(now_path+'/OUTCAR'):
-#		if 'Voluntary' in subprocess.check_output(['tail','-n','1',now_path+'/OUTCAR']):
 			rerun = 1
 	if rerun == 0:
 		copy_input(dir+'/INPUT0',now_path,POT)
@@ -109,7 +107,7 @@ while convergence == 1 :
 		# Running vasp
 		out = run_vasp(now_path,nproc,vasprun,mpi)
 		if out == 1:  # error in vasp calculation
-			print 0
+			print(0)
 			sys.exit() 
 
 		out = electronic_step_convergence_check(now_path)
@@ -117,13 +115,13 @@ while convergence == 1 :
 			make_amp2_log(dir+'/cutoff','Calculation options are changed. New calculation starts.')
 			out = run_vasp(now_path,nproc,vasprun,mpi)
 			if out == 1:  # error in vasp calculation
-				print 0
+				print(0)
 				sys.exit()
 			out = electronic_step_convergence_check(now_path)
 
 		if out == 2:  # electronic step is not converged. (algo = normal)
 			make_amp2_log(dir+'/cutoff','The calculation stops but electronic step is not converged.')
-			print 0
+			print(0)
 			sys.exit()
 
 	# electronic step is converged.
@@ -153,4 +151,4 @@ with open(dir+'/cutoff/amp2.log','r') as amp2_log:
 	with open(dir+'/amp2.log','a') as amp2_log_tot:
 		amp2_log_tot.write(amp2_log.read())
 
-print 1
+print(1)

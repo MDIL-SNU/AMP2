@@ -7,7 +7,8 @@ from module_log import *
 from module_vasprun import *
 from module_dielectric import *
 from input_conf import set_on_off
-code_data = 'Version 0.9.4. Modified at 2019-11-28'
+from _version import __version__
+code_data = 'Version '+__version__+'. Modified at 2019-12-17'
 
 dir = sys.argv[1]
 
@@ -34,11 +35,11 @@ dir_diel = dir+'/dielectric_'+POT
 if os.path.isdir(dir_diel) and os.path.isfile(dir_diel+'/dielectric.log') :
 	make_amp2_log_default(dir,src_path,'Dielectric calculation with '+POT,node,code_data)
 	make_amp2_log(dir,'Dielectric constant calculation with '+POT+' is already done.')
-	print 1
+	print(1)
 	sys.exit()
 
 if not os.path.isdir(dir_diel):
-	os.mkdir(dir_diel,0755)
+	os.mkdir(dir_diel,0o755)
 
 os.chdir(dir_diel)
 
@@ -58,7 +59,7 @@ else:
 		no_rlx = 1
 
 if no_rlx == 1 and set_on_off(inp_diel['relax_check']) == 1:
-	print 0
+	print(0)
 	sys.exit()
 
 if set_on_off(inp_diel['metal_check']) == 1:
@@ -70,7 +71,7 @@ if set_on_off(inp_diel['metal_check']) == 1:
 			gap_log = inp.readline()
 	else:
 		make_amp2_log(dir_diel,'Band gap calculation should be performed.')
-		print 0
+		print(0)
 		sys.exit()
 else:
 	make_amp2_log(dir_diel,'Do not check the gap condition. (Metal or not)')
@@ -78,7 +79,7 @@ else:
 
 if 'etal' in gap_log:
 	make_amp2_log(dir_diel,'It is metallic band structure.\nDielectric calculation is unreasonable for a metallic system.')
-	print 1
+	print(1)
 	sys.exit()
 else:
 	if no_rlx == 1:
@@ -98,20 +99,20 @@ else:
 	# VASP calculation
 	out = run_vasp(dir_diel,nproc,vasprun,mpi)
 	if out == 1:  # error in vasp calculation
-		print 0
+		print(0)
 		sys.exit() 
 	out = electronic_step_convergence_check(dir_diel)
 	while out == 1:
 		make_amp2_log(dir_diel,'Calculation options are changed. New calculation starts.')
 		out = run_vasp(dir_diel,nproc,vasprun,mpi)
 		if out == 1:  # error in vasp calculation
-			print 0
+			print(0)
 			sys.exit()
 		out = electronic_step_convergence_check(dir_diel)
 
 	if out == 2:  # electronic step is not converged. (algo = normal)
 		make_amp2_log(dir_diel,'The calculation stops but electronic step is not converged.')
-		print 0
+		print(0)
 		sys.exit()
 	write_diel_log(dir_diel+'/OUTCAR',dir_diel)
 	make_amp2_log(dir_diel,'Dielectric calculation is done.')
@@ -120,4 +121,4 @@ with open(dir_diel+'/amp2.log','r') as amp2_log:
 	with open(dir+'/amp2.log','a') as amp2_log_tot:
 		amp2_log_tot.write(amp2_log.read())
 
-print 1
+print(1)

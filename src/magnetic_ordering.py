@@ -10,7 +10,8 @@ from module_AF import *
 from module_amp2_input import *
 from module_relax import *
 from input_conf import set_on_off
-code_data = 'Version 0.9.4. Modified at 2019-11-28'
+from _version import __version__
+code_data = 'Version '+__version__+'. Modified at 2019-12-17'
 
 # Set input
 dir = sys.argv[1]
@@ -40,17 +41,17 @@ else:
 
 node = node_simple(sys.argv[3])
 nproc = sys.argv[4]
+pypath = sys.executable
 
 # Check existing data
 if os.path.isdir(dir+'/magnetic_ordering') and os.path.isfile(dir+'/magnetic_ordering/POSCAR_spin') :
 	make_amp2_log_default(dir,src_path,'Magnetic ordering',node,code_data)
-#	print('Success!')
 	make_amp2_log(dir,'Already done')
-	print 1
+	print(1)
 	sys.exit()
 
 if not os.path.isdir(dir+'/magnetic_ordering') :
-	os.mkdir(dir+'/magnetic_ordering', 0755)
+	os.mkdir(dir+'/magnetic_ordering', 0o755)
 	make_amp2_log_default(dir+'/magnetic_ordering',src_path,'Magnetic ordering',node,code_data)
 	make_amp2_log(dir+'/magnetic_ordering','New calculation.')
 else:
@@ -70,7 +71,7 @@ if set_on_off(inp_af['from_relax']) == 1:
 		inp_pos = dir+'/INPUT0/POSCAR_rlx_'+pot_type
 	else:
 		make_amp2_log(target,'Cannot find relaxed POSCAR.')
-		print 0
+		print(0)
 		sys.exit()
 else:
 	ref_dir = ''
@@ -90,17 +91,16 @@ else:
 
 if ref_dir == '':
 	make_amp2_log(target,'Cannot find reference OUTCAR.')
-	print 0
+	print(0)
 	sys.exit()
 
 spin = pygrep('ISPIN',ref_dir+'/OUTCAR',0,0).split()[2]
-#spin = subprocess.check_output(['grep','ISPIN',ref_dir+'/OUTCAR']).split()[2]
 if spin == '1':
 	make_amp2_log(target,'ISPIN was turned off.')
 	with open(target+'/amp2.log','r') as amp2_log:
 		with open(dir+'/amp2.log','a') as amp2_log_tot:
 			amp2_log_tot.write(amp2_log.read())
-	print 1
+	print(1)
 	sys.exit()
 
 [mag_atom_list,mag_val] = check_spin(ref_dir,inp_pos,inp_af['minimum_moment'])
@@ -109,7 +109,7 @@ if len(mag_atom_list) == 0:
 	with open(target+'/amp2.log','r') as amp2_log:
 		with open(dir+'/amp2.log','a') as amp2_log_tot:
 			amp2_log_tot.write(amp2_log.read())
-	print 1
+	print(1)
 	sys.exit()
 else:
 	make_amp2_log(dir+'/magnetic_ordering','Magnetic atoms are '+', '.join(mag_atom_list)+'.')
@@ -119,7 +119,10 @@ else:
 if not os.path.isfile(target+'/POSCAR_param'):
 	min_cell_length = cutoff_length*2
 	while 1:
-		out = int(subprocess.check_output(['python',src_path+'/mk_supercell.py',inp_pos,dir+'/INPUT0/KPOINTS',str(min_cell_length),target+'/POSCAR_param']).split()[0])
+		try:
+			out = int(subprocess.check_output([pypath,src_path+'/mk_supercell.py',inp_pos,dir+'/INPUT0/KPOINTS',str(min_cell_length),target+'/POSCAR_param'],universal_newlines=True).split()[0])
+		except:
+			out = 1
 		if out == 0:
 			break
 		else:
@@ -128,7 +131,7 @@ if not os.path.isfile(target+'/POSCAR_param'):
 [axis_param,pos_param] = read_poscar(target+'/POSCAR_param')
 if isinstance(inp_af['maximum_atoms_number'],int) and inp_af['maximum_atoms_number'] > 0 and len(pos_param) > inp_af['maximum_atoms_number']:
 	make_amp2_log(target,'The number of atoms in supercell is larger than the criteria.')
-	print 0
+	print(0)
 	sys.exit()
 
 [pair_list,sole_list,mag_list] = find_pair(target+'/POSCAR_param',cutoff_length,mag_atom_list,mag_val,inp_af['tolerance'])
@@ -137,12 +140,12 @@ if len(pair_list) == 0:
 	with open(target+'/amp2.log','r') as amp2_log:
 		with open(dir+'/amp2.log','a') as amp2_log_tot:
 			amp2_log_tot.write(amp2_log.read())
-	print 1
+	print(1)
 	sys.exit()
 
 if isinstance(inp_af['maximum_pair_type'],int) and inp_af['maximum_pair_type'] > 0 and len(pair_list) > inp_af['maximum_pair_type']:
 	make_amp2_log(target,'The number of pairs is larger than the criteria.')
-	print 0
+	print(0)
 	sys.exit()
 
 tot_mag_list = write_pair_list(pair_list,sole_list,mag_list,target)
@@ -172,7 +175,7 @@ for i in range(len(tot_mag_list)):
 
 		out = run_vasp(targ_dir,nproc,vasprun,mpi)
 		if out == 1:  # error in vasp calculation
-			print 0
+			print(0)
 			sys.exit() 
 
 		out = electronic_step_convergence_check(targ_dir)
@@ -180,17 +183,16 @@ for i in range(len(tot_mag_list)):
 			make_amp2_log(targ_dir,'Calculation options are changed. New calculation starts.')
 			out = run_vasp(targ_dir,nproc,vasprun,mpi)
 			if out == 1:  # error in vasp calculation
-				print 0
+				print(0)
 				sys.exit()
 			out = electronic_step_convergence_check(targ_dir)
 
 		if out == 2:  # electronic step is not converged. (algo = normal)
 			make_amp2_log(targ_dir,'The calculation stops but electronic step is not converged.')
-			print 0
+			print(0)
 			sys.exit()
 
 		energy = pygrep('free  ','OUTCAR',0,0).splitlines()[-1].split()[4]
-#		energy = subprocess.check_output(['grep','free  ','OUTCAR']).splitlines()[-1].split()[4]
 		with open(targ_dir+'/energy','w') as enef:
 			enef.write('Spin_'+str(i)+'\t'+energy+'\n')
 
@@ -221,11 +223,20 @@ for cell in supercell_list:
 
 	# shuld be checked
 	if not os.path.isfile(ga_path+'/POSCAR_spin0'):
-		subprocess.call(['python',src_path+'/make_supercell.py',inp_pos,str(cell[0]),str(cell[1]),str(cell[2]),ga_path+'/POSCAR_ref'])
-		subprocess.call(['python',src_path+'/genetic_algorithm.py',target+'/input_GA.yaml',ga_path+'/POSCAR_ref',energy_tolerance])
+		try:
+			subprocess.call([pypath,src_path+'/make_supercell.py',inp_pos,str(cell[0]),str(cell[1]),str(cell[2]),ga_path+'/POSCAR_ref'])
+		except:
+			make_amp2_log(targ_dir,'Error occurred while making supercell.')
+			print (0)
+			sys.exit()
+		try:
+			subprocess.call([pypath,src_path+'/genetic_algorithm.py',target+'/input_GA.yaml',ga_path+'/POSCAR_ref',energy_tolerance])
+		except:
+			make_amp2_log(targ_dir,'Error occurred shile running genetic algorithm.')
+			print (0)
+			sys.exit()
 
 	fin_energy = float(pytail(ga_path+'/energy.dat').split()[0])
-#	fin_energy = float(subprocess.check_output(['tail','-1',ga_path+'/energy.dat']).split()[0])
 	fin_energy = fin_energy/float(cell[0]*cell[1]*cell[2])
 	if round(fin_energy-min_energy_in_ga,8) < 0 :
 		min_energy_in_ga = fin_energy
@@ -261,7 +272,6 @@ for i in range(len(POSCARs)):
 		os.chdir(calc_path)
 		if os.path.isfile(calc_path+'/CONTCAR') and os.path.isfile(calc_path+'/free') and len(pygrep('free  ',calc_path+'/free',0,0).splitlines()) > 0 and len(pygrep('free  ',calc_path+'/free',0,0).splitlines()) <= inp_rlx['converged_ionic_step'] :
 			energy = pygrep('free  ','OUTCAR',0,0).splitlines()
-#			energy = subprocess.check_output(['grep','free  ','OUTCAR']).splitlines()
 		else:
 			run_cont = 0
 			if os.path.isfile(calc_path+'/CONTCAR') and count_line(calc_path+'/CONTCAR') > 9:
@@ -298,26 +308,25 @@ for i in range(len(POSCARs)):
 
 			out = run_vasp(calc_path,nproc,vasprun,mpi)
 			if out == 1:  # error in vasp calculation
-				print 0
+				print(0)
 				sys.exit() 
 			out = electronic_step_convergence_check(calc_path)
 			while out == 1:
 				make_amp2_log(calc_path,'Calculation options are changed. New calculation starts.')
 				out = run_vasp(calc_path,nproc,vasprun,mpi)
 				if out == 1:  # error in vasp calculation
-					print 0
+					print(0)
 					sys.exit()
 				out = electronic_step_convergence_check(calc_path)
 
 			if out == 2:  # electronic step is not converged. (algo = normal)
 				make_amp2_log(calc_path,'The calculation stops but electronic step is not converged.')
-				print 0
+				print(0)
 				sys.exit()
 
 			ionic_converge = 0
 			iteration = 1
 			energy = pygrep('free  ','OUTCAR',0,0).splitlines()
-#			energy = subprocess.check_output(['grep','free  ','OUTCAR']).splitlines()
 			while iteration < inp_rlx['max_iteration']:
 				with open(calc_path+'/OUT_TOT','a') as out_log:
 					out_log.write(open(calc_path+'/OUTCAR','r').read())
@@ -326,30 +335,29 @@ for i in range(len(POSCARs)):
 					make_amp2_log(calc_path,'Relaxation is done.')
 					break
 				shutil.copyfile(calc_path+'/CONTCAR',calc_path+'/POSCAR')
-				if bool(inp_rlx['incar']) and not 'EDIFFG' in inp_rlx['incar'].keys():
+				if bool(inp_rlx['incar']) and not 'EDIFFG' in list(inp_rlx['incar'].keys()):
 					converge_condition = set_ediffg(calc_path+'/POSCAR',inp_rlx['force'],inp_rlx['pressure'],inp_rlx['energy'])
 					if not converge_condition == 0:
 						wincar(calc_path+'/INCAR',calc_path+'/INCAR',[['EDIFFG',str(converge_condition)]],[])
 
 				out = run_vasp(calc_path,nproc,vasprun,mpi)
 				if out == 1:  # error in vasp calculation
-					print 0
+					print(0)
 					sys.exit() 
 				out = electronic_step_convergence_check(calc_path)
 				while out == 1:
 					make_amp2_log(calc_path,'Calculation options are changed. New calculation starts.')
 					out = run_vasp(calc_path,nproc,vasprun,mpi)
 					if out == 1:  # error in vasp calculation
-						print 0
+						print(0)
 						sys.exit()
 					out = electronic_step_convergence_check(calc_path)
 				if out == 2:  # electronic step is not converged. (algo = normal)
 					make_amp2_log(calc_path,'The calculation stops but electronic step is not converged.')
-					print 0
+					print(0)
 					sys.exit()
 
 				energy = pygrep('free  ','OUTCAR',0,0).splitlines()
-#				energy = subprocess.check_output(['grep','free  ','OUTCAR']).splitlines()
 				iteration = iteration+1
 				make_amp2_log(calc_path,'Iteration number is '+str(iteration))
 
@@ -357,7 +365,6 @@ for i in range(len(POSCARs)):
 			stable_ene = [i,float(energy[-1].split()[4])]
 		with open('free','w') as fr_file:
 			fr_file.write(pygrep('free  ','OUTCAR',0,0).splitlines()[-1])
-#			fr_file.write(subprocess.check_output(['grep','free  ','OUTCAR']).splitlines()[-1])
 
 with open(target+'/amp2.log','r') as amp2_log:
 	with open(dir+'/amp2.log','a') as amp2_log_tot:
@@ -400,4 +407,4 @@ else:
 		mag_info = inp.readline()
 	wincar(dir+'/INPUT0/spin_note',dir+'/INPUT0/spin_note',[['MAGMOM',mag_info]],[])
 
-print 1
+print(1)

@@ -16,7 +16,7 @@ def make_amp2_log_default(path,src_path,comment,node,code_data):
 		amp2_log.write('\tThe current running path is '+full_path+'\n')
 		amp2_log.write('\tThe source path is '+full_src_path+'\n')
 		amp2_log.write('\t'+code_data+'\n')
-		amp2_log.write('\tRunning nodes are')
+		amp2_log.write('\tYour job was run at')
 		for node_index in node:
 			amp2_log.write(' '+node_index)
 		amp2_log.write('\n')
@@ -40,7 +40,6 @@ def node_simple(node_file):
 def read_code_head(code,head_num):
 	from module_vasprun import pyhead
 	code_ver = pyhead(code,head_num)
-#	code_ver = subprocess.check_output(['head','-'+str(head_num),code])
 	return code_ver
 
 def write_log_in_outcar(outcar_file,log_file):

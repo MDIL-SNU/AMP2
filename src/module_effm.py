@@ -17,9 +17,7 @@ def calc_max_E_diff(Fermi_cut,temp):
 
 def pocket(target,band_path,carrier_type,E_width,search_space):
 	spin = pygrep('ISPIN',band_path+'/OUTCAR',0,0).split()[2]
-#	spin = subprocess.check_output(['grep','ISPIN',band_path+'/OUTCAR']).split()[2]
 	ncl = pygrep('NONCOL',band_path+'/OUTCAR',0,0).split()[2]
-#	ncl = subprocess.check_output(['grep','NONCOL',band_path+'/OUTCAR']).split()[2]
 	[KPT,Band,nelect] = EIGEN_to_array(band_path+'/EIGENVAL',spin)
 	axis = poscar_to_axis(band_path+'/POSCAR')
 	rec_lat = reciprocal_lattice(axis)
@@ -195,11 +193,11 @@ def make_kpts_for_calculation(target,grid_size,max_E_diff):
 			kp_min = [x for x in pocket_kpt[k]]
 			for i in range(len(num_kp_for_test)):
 				## extreme to -direction
-				for j in range((num_kp_for_test[i]-1)/2):
-					kpj_idx = shift-j+(num_kp_for_test[i]-1)/2-1 # (shift + exterme point index - j), Ex> if num kp = 15; 6,5,4,...,0
+				for j in range((num_kp_for_test[i]-1)//2):
+					kpj_idx = shift-j+(num_kp_for_test[i]-1)//2-1 # (shift + exterme point index - j), Ex> if num kp = 15; 6,5,4,...,0
 					if abs(extreme_E - Band[pocket_inform[k][0]][kpj_idx][pocket_inform[k][1]]) < max_E_diff:
 						for k_id in range(3):
-							if KPT[kpj_idx][k_id] > KPT[shift+(num_kp_for_test[i]-1)/2][k_id]:
+							if KPT[kpj_idx][k_id] > KPT[shift+(num_kp_for_test[i]-1)//2][k_id]:
 								if kp_max[k_id] < KPT[kpj_idx][k_id]:
 									kp_max[k_id] = KPT[kpj_idx][k_id]
 							else:
@@ -208,11 +206,11 @@ def make_kpts_for_calculation(target,grid_size,max_E_diff):
 					else:
 						break
 				## extreme to +direction
-				for j in range((num_kp_for_test[i]-1)/2):
-					kpj_idx = shift+j+(num_kp_for_test[i]-1)/2+1 # (shift + exterme point index - j), Ex> if num kp = 15; 8,9,10,11
+				for j in range((num_kp_for_test[i]-1)//2):
+					kpj_idx = shift+j+(num_kp_for_test[i]-1)//2+1 # (shift + exterme point index - j), Ex> if num kp = 15; 8,9,10,11
 					if abs(extreme_E - Band[pocket_inform[k][0]][kpj_idx][pocket_inform[k][1]]) < max_E_diff:
 						for k_id in range(3):
-							if KPT[kpj_idx][k_id] > KPT[shift+(num_kp_for_test[i]-1)/2][k_id]:
+							if KPT[kpj_idx][k_id] > KPT[shift+(num_kp_for_test[i]-1)//2][k_id]:
 								if kp_max[k_id] < KPT[kpj_idx][k_id]:
 									kp_max[k_id] = KPT[kpj_idx][k_id]
 							else:
@@ -414,14 +412,12 @@ def Fermi_dist(x,x0,carrier_type,Temp):
 def PROCAR_to_array(procar_file):
 	# read head line
 	lines = pygrep('# of',procar_file,0,0).splitlines()
-#	lines = subprocess.check_output(['grep','# of',procar_file]).splitlines()
 	spin = len(lines)
 	line = lines[0].replace(':',': ').split() # due to printing format
 	nband = int(line[7])
 	nkpt = int(line[3])
 	# read energy line
 	lines = pygrep('# energy',procar_file,0,0).splitlines()
-#	lines = subprocess.check_output(['grep','# energy',procar_file]).splitlines()
 	Band = []
 	for n in range(nband):
 		Band.append([])
@@ -447,14 +443,11 @@ def check_vasp_done(target):
 	if not os.path.isfile(target+'/OUTCAR'):
 		return 0
 	outcar_last_line = pytail(target+'/OUTCAR')
-#	outcar_last_line = subprocess.check_output(['tail','-1',target+'/OUTCAR'])
 	if not 'Voluntary' in outcar_last_line:
 		return 0
 	else:
 		kpt_for_kpoints = pyhead(target+'/KPOINTS',8).splitlines()[3:8]
-#		kpt_for_kpoints = subprocess.check_output(['head','-8',target+'/KPOINTS']).splitlines()[3:8]
 		kpt_for_outcar =  pygrep('k-points in units of 2pi',target+'/OUTCAR',0,5).splitlines()[1:6]
-#		kpt_for_outcar =  subprocess.check_output(['grep','-A5','k-points in units of 2pi',target+'/OUTCAR']).splitlines()[1:6]
 		for i in range(5):
 			for j in range(3):
 				if not round(float(kpt_for_kpoints[i].split()[j]),7) == round(float(kpt_for_outcar[i].split()[j]),7):
@@ -473,7 +466,7 @@ def read_operation(poscar):
 	index = 0
 	for line in atom_pos:
 		pos.append(line[0:3])
-		if not line[4] in atom_dic.keys():
+		if not line[4] in list(atom_dic.keys()):
 			atom_dic[line[4]] = index
 			type_dic[index] = [line[3],line[4]]
 			index = index+1
@@ -554,9 +547,7 @@ def apply_operator(pos,operator):
 ############################################################################################
 def pocket_old(target,carrier_type,E_width,kspacing):
 	spin = pygrep('ISPIN',target+'/OUTCAR',0,0).split()[2]
-#	spin = subprocess.check_output(['grep','ISPIN',target+'/OUTCAR']).split()[2]
 	ncl = pygrep('NONCOL',target+'/OUTCAR',0,0).split()[2]
-#	ncl = subprocess.check_output(['grep','NONCOL',target+'/OUTCAR']).split()[2]
 	[KPT,Band,nelect] = EIGEN_to_array(target+'/EIGENVAL',spin)
 	with open(target+'/Band_gap.log','r') as inp:
 		lines = inp.readlines()

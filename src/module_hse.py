@@ -22,7 +22,7 @@ def make_kpts_for_hse(kpt_rlx_file,kpt_band_file,target,calc_type):
 		lines = kpt_band_inp.readlines()
 	kpt_band = []
 	for line in lines[3:]:
-		if line.split() > 3:
+		if len(line.split()) > 2:
 			kpt_band.append([float(x) for x in line.split()[0:3]]+[0.0])
 
 	for i in range(len(kpt_band)):
@@ -94,9 +94,7 @@ def DOS_ratio_fermi_to_vb(dos_file,fermi_width,vb_range):
 
 def find_extreme_kpt_for_hse(dir_band,e_width,search_space):
 	spin = pygrep('ISPIN',dir_band+'/OUTCAR',0,0).split()[2]
-#	spin = subprocess.check_output(['grep','ISPIN',dir_band+'/OUTCAR']).split()[2]
 	ncl = pygrep('NONCOL',dir_band+'/OUTCAR',0,0).split()[2]
-#	ncl = subprocess.check_output(['grep','NONCOL',dir_band+'/OUTCAR']).split()[2]
 	[KPT,Band,nelect] = EIGEN_to_array(dir_band+'/EIGENVAL',spin)
 	fermi = get_fermi_level(Band,nelect,ncl)
 
@@ -206,9 +204,9 @@ def read_wavecar(wave_file,min_band,max_band):
 def get_Gvector(kvector,Bcell,ngrid,encut):
 	AU2Ang = 0.529177249
 	RY2Ev = 13.605826
-	fx = [ii if ii < ngrid[0] / 2 + 1 else ii - ngrid[0] for ii in range(ngrid[0])]
-	fy = [jj if jj < ngrid[1] / 2 + 1 else jj - ngrid[1] for jj in range(ngrid[1])]
-	fz = [kk if kk < ngrid[2] / 2 + 1 else kk - ngrid[2] for kk in range(ngrid[2])]
+	fx = [ii if ii < ngrid[0] // 2 + 1 else ii - ngrid[0] for ii in range(ngrid[0])]
+	fy = [jj if jj < ngrid[1] // 2 + 1 else jj - ngrid[1] for jj in range(ngrid[1])]
+	fz = [kk if kk < ngrid[2] // 2 + 1 else kk - ngrid[2] for kk in range(ngrid[2])]
 	kgrid = np.array([(fx[ii], fy[jj], fz[kk]) for kk in range(ngrid[2]) for jj in range(ngrid[1]) for ii in range(ngrid[0])], dtype=float)
 	kinetic_E = RY2Ev * AU2Ang ** 2.0 * np.linalg.norm(np.dot(kgrid + kvector[np.newaxis,:],2.0*np.pi*Bcell),axis = 1) ** 2.0
 	Gvector = kgrid[np.where(kinetic_E < encut)[0]]
@@ -252,15 +250,15 @@ def read_xtic_file(xtic_file):
 			if not abs(xtic[overlap_idx[i][0]]-xtic[overlap_idx[i][0]+1]) < 0.0000001:
 				for j in range(overlap_idx[i][0],len(xtic)-1):
 					if abs(xtic[j]-xtic[j+1]) < 0.0000001:
-						band_line.append([1,0]+range(overlap_idx[i][0]+1,j+1))
+						band_line.append([1,0]+list(range(overlap_idx[i][0]+1,j+1)))
 						break
 					elif j == len(xtic)-2:
-						band_line.append([1,0]+range(overlap_idx[i][0]+1,j+1))
+						band_line.append([1,0]+list(range(overlap_idx[i][0]+1,j+1)))
 						break
 			if not abs(xtic[overlap_idx[i][0]]-xtic[overlap_idx[i][0]-1]) < 0.0000001:
 				for j in range(overlap_idx[i][0],0,-1):
 					if abs(xtic[j]-xtic[j-1]) < 0.0000001:
-						band_line.append([1,0]+range(overlap_idx[i][0]-1,j-1,-1))
+						band_line.append([1,0]+list(range(overlap_idx[i][0]-1,j-1,-1)))
 						break
 	for item in over_rm_idx:
 		overlap_idx.remove(item)
@@ -286,10 +284,10 @@ def read_xtic_file(xtic_file):
 
 				for j in range(i,len(xtic)-1):
 					if abs(xtic[j]-xtic[j+1]) < 0.0000001:
-						band_line.append(address+range(i+1,j+1))
+						band_line.append(address+list(range(i+1,j+1)))
 						break
 					elif j == len(xtic)-2:
-						band_line.append(address+range(i+1,j+2))
+						band_line.append(address+list(range(i+1,j+2)))
 						break
 	return [band_line,overlap_idx]
 
@@ -344,14 +342,11 @@ def plot_band_corrected_structure(spin,Band,fermi,xtic_file,xlabel_file,plot_ran
 	# make band.in
 	nband = len(Band)
 	if pyhead(target+'/Band_gap.log',1).split()[2] == 'is' :
-#	if subprocess.check_output(['head','-n','1',target+'/Band_gap.log']).split()[2] == 'is' :
 		gap = 0
 		fermi = str(fermi)
 	else :
-		gap = round(float(subprocess.check_output(['head','-n','1',target+'/Band_gap.log']).split()[2]))
-#		gap = round(float(subprocess.check_output(['head','-n','1',target+'/Band_gap.log']).split()[2]))
+		gap = round(float(pyhead(target+'/Band_gap.log',1).split()[2]))
 		fermi = pygrep('VBM',target+'/Band_gap.log',0,0).splitlines()[0].split()[-2]
-#		fermi = subprocess.check_output(['grep','VBM',target+'/Band_gap.log']).splitlines()[0].split()[-2]
 
 	title = target.split('/')[-2]
 	make_band_corrected_in(title,xlabel_file,fermi,gap,nband,spin,plot_range,target)
@@ -451,8 +446,8 @@ def get_band_reorder(Band,KPT,fermi,spin,target):
 
 	band_idx = -1 * np.ones((len(Unk_GGA),len(KPT),nband),dtype=int)
 	for i in range(len(Unk_GGA)):
-		band_idx[i,0,:] = range(nband)
-		band_idx[i,1,:] = range(nband)
+		band_idx[i,0,:] = list(range(nband))
+		band_idx[i,1,:] = list(range(nband))
 
 	for i in range(len(Unk_GGA)):
 		for idx_GGA in band_line:
@@ -482,7 +477,7 @@ def get_band_reorder(Band,KPT,fermi,spin,target):
 						for n2 in range(min_band,max_band):
 							if R2[n1,n2] == 1 and flag[n2] == 0:
 								R[band_idx_prev[n1]] = R2[n1]
-		     						break
+								break
 						flag = flag + R[band_idx_prev[n1]]
 
 				for n1 in range(min_band,max_band):
@@ -605,7 +600,7 @@ def convergence_check_E(target):
     path_list = glob.glob(target+'/kptest/KP*')
     if os.path.isfile(target+'/kptest/KPOINTS_converged'):
         path_list.remove(target+'/kptest/KPOINTS_converged')
-    path_list.sort()
+    path_list.sort(key=lambda x:int(x.split('/')[-1][2:]))
     if os.path.isfile(target+'/kptest/kpoint.log'):
         ENCONV = float(pygrep('E/atom',target+'/kptest/kpoint.log',0,0).split()[-2])
     else:
@@ -619,7 +614,7 @@ def convergence_check_E(target):
                 ENERGY.append(float(pygrep('free  ',path_list[i+j]+'/OUTCAR',0,0).splitlines()[-1].split()[4]))
         converge = 0
         # Convergence check for energy/atom
-        if (abs(ENERGY[0]-ENERGY[1])/nion < ENCONV and abs(ENERGY[0]-ENERGY[2])/nion < ENCONV) and check == 0:
+        if (abs(ENERGY[0]-ENERGY[1])/nion < ENCONV and abs(ENERGY[0]-ENERGY[2])/nion < ENCONV and abs(ENERGY[1]-ENERGY[2])/nion < ENCONV) and check == 0:
 #            print path_list[i]
             E_conv_kp = path_list[i]
             check = 1

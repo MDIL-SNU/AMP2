@@ -17,9 +17,9 @@ def input_conf(conf):
 	
 	inp_override(inp0_yaml,inp_yaml)
 
-	if 'potential_type' in inp0_yaml['calculation'].keys() and not inp0_yaml['calculation']['potential_type'] is None:
-		for cal_key in inp0_yaml.keys():
-			if 'potential_type' in inp0_yaml[cal_key].keys():
+	if 'potential_type' in list(inp0_yaml['calculation'].keys()) and not inp0_yaml['calculation']['potential_type'] is None:
+		for cal_key in list(inp0_yaml.keys()):
+			if 'potential_type' in list(inp0_yaml[cal_key].keys()):
 				# list type
 				if isinstance(inp0_yaml[cal_key]['potential_type'],list):
 					inp0_yaml[cal_key]['potential_type'] = [inp0_yaml['calculation']['potential_type']]
@@ -27,7 +27,7 @@ def input_conf(conf):
 				elif isinstance(inp0_yaml[cal_key]['potential_type'],str):
 					inp0_yaml[cal_key]['potential_type'] = inp0_yaml['calculation']['potential_type']
 
-	for dir_key in inp0_yaml['directory'].keys():
+	for dir_key in list(inp0_yaml['directory'].keys()):
 		inp0_yaml['directory'][dir_key] = os.path.expanduser(inp0_yaml['directory'][dir_key])	# home to absolute path
 		inp0_yaml['directory'][dir_key] = os.path.abspath(inp0_yaml['directory'][dir_key])	# absolute path
 		if dir_key in ['src_path','pot_path_gga','pot_path_lda']:
@@ -41,7 +41,7 @@ def input_conf(conf):
 		else:
 			if not os.path.isdir(inp0_yaml['directory'][dir_key]):
 				os.mkdir(inp0_yaml['directory'][dir_key])
-	for dir_key in inp0_yaml['program'].keys():
+	for dir_key in list(inp0_yaml['program'].keys()):
 		if not dir_key in ['mpi_command']:
 			inp0_yaml['program'][dir_key] = os.path.expanduser(inp0_yaml['program'][dir_key])	# home to absolute path
 			inp0_yaml['program'][dir_key] = os.path.abspath(inp0_yaml['program'][dir_key])	# absolute path
@@ -72,7 +72,7 @@ def input_conf(conf):
 	return conf_fin
 		
 def inp_override(source,override):
-	for key in override.keys():
+	for key in list(override.keys()):
 		if isinstance(source, collections.Mapping):
 			if isinstance(override[key], collections.Mapping) and override[key]:
 				returned = inp_override(source.get(key, {}),override[key])
@@ -92,7 +92,7 @@ def set_on_off(set_val):
 def dic_to_lowercase(data):
 	if isinstance(data,dict):
 		t = type(data)()
-		for k, v in data.items():
+		for k, v in list(data.items()):
 			if k.lower() in ['pot_name','incar','u_value']:
 				t[k.lower()] = v
 			elif k.lower() in ['potential_type']:

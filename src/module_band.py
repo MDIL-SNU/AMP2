@@ -497,10 +497,10 @@ def get_fermi_level(Band,nelect,ncl):
 		occupied_index = nelect*num_kpt
 		fermi =  (Band_reshape[occupied_index-1] + Band_reshape[occupied_index])/2.0
 	elif nelect%2 == 1 and spin == 1 and num_kpt%2 == 1:
-		occupied_index = (nelect*num_kpt+1)/2
+		occupied_index = (nelect*num_kpt+1)//2
 		fermi = Band_reshape[occupied_index-1]
 	else:
-		occupied_index = nelect*num_kpt/(3-spin)
+		occupied_index = nelect*num_kpt//(3-spin)
 		fermi =  (Band_reshape[occupied_index-1] + Band_reshape[occupied_index])/2.0
 	return fermi
 
@@ -755,14 +755,11 @@ def plot_band_structure(spin,Band,fermi,xtic_file,xlabel_file,plot_range,target)
 	# make band.in
 	nband = len(Band)
 	if pyhead(target+'/Band_gap.log',1).split()[2] == 'is' :
-#	if subprocess.check_output(['head','-n','1',target+'/Band_gap.log']).split()[2] == 'is' :
 		gap = 0
 		fermi = str(fermi)
 	else :
 		gap = round(float(pyhead(target+'/Band_gap.log',1).split()[2]))
-#		gap = round(float(subprocess.check_output(['head','-n','1',target+'/Band_gap.log']).split()[2]))
 		fermi = pygrep('VBM',target+'/Band_gap.log',0,0).splitlines()[0].split()[-2]
-#		fermi = subprocess.check_output(['grep','VBM',target+'/Band_gap.log']).splitlines()[0].split()[-2]
 
 	title = target.split('/')[-2]
 	make_band_in(title,xlabel_file,fermi,gap,nband,spin,plot_range,target)
