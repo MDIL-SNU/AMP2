@@ -1,0 +1,50 @@
+\babel@toc {english}{}
+\contentsline {chapter}{\numberline {1}Installation and execution}{1}{chapter.1}%
+\contentsline {section}{\numberline {1.1}Installation AMP$^{\text {2}}$}{1}{section.1.1}%
+\contentsline {subsection}{\numberline {1.1.1}System requirements}{1}{subsection.1.1.1}%
+\contentsline {subsection}{\numberline {1.1.2}Installation}{1}{subsection.1.1.2}%
+\contentsline {section}{\numberline {1.2}Essential setting}{1}{section.1.2}%
+\contentsline {subsection}{\numberline {1.2.1}Setting of configuration file}{1}{subsection.1.2.1}%
+\contentsline {section}{\numberline {1.3}Execution AMP$^{\text {2}}$}{2}{section.1.3}%
+\contentsline {chapter}{\numberline {2}Overview}{3}{chapter.2}%
+\contentsline {section}{\numberline {2.1}Preparing input files}{3}{section.2.1}%
+\contentsline {section}{\numberline {2.2}Running AMP$^{\text {2}}$}{4}{section.2.2}%
+\contentsline {section}{\numberline {2.3}Outputs}{4}{section.2.3}%
+\contentsline {section}{\numberline {2.4}List of source codes}{5}{section.2.4}%
+\contentsline {chapter}{\numberline {3}Input}{7}{chapter.3}%
+\contentsline {section}{\numberline {3.1}Input files}{7}{section.3.1}%
+\contentsline {subsection}{\numberline {3.1.1}Structure file}{7}{subsection.3.1.1}%
+\contentsline {subsection}{\numberline {3.1.2}Configuration}{7}{subsection.3.1.2}%
+\contentsline {section}{\numberline {3.2}Configuration}{9}{section.3.2}%
+\contentsline {subsection}{\numberline {3.2.1}Directory}{9}{subsection.3.2.1}%
+\contentsline {subsection}{\numberline {3.2.2}Program}{10}{subsection.3.2.2}%
+\contentsline {subsection}{\numberline {3.2.3}Calculation}{12}{subsection.3.2.3}%
+\contentsline {subsection}{\numberline {3.2.4}Vasp\_parallel}{13}{subsection.3.2.4}%
+\contentsline {subsection}{\numberline {3.2.5}cif2vasp}{14}{subsection.3.2.5}%
+\contentsline {subsection}{\numberline {3.2.6}Hybrid\_oneshot}{15}{subsection.3.2.6}%
+\contentsline {subsection}{\numberline {3.2.7}Effective\_mass}{16}{subsection.3.2.7}%
+\contentsline {section}{\numberline {3.3}Advanced configuration}{16}{section.3.3}%
+\contentsline {chapter}{\numberline {4}Output}{21}{chapter.4}%
+\contentsline {section}{\numberline {4.1}Output files}{21}{section.4.1}%
+\contentsline {subsection}{\numberline {4.1.1}INPUT0}{21}{subsection.4.1.1}%
+\contentsline {subsection}{\numberline {4.1.2}kptest}{21}{subsection.4.1.2}%
+\contentsline {subsection}{\numberline {4.1.3}encut}{21}{subsection.4.1.3}%
+\contentsline {subsection}{\numberline {4.1.4}relax\_POT (POT = GGA or LDA)}{21}{subsection.4.1.4}%
+\contentsline {subsection}{\numberline {4.1.5}magnetic\_ordering}{21}{subsection.4.1.5}%
+\contentsline {subsection}{\numberline {4.1.6}band\_POT (POT = GGA or LDA)}{22}{subsection.4.1.6}%
+\contentsline {subsection}{\numberline {4.1.7}dos\_POT (POT = GGA or LDA)}{22}{subsection.4.1.7}%
+\contentsline {subsection}{\numberline {4.1.8}dielectric\_POT (POT = GGA or LDA)}{22}{subsection.4.1.8}%
+\contentsline {subsection}{\numberline {4.1.9}hybrid\_POT1\_POT2 (POT = GGA or LDA)}{22}{subsection.4.1.9}%
+\contentsline {subsection}{\numberline {4.1.10}effm\_POT (POT = GGA or LDA)}{22}{subsection.4.1.10}%
+\contentsline {subsection}{\numberline {4.1.11}Results}{22}{subsection.4.1.11}%
+\contentsline {subsection}{\numberline {4.1.12}INPUT0\_old}{22}{subsection.4.1.12}%
+\contentsline {subsection}{\numberline {4.1.13}relax\_POT\_old (POT = GGA or LDA)}{22}{subsection.4.1.13}%
+\contentsline {subsection}{\numberline {4.1.14}name\_with\_U}{23}{subsection.4.1.14}%
+\contentsline {chapter}{\numberline {5}Examples}{25}{chapter.5}%
+\contentsline {section}{\numberline {5.1}Introduction}{25}{section.5.1}%
+\contentsline {section}{\numberline {5.2}Execute AMP$^{\text {2}}$}{25}{section.5.2}%
+\contentsline {section}{\numberline {5.3}Calculation results}{25}{section.5.3}%
+\contentsline {subsection}{\numberline {5.3.1}Si}{25}{subsection.5.3.1}%
+\contentsline {subsection}{\numberline {5.3.2}Ge}{27}{subsection.5.3.2}%
+\contentsline {subsection}{\numberline {5.3.3}NiO}{28}{subsection.5.3.3}%
+\contentsline {chapter}{\numberline {6}Indices and tables}{31}{chapter.6}%

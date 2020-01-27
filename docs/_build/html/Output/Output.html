@@ -1,0 +1,410 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Output &mdash; AMP2  documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../_static/jquery.js"></script>
+        <script type="text/javascript" src="../_static/underscore.js"></script>
+        <script type="text/javascript" src="../_static/doctools.js"></script>
+        <script type="text/javascript" src="../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Examples" href="../Examples/Examples.html" />
+    <link rel="prev" title="Advanced configuration" href="../Input/Advanced_configuration.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> AMP2
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.9.5
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../Installation/Installation.html">Installation and execution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Overview/Overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Input/Input.html">Input</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Output</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#output-files">Output files</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#input0">INPUT0</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#kptest">kptest</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#encut">encut</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#relax-pot-pot-gga-or-lda">relax_POT (POT = GGA or LDA)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#magnetic-ordering">magnetic_ordering</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#band-pot-pot-gga-or-lda">band_POT (POT = GGA or LDA)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#dos-pot-pot-gga-or-lda">dos_POT (POT = GGA or LDA)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#dielectric-pot-pot-gga-or-lda">dielectric_POT (POT = GGA or LDA)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#hybrid-pot1-pot2-pot-gga-or-lda">hybrid_POT1_POT2 (POT = GGA or LDA)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#effm-pot-pot-gga-or-lda">effm_POT (POT = GGA or LDA)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#results">Results</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#input0-old">INPUT0_old</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#relax-pot-old-pot-gga-or-lda">relax_POT_old (POT = GGA or LDA)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#name-with-u">name_with_U</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../Examples/Examples.html">Examples</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">AMP2</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+      <li>Output</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/Output/Output.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="output">
+<h1>Output<a class="headerlink" href="#output" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="output-files">
+<h2>Output files<a class="headerlink" href="#output-files" title="Permalink to this headline">¶</a></h2>
+<p>AMP<sup>2</sup> makes directory for each configuration file as its name (from name.cif or POSCAR_name).
+When the calculation is on progress, the directory is
+placed in output path in the configuration. If calculation is well finished, the calculation directory
+is moved to done path. If any error breaks out, it is move to error path.</p>
+<p>Each directory includes several sub-directory as follow;</p>
+<div class="section" id="input0">
+<h3>INPUT0<a class="headerlink" href="#input0" title="Permalink to this headline">¶</a></h3>
+<blockquote>
+<div><p>Directory for input files for VASP calculation.</p>
+<ul class="simple">
+<li><dl class="simple">
+<dt>POSCAR_rlx_POT:</dt><dd><p>Optimized structure file with POT functional.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>KPOINTS:</dt><dd><p>Converged k-points file</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>INCAR:</dt><dd><p>VASP input file with converged cutoff energy and ground-state magnetic ordering</p>
+</dd>
+</dl>
+</li>
+</ul>
+</div></blockquote>
+</div>
+<div class="section" id="kptest">
+<h3>kptest<a class="headerlink" href="#kptest" title="Permalink to this headline">¶</a></h3>
+<blockquote>
+<div><p>Directory for k-point convergence test.</p>
+<ul class="simple">
+<li><dl class="simple">
+<dt>kpoint.log:</dt><dd><p>Calculation log for k-points convergence test</p>
+</dd>
+</dl>
+</li>
+</ul>
+</div></blockquote>
+</div>
+<div class="section" id="encut">
+<h3>encut<a class="headerlink" href="#encut" title="Permalink to this headline">¶</a></h3>
+<blockquote>
+<div><p>Directory for cutoff energy convergence test.</p>
+<ul class="simple">
+<li><dl class="simple">
+<dt>cutoff.log:</dt><dd><p>Calculation log for cutoff energy convergence test</p>
+</dd>
+</dl>
+</li>
+</ul>
+</div></blockquote>
+</div>
+<div class="section" id="relax-pot-pot-gga-or-lda">
+<h3>relax_POT (POT = GGA or LDA)<a class="headerlink" href="#relax-pot-pot-gga-or-lda" title="Permalink to this headline">¶</a></h3>
+<blockquote>
+<div><p>Directory for structure relaxation.</p>
+</div></blockquote>
+</div>
+<div class="section" id="magnetic-ordering">
+<h3>magnetic_ordering<a class="headerlink" href="#magnetic-ordering" title="Permalink to this headline">¶</a></h3>
+<blockquote>
+<div><p>Directory for identifying magnetic spin ordering.</p>
+</div></blockquote>
+</div>
+<div class="section" id="band-pot-pot-gga-or-lda">
+<h3>band_POT (POT = GGA or LDA)<a class="headerlink" href="#band-pot-pot-gga-or-lda" title="Permalink to this headline">¶</a></h3>
+<blockquote>
+<div><p>Directory for band structure and band gap calculation.</p>
+</div></blockquote>
+</div>
+<div class="section" id="dos-pot-pot-gga-or-lda">
+<h3>dos_POT (POT = GGA or LDA)<a class="headerlink" href="#dos-pot-pot-gga-or-lda" title="Permalink to this headline">¶</a></h3>
+<blockquote>
+<div><p>Directory for density of states calculation.</p>
+</div></blockquote>
+</div>
+<div class="section" id="dielectric-pot-pot-gga-or-lda">
+<h3>dielectric_POT (POT = GGA or LDA)<a class="headerlink" href="#dielectric-pot-pot-gga-or-lda" title="Permalink to this headline">¶</a></h3>
+<blockquote>
+<div><p>Directory for dielectric constant calculation.</p>
+</div></blockquote>
+</div>
+<div class="section" id="hybrid-pot1-pot2-pot-gga-or-lda">
+<h3>hybrid_POT1_POT2 (POT = GGA or LDA)<a class="headerlink" href="#hybrid-pot1-pot2-pot-gga-or-lda" title="Permalink to this headline">¶</a></h3>
+<blockquote>
+<div><p>Directory for band gap calculation with hybrid oneshot scheme.</p>
+</div></blockquote>
+</div>
+<div class="section" id="effm-pot-pot-gga-or-lda">
+<h3>effm_POT (POT = GGA or LDA)<a class="headerlink" href="#effm-pot-pot-gga-or-lda" title="Permalink to this headline">¶</a></h3>
+<blockquote>
+<div><p>Directory for effective mass calculation.</p>
+</div></blockquote>
+</div>
+<div class="section" id="results">
+<h3>Results<a class="headerlink" href="#results" title="Permalink to this headline">¶</a></h3>
+<blockquote>
+<div><p>Directory for calculation results.</p>
+<ul class="simple">
+<li><dl class="simple">
+<dt>POSCAR_GGA:</dt><dd><p>Optimized structure</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>Band_gap_GGA.log:</dt><dd><p>Information of band gap</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>band_GGA.png (band_GGA.pdf):</dt><dd><p>Band structure image</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>band_corrected.png (band_corrected.pdf):</dt><dd><p>Corrected band structure image</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>Band_gap_hybrid_GGA.log:</dt><dd><p>Information of band gap with <a class="reference external" href="mailto:HSE&#37;&#52;&#48;PBE">HSE<span>&#64;</span>PBE</a> scheme</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>dos_GGA.pnd (dos_GGA.pdf):</dt><dd><p>Density of states image</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>dielectric_GGA.log:</dt><dd><p>Information of dielectric constant</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>effective_mass_hole_GGA.log:</dt><dd><p>Information of effective mass of hole</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>effective_mass_electron_GGA.log:</dt><dd><p>Information of effective mass of electron</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>Properties.json:</dt><dd><p>Summarized material properties</p>
+</dd>
+</dl>
+</li>
+</ul>
+</div></blockquote>
+</div>
+<div class="section" id="input0-old">
+<h3>INPUT0_old<a class="headerlink" href="#input0-old" title="Permalink to this headline">¶</a></h3>
+<blockquote>
+<div><p>Directory for input files for VASP calculation with ferromagnetic ordering.
+If more stable magnetic spin ordering is obsevred, this directory is made.</p>
+</div></blockquote>
+</div>
+<div class="section" id="relax-pot-old-pot-gga-or-lda">
+<h3>relax_POT_old (POT = GGA or LDA)<a class="headerlink" href="#relax-pot-old-pot-gga-or-lda" title="Permalink to this headline">¶</a></h3>
+<blockquote>
+<div><p>Directory for structure relaxation with ferromagnetic ordering.
+If more stable magnetic spin ordering is obsevred, this directory is made.</p>
+</div></blockquote>
+</div>
+<div class="section" id="name-with-u">
+<h3>name_with_U<a class="headerlink" href="#name-with-u" title="Permalink to this headline">¶</a></h3>
+<blockquote>
+<div><p>Directory for AMP<sup>2</sup> calculation with DFT+U calculation.
+If the material is metallic and DFT+U calculation has been conducted,
+all of results move to this directory.</p>
+</div></blockquote>
+<p>Additionally, AMP<sup>2</sup> provides log file as amp2.log for tracing the calculation.</p>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="../Examples/Examples.html" class="btn btn-neutral float-right" title="Examples" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="../Input/Advanced_configuration.html" class="btn btn-neutral float-left" title="Advanced configuration" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019, Materials Data and Informatics Labarotary
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

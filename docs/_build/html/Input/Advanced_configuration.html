@@ -1,0 +1,321 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Advanced configuration &mdash; AMP2  documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../_static/jquery.js"></script>
+        <script type="text/javascript" src="../_static/underscore.js"></script>
+        <script type="text/javascript" src="../_static/doctools.js"></script>
+        <script type="text/javascript" src="../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Output" href="../Output/Output.html" />
+    <link rel="prev" title="Configuration" href="Configuration.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> AMP2
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.9.5
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../Installation/Installation.html">Installation and execution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Overview/Overview.html">Overview</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="Input.html">Input</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="Input_files.html">Input files</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Configuration.html">Configuration</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Advanced configuration</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../Output/Output.html">Output</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Examples/Examples.html">Examples</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">AMP2</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="Input.html">Input</a> &raquo;</li>
+        
+      <li>Advanced configuration</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/Input/Advanced_configuration.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="advanced-configuration">
+<h1>Advanced configuration<a class="headerlink" href="#advanced-configuration" title="Permalink to this headline">¶</a></h1>
+<p>For advanced users, AMP<sup>2</sup> provides some additional configuration parameters written in
+the default configuration file (‘/src/cpnfig_def.yaml’).</p>
+<p>config_def.yaml:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">directory</span><span class="p">:</span>
+  <span class="n">submit</span><span class="p">:</span> <span class="o">./</span><span class="n">Submit</span>                      <span class="c1"># the path of structure file or the directory containg structure files</span>
+  <span class="n">output</span><span class="p">:</span> <span class="o">./</span><span class="n">Output</span>                      <span class="c1"># the path of the directory where calculation is conducted</span>
+  <span class="n">done</span><span class="p">:</span> <span class="o">./</span><span class="n">Done</span>                          <span class="c1"># the path of the directory where results are saved</span>
+  <span class="n">error</span><span class="p">:</span> <span class="o">./</span><span class="n">ERROR</span>                        <span class="c1"># the path of the directory where the materials with error are saved</span>
+  <span class="n">src_path</span><span class="p">:</span> <span class="o">./</span><span class="n">src</span>                       <span class="c1"># the path of the directory of AMP2 source codes</span>
+  <span class="n">pot_path_gga</span><span class="p">:</span> <span class="o">/</span><span class="n">data</span><span class="o">/</span><span class="n">vasp4us</span><span class="o">/</span><span class="n">pot</span><span class="o">/</span><span class="n">PBE52</span> <span class="c1"># the path of directory for GGA pseudopotential</span>
+  <span class="n">pot_path_lda</span><span class="p">:</span> <span class="o">/</span><span class="n">data</span><span class="o">/</span><span class="n">vasp4us</span><span class="o">/</span><span class="n">pot</span><span class="o">/</span><span class="n">LDA52</span> <span class="c1"># the path of directory for LDA pseudopotential</span>
+
+<span class="n">program</span><span class="p">:</span>
+  <span class="n">vasp_std</span><span class="p">:</span> <span class="o">/</span><span class="n">data</span><span class="o">/</span><span class="n">vasp4us</span><span class="o">/</span><span class="n">vasp_std</span>      <span class="c1"># the path of standard version of VASP</span>
+  <span class="n">vasp_gam</span><span class="p">:</span> <span class="o">/</span><span class="n">data</span><span class="o">/</span><span class="n">vasp4us</span><span class="o">/</span><span class="n">vasp_gam</span>      <span class="c1"># the path of gamma-only version of VASP</span>
+  <span class="n">vasp_ncl</span><span class="p">:</span> <span class="o">/</span><span class="n">data</span><span class="o">/</span><span class="n">vasp4us</span><span class="o">/</span><span class="n">vasp_ncl</span>      <span class="c1"># the path of noncollinear version of VASP</span>
+  <span class="n">gnuplot</span><span class="p">:</span> <span class="o">/</span><span class="n">gnuplot</span>                     <span class="c1"># the path of executable file for gnuplot</span>
+  <span class="n">mpi_command</span><span class="p">:</span> <span class="n">mpirun</span>                   <span class="c1"># mpi command (ex. mpirun, mpiexec, ...)</span>
+
+<span class="n">vasp_parallel</span><span class="p">:</span>
+  <span class="n">npar</span><span class="p">:</span> <span class="mi">2</span>                               <span class="c1"># the number of bands that are treated in parallel. It is same to NPAR tag in VASP.</span>
+  <span class="n">kpar</span><span class="p">:</span> <span class="mi">2</span>                               <span class="c1"># the number of kpoints that are treated in parallel. It is same to NPAR tag in VASP.</span>
+
+<span class="n">calculation</span><span class="p">:</span>
+  <span class="n">kp_test</span><span class="p">:</span> <span class="n">T</span>                            <span class="c1"># On/Off for convergence test of k-points</span>
+  <span class="n">encut_test</span><span class="p">:</span> <span class="n">T</span>                         <span class="c1"># On/Off for convergence test of cutoff energy</span>
+  <span class="n">relaxation</span><span class="p">:</span> <span class="n">T</span>                         <span class="c1"># On/Off for structure optimization</span>
+  <span class="n">magnetic_ordering</span><span class="p">:</span> <span class="n">T</span>                  <span class="c1"># On/Off for calculation to identify most stable magnetic spin ordering</span>
+  <span class="n">band</span><span class="p">:</span> <span class="n">T</span>                               <span class="c1"># On/Off for the calculation for band structure and band gap</span>
+  <span class="n">density_of_states</span><span class="p">:</span> <span class="n">T</span>                  <span class="c1"># On/Off for the calculation for density of states</span>
+  <span class="n">hse_oneshot</span><span class="p">:</span> <span class="n">T</span>                        <span class="c1"># On/Off for the calculation for HSE@PBE</span>
+  <span class="n">dielectric</span><span class="p">:</span> <span class="n">T</span>                         <span class="c1"># On/Off for the calculation for dielectric constant</span>
+  <span class="n">effective_mass</span><span class="p">:</span> <span class="n">T</span>                     <span class="c1"># On/Off for the calculation for effective mass</span>
+  <span class="n">potential_type</span><span class="p">:</span> <span class="n">GGA</span>                   <span class="c1"># calculation scheme (LDA or GGA)</span>
+
+<span class="n">cif2vasp</span><span class="p">:</span>
+  <span class="n">pot_name</span><span class="p">:</span>                             <span class="c1"># the pseudopotential potential for element.</span>
+    <span class="n">GGA</span><span class="p">:</span>                                <span class="c1"># (Ex. GGA:\n    Ge:Ge_d\n    Cu:Cu_pv)</span>
+    <span class="n">LDA</span><span class="p">:</span>
+  <span class="n">soc_target</span><span class="p">:</span>                           <span class="c1"># the elements to carry out spin-orbit coupling calculation (Ex. soc_target:\n    - Bi\n    - Pb)</span>
+  <span class="n">u_value</span><span class="p">:</span>                              <span class="c1"># U values for PBE+U calculation (Ex. u_value:\n    La: 7.5\n    Ce: 8.5)</span>
+  <span class="n">max_nelm</span><span class="p">:</span> <span class="mi">100</span>                         <span class="c1"># the maximum number of iteration for structure optimization.</span>
+
+<span class="n">convergence_test</span><span class="p">:</span>
+  <span class="n">enconv</span><span class="p">:</span> <span class="mf">0.01</span>                          <span class="c1"># convergence condition for energy (eV/atom). Negative value indicates that energy is not used as the condition.</span>
+  <span class="n">prconv</span><span class="p">:</span> <span class="mi">10</span>                            <span class="c1"># convergence condition for pressure (bar). Negative value indicates that pressure is not used as the condition.</span>
+  <span class="n">foconv</span><span class="p">:</span> <span class="o">-</span><span class="mi">1</span>                            <span class="c1"># convergence condition for force (eV/angst). Negative value indicates that force is not used as the condition.</span>
+  <span class="n">initial_kpl</span><span class="p">:</span> <span class="mi">1</span>                        <span class="c1"># Minimum value for the convergence test of k-points. It corresponds to the largest mesh grid in the three directions.</span>
+  <span class="n">max_kpl</span><span class="p">:</span> <span class="mi">20</span>                           <span class="c1"># Maximum value for the convergence test of k-points. It corresponds to the largest mesh grid in the three directions.</span>
+  <span class="n">enstart</span><span class="p">:</span> <span class="mi">200</span>                          <span class="c1"># Minimum value for the convergence test of cutoff energy</span>
+  <span class="n">enstep</span><span class="p">:</span> <span class="mi">50</span>                            <span class="c1"># Interval for the convergence test of cutoff energy</span>
+  <span class="n">enmax</span><span class="p">:</span> <span class="mi">1000</span>                           <span class="c1"># Maximum value for the convergence test of cutoff energy</span>
+  <span class="n">potential_type</span><span class="p">:</span> <span class="n">GGA</span>                   <span class="c1"># Calculation scheme for convergence test. User have to choose one potential among the GGA, LDA and HSE.</span>
+
+<span class="n">relaxation</span><span class="p">:</span>
+  <span class="n">potential_type</span><span class="p">:</span>                        <span class="c1"># Calculation scheme for structure optimization. User can choose one or more potential among the GGA, LDA and HSE.</span>
+    <span class="o">-</span> <span class="n">GGA</span>
+  <span class="n">max_iteration</span><span class="p">:</span> <span class="mi">10</span>                     <span class="c1"># The maximum iteration number from previously optimized structure</span>
+  <span class="n">converged_ionic_step</span><span class="p">:</span> <span class="o">-</span><span class="mi">1</span>              <span class="c1"># The tolerance of steps for iteration. Until the relaxation finishes within the tolerance, we iterate the structure relaxation from previously optimized structure. In negative value, it is neglected.</span>
+  <span class="n">length_tolerance</span><span class="p">:</span> <span class="mf">0.002</span>               <span class="c1"># The tolerance of length (ratio). Until the relaxation finishes within the tolerance, we iterate the structure relaxation from previously optimized structure. In negative value, it is neglected.</span>
+  <span class="n">angle_tolerance</span><span class="p">:</span> <span class="mf">0.01</span>                 <span class="c1"># The tolerance of angle (degrees). Until the relaxation finishes within the tolerance, we iterate the structure relaxation from previously optimized structure. In negative value, it is neglected.</span>
+  <span class="n">energy</span><span class="p">:</span> <span class="o">-</span><span class="mi">1</span>                            <span class="c1"># The energy tolerance (eV) to break the loop for structure optimization in VASP. In negative value, it is neglected.</span>
+  <span class="n">pressure</span><span class="p">:</span> <span class="mi">10</span>                          <span class="c1"># The pressure tolerance (bar) to break the loop for structure optimization in VASP. In negative value, it is neglected.</span>
+  <span class="n">force</span><span class="p">:</span> <span class="mf">0.02</span>                           <span class="c1"># The force tolerance (eV/angst) to break the loop for structure optimization in VASP. In negative value, it is neglected.</span>
+
+<span class="n">band_calculation</span><span class="p">:</span>
+  <span class="n">kspacing_for_band</span><span class="p">:</span> <span class="mf">0.01</span>               <span class="c1"># The distance between adjacent points in the band structure (2pi/ang).</span>
+  <span class="n">type_of_kpt</span><span class="p">:</span> <span class="nb">all</span>                      <span class="c1"># Set the lines to calculate the band gap. In the &#39;all&#39;, AMP2 calculates the eigenvalues along the lines connecting every combination of high symmetric k-points. In the &#39;band&#39;, AMP2 calculates the eigenvalue along the line to draw band structure.</span>
+  <span class="n">y_min</span><span class="p">:</span> <span class="mi">3</span>                              <span class="c1"># The minimum energy range for band structure.</span>
+  <span class="n">y_max</span><span class="p">:</span> <span class="mi">2</span>                              <span class="c1"># The maximum energy range from conduction band minimum for band structure.</span>
+  <span class="n">potential_type</span><span class="p">:</span>                       <span class="c1"># Calculation scheme for band structure. User can choose one or more potential among the GGA, LDA and HSE.</span>
+    <span class="o">-</span> <span class="n">GGA</span>
+
+<span class="n">density_of_states</span><span class="p">:</span>
+  <span class="n">kp_multiplier</span><span class="p">:</span> <span class="nb">all</span>                    <span class="c1"># Multiplier for k-points for smooth figure.</span>
+  <span class="n">y_min</span><span class="p">:</span> <span class="mi">3</span>                              <span class="c1"># The minimum energy range for density of states.</span>
+  <span class="n">y_max</span><span class="p">:</span> <span class="mi">2</span>                              <span class="c1"># The maximum energy range from conduction band minimum for density of states.</span>
+  <span class="n">potential_type</span><span class="p">:</span>                       <span class="c1"># Calculation scheme for density of states. User can choose one or more potential among the GGA, LDA and HSE.</span>
+    <span class="o">-</span> <span class="n">GGA</span>
+
+<span class="n">hybrid_oneshot</span><span class="p">:</span>
+  <span class="n">alpha</span><span class="p">:</span> <span class="mf">0.25</span>                           <span class="c1"># Mixing parameter for hybrid calculation. If &#39;Auto&#39; is set, the mixing parameter is set to be one of permittivity and PBE0 calualation is performed.</span>
+  <span class="n">fermi_width</span><span class="p">:</span> <span class="mf">0.3</span>                      <span class="c1"># The energy range for DF</span>
+  <span class="n">vb_dos_min</span><span class="p">:</span> <span class="mi">1</span>                         <span class="c1"># The energy range for DVB</span>
+  <span class="n">vb_dos_max</span><span class="p">:</span> <span class="mi">3</span>                         <span class="c1"># The energy range for DVB</span>
+  <span class="n">cutoff_df_dvb</span><span class="p">:</span> <span class="mf">0.3</span>                    <span class="c1"># DF/DVB used to classify semiconductor candidates. (See paper)</span>
+  <span class="n">band_structure_correction</span><span class="p">:</span> <span class="kc">True</span>       <span class="c1"># On/Off for the band structure correction</span>
+  <span class="n">potential_type</span><span class="p">:</span>                       <span class="c1"># The potential used for lattice parameter optimization and for identifying the points at VBM and VBM. If one variable is inserted, AMP2 uses the lattice parameter and the points of VBM and CBM with that potential. If two variables are inserted, AMP2 uses the lattice parameter with above potential and the points of VBM and CBM with below potential. (Ex. potential_type:\n    - - HSE\n      - GGA)</span>
+    <span class="o">-</span> <span class="n">GGA</span>
+
+<span class="n">dielectric</span><span class="p">:</span>
+  <span class="n">kp_multiplier</span><span class="p">:</span> <span class="nb">all</span>                    <span class="c1"># Multiplier for k-points for dielectric constant.</span>
+  <span class="n">potential_type</span><span class="p">:</span>                       <span class="c1"># Calculation scheme for dielectric constant. User can choose one or more potential among the GGA and LDA</span>
+    <span class="o">-</span> <span class="n">GGA</span>
+
+<span class="n">effective_mass</span><span class="p">:</span>
+  <span class="n">carrier_type</span><span class="p">:</span>                         <span class="c1"># carrier type of effective mass to be estimated</span>
+    <span class="o">-</span> <span class="n">hole</span>
+    <span class="o">-</span> <span class="n">electron</span>
+  <span class="n">temperature_for_fermi</span><span class="p">:</span> <span class="mi">300</span>            <span class="c1"># The temperature to estimate the Fermi distribution</span>
+  <span class="n">fermi_for_cutoff</span><span class="p">:</span> <span class="mf">0.99</span>                <span class="c1"># Boundary condition for valid Fermi distribution (1-f)</span>
+</pre></div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="../Output/Output.html" class="btn btn-neutral float-right" title="Output" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="Configuration.html" class="btn btn-neutral float-left" title="Configuration" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019, Materials Data and Informatics Labarotary
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
