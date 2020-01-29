@@ -23,7 +23,6 @@ cal_dic = inp_yaml['calculation']
 src_path = inp_yaml['directory']['src_path']
 ERROR_path = inp_yaml['directory']['error']
 Done_path = inp_yaml['directory']['done']
-large_off = inp_yaml['calculation']['large_off']
 
 # Check metal in HSE
 if os.path.isfile(target+'/HSE/Band_gap.log'):

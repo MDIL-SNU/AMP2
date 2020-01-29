@@ -48,6 +48,7 @@ while len(make_list(inp_file)) > 0:
 	if isinstance(large_off,int) and large_off > 1:
 		num_pos = len(read_poscar(target+'/INPUT0/POSCAR')[1])
 		if num_pos > large_off:
+			make_amp2_log(target,'The number of atoms is larger than cutoff value. We pass this material due to computational cost.')
 			shutil.move(target,ERROR_path+'/'+target.split('/')[-1])
 			continue
 
