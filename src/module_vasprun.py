@@ -30,7 +30,7 @@ def copy_input_no_kp(source,target,pot_type):
 def kpt_generation_for_relax(target,KPL,sym):
 	kpoint = open(target+'/KPOINTS','w')
 	# Gamma-centred mesh for hexagoanl and rhombohedral symmetry
-	if sym==12 or sym==13 or sym==14:
+	if sym==12 or sym==13 or sym==14 or sym=='gamma':
 #	if sym==6 or sym==12 or sym==13 or sym==14 or sym==10 or sym==15:
 		KPset = 'Gamma-centered'
 	else :

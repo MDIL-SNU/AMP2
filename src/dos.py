@@ -151,12 +151,18 @@ else:
 			sys.exit() 
 		make_amp2_log(dir_dos,'CHGCAR file is generated successfully.')
 
-	with open(dir+'/INPUT0/sym','r') as symf:
-		sym = int(symf.readline().split()[0])
-	make_multiple_kpts(dir+'/kptest/kpoint.log',dir_dos+'/KPOINTS',dir_dos+'/POSCAR',inp_dos['kp_multiplier'],sym)
+	wincar(dir_dos+'/INCAR',dir_dos+'/INCAR',[['NEDOS','3001'],['ISMEAR','-5'],['SIGMA','0.1']],[])
+
 	incar_from_yaml(dir_dos,inp_dos['incar'])
 
-	wincar(dir_dos+'/INCAR',dir_dos+'/INCAR',[['NSW','0'],['ISTART','1'],['ICHARG','11'],['LCHARG','.F.'],['NEDOS','3001'],['ISMEAR','-5']],[])
+	sym = 'gamma'
+	if 'ISMEAR' in inp_dos['incar'] and inp_dos['incar']['ISMEAR'] > -3.5:
+		with open(dir+'/INPUT0/sym','r') as symf:
+			sym = int(symf.readline().split()[0])
+
+	make_multiple_kpts(dir+'/kptest/kpoint.log',dir_dos+'/KPOINTS',dir_dos+'/POSCAR',inp_dos['kp_multiplier'],sym)
+
+	wincar(dir_dos+'/INCAR',dir_dos+'/INCAR',[['NSW','0'],['ISTART','1'],['ICHARG','11'],['LCHARG','.F.']],[])
 	# make INCAR for CHGCAR
 	if no_rlx == 1:
 		mag_on = 2
