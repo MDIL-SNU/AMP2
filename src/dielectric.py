@@ -88,7 +88,7 @@ else:
 		copy_input_cont(dir+'/relax_'+POT,dir_diel)
 	with open(dir+'/INPUT0/sym','r') as symf:
 		sym = int(symf.readline().split()[0])
-	make_multiple_kpts(dir+'/kptest/kpoint.log',dir_diel+'/KPOINTS',dir_diel+'/POSCAR',inp_diel['kp_multiplier'],sym)
+	make_multiple_kpts(dir+'/kptest/kpoint.log',dir_diel+'/KPOINTS',dir_diel+'/POSCAR',inp_diel['kp_multiplier'],sym,'')
 	incar_from_yaml(dir_diel,inp_diel['incar'])
 	if not no_rlx == 1:
 		mag_on = check_magnet(dir+'/relax_'+POT,inp_yaml['magnetic_ordering']['minimum_moment'])

@@ -89,12 +89,13 @@ if pot_type == 'HSE':
 
 	incar_from_yaml(dir_dos,inp_dos['incar'])
 
-	sym = 'gamma'
+	gam_option = 'gamma'
 	if bool(inp_dos['incar']) and 'ISMEAR' in list(inp_dos['incar'].keys()) and inp_dos['incar']['ISMEAR'] > -3.5:
-		with open(dir+'/INPUT0/sym','r') as symf:
-			sym = int(symf.readline().split()[0])
+		gam_option =''
+	with open(dir+'/INPUT0/sym','r') as symf:
+		sym = int(symf.readline().split()[0])
 
-	make_multiple_kpts(dir+'/kptest/kpoint.log',dir_dos+'/KPOINTS',dir_dos+'/POSCAR',inp_dos['kp_multiplier'],sym)
+	make_multiple_kpts(dir+'/kptest/kpoint.log',dir_dos+'/KPOINTS',dir_dos+'/POSCAR',inp_dos['kp_multiplier'],sym,gam_option)
 
 	incar_for_hse(dir_dos+'/INCAR')
 	hse_algo = pygrep('ALGO',dir+'/relax_'+pot_type+'/INCAR',0,0).split()[2]
@@ -163,12 +164,13 @@ else:
 
 	incar_from_yaml(dir_dos,inp_dos['incar'])
 
-	sym = 'gamma'
+	gam_option = 'gamma'
 	if bool(inp_dos['incar']) and 'ISMEAR' in list(inp_dos['incar'].keys()) and inp_dos['incar']['ISMEAR'] > -3.5:
-		with open(dir+'/INPUT0/sym','r') as symf:
-			sym = int(symf.readline().split()[0])
+		gam_option =''
+	with open(dir+'/INPUT0/sym','r') as symf:
+		sym = int(symf.readline().split()[0])
 
-	make_multiple_kpts(dir+'/kptest/kpoint.log',dir_dos+'/KPOINTS',dir_dos+'/POSCAR',inp_dos['kp_multiplier'],sym)
+	make_multiple_kpts(dir+'/kptest/kpoint.log',dir_dos+'/KPOINTS',dir_dos+'/POSCAR',inp_dos['kp_multiplier'],sym,gam_option)
 
 	wincar(dir_dos+'/INCAR',dir_dos+'/INCAR',[['NSW','0'],['ISTART','1'],['ICHARG','11'],['LCHARG','.F.']],[])
 	# make INCAR for CHGCAR

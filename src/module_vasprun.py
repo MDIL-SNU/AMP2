@@ -298,7 +298,7 @@ def count_line(filename):
 	return lines
 
 # make kpoints for dos and dielectric constant
-def make_multiple_kpts(kp_log,kpt_file,pos_file,kp_multi,sym):
+def make_multiple_kpts(kp_log,kpt_file,pos_file,kp_multi,sym,gam_option):
 	if os.path.isfile(kp_log):
 		with open(kp_log,'r') as inp:
 			KPL = kp_multi*int(inp.readlines()[-1].split()[-1])
@@ -329,7 +329,8 @@ def make_multiple_kpts(kp_log,kpt_file,pos_file,kp_multi,sym):
 				KP.append(str(max([int(x) for x in KP_ori[i]])*kp_multi))
 			else:
 				KP.append(str(int(KP_ori[i])*kp_multi))
-	
+	if gam_option == 'gamma':
+		khead[2] = 'Gamma-centered\n'
 	with open(kpt_file,'w') as kpt:
 		kpt.write(khead[0]+khead[1]+khead[2]+"  "+KP[0]+"  "+KP[1]+"  "+KP[2]+"\n  0  0  0\n")
 
