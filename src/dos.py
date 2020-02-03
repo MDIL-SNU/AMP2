@@ -84,13 +84,21 @@ if pot_type == 'HSE':
 	else:
 		mag_on = check_magnet(dir+'/relax_'+pot_type,inp_yaml['magnetic_ordering']['minimum_moment'])
 	vasprun = make_incar_for_ncl(dir_dos,mag_on,kpar,npar,vasp_std,vasp_gam,vasp_ncl)
-	with open(dir+'/INPUT0/sym','r') as symf:
-		sym = int(symf.readline().split()[0])
+
+	wincar(dir_dos+'/INCAR',dir_dos+'/INCAR',[['NEDOS','3001'],['ISMEAR','-5'],['SIGMA','0.1']],[])
+
+	incar_from_yaml(dir_dos,inp_dos['incar'])
+
+	sym = 'gamma'
+	if bool(inp_dos['incar']) and 'ISMEAR' in list(inp_dos['incar'].keys()) and inp_dos['incar']['ISMEAR'] > -3.5:
+		with open(dir+'/INPUT0/sym','r') as symf:
+			sym = int(symf.readline().split()[0])
+
 	make_multiple_kpts(dir+'/kptest/kpoint.log',dir_dos+'/KPOINTS',dir_dos+'/POSCAR',inp_dos['kp_multiplier'],sym)
+
 	incar_for_hse(dir_dos+'/INCAR')
 	hse_algo = pygrep('ALGO',dir+'/relax_'+pot_type+'/INCAR',0,0).split()[2]
-	wincar(dir_dos+'/INCAR',dir_dos+'/INCAR',[['NSW','0'],['NEDOS','3001'],['ALGO',hse_algo]],[])
-	incar_from_yaml(dir_dos,inp_dos['incar'])
+	wincar(dir_dos+'/INCAR',dir_dos+'/INCAR',[['NSW','0'],['ALGO',hse_algo]],[])
 	vasprun = vasp_std
 	# VASP calculation
 	out = run_vasp(dir_dos,nproc,vasprun,mpi)
@@ -156,7 +164,7 @@ else:
 	incar_from_yaml(dir_dos,inp_dos['incar'])
 
 	sym = 'gamma'
-	if 'ISMEAR' in inp_dos['incar'] and inp_dos['incar']['ISMEAR'] > -3.5:
+	if bool(inp_dos['incar']) and 'ISMEAR' in list(inp_dos['incar'].keys()) and inp_dos['incar']['ISMEAR'] > -3.5:
 		with open(dir+'/INPUT0/sym','r') as symf:
 			sym = int(symf.readline().split()[0])
 
