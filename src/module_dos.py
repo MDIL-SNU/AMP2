@@ -122,7 +122,7 @@ def make_dos_in(target,atom_name,spin,orb_len,plot_range):
 			out.write("replot '"+atom_name[i]+"_dos.dat' u (")
 			for k in range(orb_len-1):
 				out.write("$"+str((k*int(spin)+2))+"+")
-			out.write("$"+str(((orb_len-1)*int(spin)+2))+"):1 w filledcurves lc rgb '"+color_list[i]+"' title '"+atom_name[i]+"'\n")
+			out.write("$"+str(((orb_len-1)*int(spin)+2))+"):1 w filledcurves y1 lc rgb '"+color_list[i]+"' title '"+atom_name[i]+"'\n")
 
 			out.write("replot '"+atom_name[i]+"_dos.dat' u (")
 			for k in range(orb_len-1):
@@ -134,7 +134,7 @@ def make_dos_in(target,atom_name,spin,orb_len,plot_range):
 				out.write("replot '"+atom_name[i]+"_dos.dat' u (0-")
 				for k in range(orb_len-1):
 					out.write("$"+str((k*2+3))+"-")
-				out.write("$"+str(((orb_len-1)*2+3))+"):1 w filledcurves lc rgb '"+color_list[i]+"' notitle\n")
+				out.write("$"+str(((orb_len-1)*2+3))+"):1 w filledcurves y1 lc rgb '"+color_list[i]+"' notitle\n")
 
 				out.write("replot '"+atom_name[i]+"_dos.dat' u (0-")
 				for k in range(orb_len-1):
