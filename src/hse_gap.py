@@ -91,17 +91,52 @@ else:
 	sys.exit()
 
 # Odd number electrons and non-magnetic system --> always metal.
-spin = pygrep('ISPIN',dir+'/relax_'+pot_cell+'/OUTCAR',0,0).split()[2]
-ncl = pygrep('NONCOL',dir+'/relax_'+pot_cell+'/OUTCAR',0,0).split()[2]
-nelect = pygrep('NELECT',dir+'/relax_'+pot_cell+'/OUTCAR',0,0).split()[2]
+spin = pygrep('ISPIN',dir+'/band_'+pot_point+'/OUTCAR',0,0).split()[2]
+ncl = pygrep('NONCOL',dir+'/band_'+pot_point+'/OUTCAR',0,0).split()[2]
+nelect = pygrep('NELECT',dir+'/band_'+pot_point+'/OUTCAR',0,0).split()[2]
 if spin == '1' and int(float(nelect))%2 == 1 and ncl == 'F':
 	make_amp2_log(dir_hse,'The band gap cannot be opened in this system.')
 	print(1)
 	sys.exit()
 
 # Identify the candidates of which band gap can open in hse calculation.
-if 'etal' in gap_log and os.path.isdir(dir+'/dos_'+pot_point) and os.path.isdir(dir+'/dos_'+pot_point+'/Pdos_dat'):
-	DF_DVB = round(DOS_ratio_fermi_to_vb(dir+'/dos_'+pot_point+'/DOSCAR',inp_hse['fermi_width'],[inp_hse['vb_dos_min'],inp_hse['vb_dos_max']]),4)
+if 'etal' in gap_log:
+	dir_dos = dir_hse+'/dos_indicator'
+	if not os.path.isdir(dir_dos):
+		os.mkdir(dir_dos,0o755)
+	if not os.path.isfile(dir_dos+'/DOSCAR') or os.path.getsize(dir_dos+'/DOSCAR') < 5000:
+		os.chdir(dir_dos)
+		make_amp2_log(dir_hse,'The calculation for DOS indicator starts.')
+		copy_input_cont(dir+'/band_'+pot_point,dir_dos)
+		subprocess.call(['cp',dir+'/INPUT0/KPOINTS',dir_dos+'/.'])
+		subprocess.call(['cp',dir+'/band_'+pot_point+'/CHGCAR',dir_dos+'/.'])
+		mag_on = int(spin)-1
+		vasprun = make_incar_for_ncl(dir_dos,mag_on,kpar,npar,vasp_std,vasp_gam,vasp_ncl)
+		wincar(dir_dos+'/INCAR',dir_dos+'/INCAR',[['NEDOS','3001'],['ISMEAR','0'],['SIGMA','0.05'],['LWAVE','F']],[])
+		with open(dir+'/INPUT0/sym','r') as symf:
+			sym = int(symf.readline().split()[0])
+		make_multiple_kpts(dir+'/kptest/kpoint.log',dir_dos+'/KPOINTS',dir_dos+'/POSCAR',2,sym,'')
+		# VASP calculation
+		out = run_vasp(dir_dos,nproc,vasprun,mpi)
+		if out == 1:  # error in vasp calculation
+			print(0)
+			sys.exit() 
+		out = electronic_step_convergence_check(dir_dos)
+		while out == 1:
+			make_amp2_log(dir_dos,'Calculation options are changed. New calculation starts.')
+			out = run_vasp(dir_dos,nproc,vasprun,mpi)
+			if out == 1:  # error in vasp calculation
+				print(0)
+				sys.exit()
+			out = electronic_step_convergence_check(dir_dos)
+
+		if out == 2:  # electronic step is not converged. (algo = normal)
+			make_amp2_log(dir_dos,'The calculation stops but electronic step is not converged.')
+			print(0)
+			sys.exit()
+		os.chdir(dir_hse)
+
+	DF_DVB = round(DOS_ratio_fermi_to_vb(dir_dos+'/DOSCAR',inp_hse['fermi_width'],[inp_hse['vb_dos_min'],inp_hse['vb_dos_max']]),4)
 	if DF_DVB < inp_hse['cutoff_df_dvb']:
 		make_amp2_log(dir_hse,'DF/DVB is '+str(DF_DVB)+'. Band_gap can open.')
 		find_extreme_kpt_for_hse(dir+'/band_'+pot_point,inp_hse['energy_width_for_extreme'],inp_hse['search_space_for_extreme'])
