@@ -336,7 +336,11 @@ def make_multiple_kpts(kp_log,kpt_file,pos_file,kp_multi,sym,gam_option):
 
 def incar_for_hse(incar_file):
 	wincar(incar_file,incar_file,[['LDA+U',''],['LDAU',''],['LDAUTYPE',''],['LDAUL',''],['LDAUU',''],['LDAUJ',''],['LDAUPRINT','']],[])
-	wincar(incar_file,incar_file,[['ALGO',''],['LMAXMIX',''],['ISYM','3']],['\n\nHybrid calculation:\n   LHFCALC= .T.\n   HFSCREEN = 0.2\n   PRECFOCK = Normal\n   ALGO = Damped\n   AEXX = 0.25\n'])
+	with open(incar_file,'r') as inc:
+		if '\nHybrid calculation' in inc.read():
+			wincar(incar_file,incar_file,[['ALGO',''],['LMAXMIX',''],['ISYM','3'],['LHFCALC','.T.'],['HFSCREEN','0.2'],['PRECFOCK','Normal'],['ALGO','Damped'],['AEXX','0.25']],[])
+		else:
+			wincar(incar_file,incar_file,[['ALGO',''],['LMAXMIX',''],['ISYM','3']],['\n\nHybrid calculation:\n   LHFCALC = .T.\n   HFSCREEN = 0.2\n   PRECFOCK = Normal\n   ALGO = Damped\n   AEXX = 0.25\n'])
 
 def write_relaxed_poscar(target,pot_type):
 	from module_amp2_input import read_poscar,write_poscar
