@@ -338,7 +338,7 @@ def incar_for_hse(incar_file):
 	wincar(incar_file,incar_file,[['LDA+U',''],['LDAU',''],['LDAUTYPE',''],['LDAUL',''],['LDAUU',''],['LDAUJ',''],['LDAUPRINT','']],[])
 	with open(incar_file,'r') as inc:
 		if '\nHybrid calculation' in inc.read():
-			wincar(incar_file,incar_file,[['ALGO',''],['LMAXMIX',''],['ISYM','3'],['LHFCALC','.T.'],['HFSCREEN','0.2'],['PRECFOCK','Normal'],['ALGO','Damped'],['AEXX','0.25']],[])
+			wincar(incar_file,incar_file,[['LMAXMIX',''],['ISYM','3'],['LHFCALC','.T.'],['HFSCREEN','0.2'],['PRECFOCK','Normal'],['ALGO','Damped'],['AEXX','0.25']],[])
 		else:
 			wincar(incar_file,incar_file,[['ALGO',''],['LMAXMIX',''],['ISYM','3']],['\n\nHybrid calculation:\n   LHFCALC = .T.\n   HFSCREEN = 0.2\n   PRECFOCK = Normal\n   ALGO = Damped\n   AEXX = 0.25\n'])
 
