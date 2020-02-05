@@ -42,6 +42,13 @@ if os.path.isdir(dir_relax) and os.path.isfile(dir_relax+'/CONTCAR') and os.path
 		make_amp2_log(dir,'Already done')
 		print(1)
 		sys.exit()
+	else:
+		lat_diff = calc_lattice_change(dir_relax+'/POSCAR',dir_relax+'/CONTCAR')
+		if (lat_diff[0] < inp_rlx['length_tolerance'] or inp_rlx['length_tolerance'] < 0) and (lat_diff[1] < inp_rlx['angle_tolerance'] or inp_rlx['angle_tolerance'] < 0):
+			make_amp2_log_default(dir,src_path,'Relaxation with '+pot_type+' potential',node,code_data)
+			make_amp2_log(dir,'Already done')
+			print(1)
+			sys.exit()
 
 if os.path.isdir(dir_relax):
 	if os.path.isfile(dir_relax+'/CONTCAR') and count_line(dir_relax+'/CONTCAR') > 9:
