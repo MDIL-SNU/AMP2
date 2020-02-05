@@ -156,6 +156,8 @@ if ionic_converge == 0 and len(energy) <= inp_rlx['converged_ionic_step']:
 
 if ionic_converge == 0:
 	make_amp2_log(dir_relax,'The iteration reach the max iteration number. You need to increase the max iteration number')
+	print(0)
+	sys.exit()
 else:
 	write_relaxed_poscar(dir,pot_type)
 
