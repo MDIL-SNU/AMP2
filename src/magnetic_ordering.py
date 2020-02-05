@@ -171,26 +171,34 @@ for i in range(len(tot_mag_list)):
 			vasprun = vasp_gam
 		else:
 			vasprun = vasp_std
-		wincar(targ_dir+'/INCAR',targ_dir+'/INCAR',[['NSW','0'],['ISYM','0']],[])
 
-		out = run_vasp(targ_dir,nproc,vasprun,mpi)
-		if out == 1:  # error in vasp calculation
-			print(0)
-			sys.exit() 
+        # VASP calculation for CHGCAR
+        wincar(targ_dir+'/INCAR',targ_dir+'/INCAR',[['NSW','0'],['ISYM','0'],['NELM','50'],['LCHARG','T']],[])
+        out = run_vasp(targ_dir,nproc,vasprun,mpi)
+        
+        if out == 1:  # error in vasp calculation
+            print(0)
+            sys.exit() 
 
-		out = electronic_step_convergence_check(targ_dir)
-		while out == 1:
-			make_amp2_log(targ_dir,'Calculation options are changed. New calculation starts.')
-			out = run_vasp(targ_dir,nproc,vasprun,mpi)
-			if out == 1:  # error in vasp calculation
-				print(0)
-				sys.exit()
-			out = electronic_step_convergence_check(targ_dir)
+        out = electronic_step_convergence_check_CHGCAR(targ_dir)
+        count = 0
+        if out == 1:
+            count = 0; out_c = 1
+            while count < 3 and out_c != 0:
+                out = run_vasp(targ_dir,nproc,vasprun,mpi)
+                count = count+1 
+                if out == 1:  # error in vasp calculation
+                    print(0)
+                    sys.exit() 
+                out_c = electronic_step_convergence_check_CHGCAR(targ_dir)
+        if count==3 and out_c == 1:
+            make_amp2_log(target,'It is not converged.')
+            print(0)
+            sys.exit() 
 
-		if out == 2:  # electronic step is not converged. (algo = normal)
-			make_amp2_log(targ_dir,'The calculation stops but electronic step is not converged.')
-			print(0)
-			sys.exit()
+        out = electronic_step_convergence_check(targ_dir)
+        os.remove(targ_dir+'/CHGCAR')
+        os.remove(targ_dir+'/CHG')
 
 		energy = pygrep('free  ','OUTCAR',0,0).splitlines()[-1].split()[4]
 		with open(targ_dir+'/energy','w') as enef:
