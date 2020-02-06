@@ -1,6 +1,6 @@
 ####################################
-# date : 2019-04-08                #
-# Author : yybbyb@snu.ac.kr        #
+# date : 2019-04-08				#
+# Author : yybbyb@snu.ac.kr		#
 ####################################
 import os, sys, subprocess, yaml, glob, shutil
 from module_log import *
@@ -172,33 +172,33 @@ for i in range(len(tot_mag_list)):
 		else:
 			vasprun = vasp_std
 
-        # VASP calculation for CHGCAR
-        wincar(targ_dir+'/INCAR',targ_dir+'/INCAR',[['NSW','0'],['ISYM','0'],['NELM','50'],['LCHARG','T']],[])
-        out = run_vasp(targ_dir,nproc,vasprun,mpi)
-        
-        if out == 1:  # error in vasp calculation
-            print(0)
-            sys.exit() 
+		# VASP calculation for CHGCAR
+		wincar(targ_dir+'/INCAR',targ_dir+'/INCAR',[['NSW','0'],['ISYM','0'],['NELM','50'],['LCHARG','T']],[])
+		out = run_vasp(targ_dir,nproc,vasprun,mpi)
+		
+		if out == 1:  # error in vasp calculation
+			print(0)
+			sys.exit() 
 
-        out = electronic_step_convergence_check_CHGCAR(targ_dir)
-        count = 0
-        if out == 1:
-            count = 0; out_c = 1
-            while count < 3 and out_c != 0:
-                out = run_vasp(targ_dir,nproc,vasprun,mpi)
-                count = count+1 
-                if out == 1:  # error in vasp calculation
-                    print(0)
-                    sys.exit() 
-                out_c = electronic_step_convergence_check_CHGCAR(targ_dir)
-        if count==3 and out_c == 1:
-            make_amp2_log(target,'It is not converged.')
-            print(0)
-            sys.exit() 
+		out = electronic_step_convergence_check_CHGCAR(targ_dir)
+		count = 0
+		if out == 1:
+			count = 0; out_c = 1
+			while count < 3 and out_c != 0:
+				out = run_vasp(targ_dir,nproc,vasprun,mpi)
+				count = count+1 
+				if out == 1:  # error in vasp calculation
+					print(0)
+					sys.exit() 
+				out_c = electronic_step_convergence_check_CHGCAR(targ_dir)
+		if count==3 and out_c == 1:
+			make_amp2_log(target,'It is not converged.')
+			print(0)
+			sys.exit() 
 
-        out = electronic_step_convergence_check(targ_dir)
-        os.remove(targ_dir+'/CHGCAR')
-        os.remove(targ_dir+'/CHG')
+		out = electronic_step_convergence_check(targ_dir)
+		os.remove(targ_dir+'/CHGCAR')
+		os.remove(targ_dir+'/CHG')
 
 		energy = pygrep('free  ','OUTCAR',0,0).splitlines()[-1].split()[4]
 		with open(targ_dir+'/energy','w') as enef:
