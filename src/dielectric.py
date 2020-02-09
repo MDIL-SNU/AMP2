@@ -2,6 +2,7 @@
 ### Date: 2018-12-05			###
 ### yybbyb@snu.ac.kr			###
 ###########################################
+# This is for estimating dielectric tensor
 import shutil, os, sys, subprocess, yaml
 from module_log import *
 from module_vasprun import *
@@ -62,6 +63,7 @@ if no_rlx == 1 and set_on_off(inp_diel['relax_check']) == 1:
 	print(0)
 	sys.exit()
 
+# check band gap calculation
 if set_on_off(inp_diel['metal_check']) == 1:
 	if os.path.isfile(dir+'/band_'+POT+'/Band_gap.log'):
 		with open(dir+'/band_'+POT+'/Band_gap.log','r') as inp:
@@ -77,6 +79,7 @@ else:
 	make_amp2_log(dir_diel,'Do not check the gap condition. (Metal or not)')
 	gap_log = '0.0'
 
+# start dielectric caclculation
 if 'etal' in gap_log:
 	make_amp2_log(dir_diel,'It is metallic band structure.\nDielectric calculation is unreasonable for a metallic system.')
 	print(1)

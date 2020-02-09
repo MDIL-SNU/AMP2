@@ -2,10 +2,12 @@
 # Modifier : yybbyb@snu.ac.kr      #
 # data : 2018-12-05                #
 ####################################
+# This is a package of modules for drawing band structure and calculating band gap.
 from module_vector import *
 from module_vasprun import poscar_to_axis,pygrep,pyhead,pytail
 from module_log import *
 import os,sys,math,subprocess
+
 def make_sym_for_band(poscar_file,sym_file,target):
 	axis = poscar_to_axis(poscar_file)
 	with open(sym_file,'r') as sym:
@@ -111,6 +113,7 @@ def make_sym_for_band(poscar_file,sym_file,target):
 		out.write('\n'+str(round(b2[0],8))+' '+str(round(b2[1],8))+' '+str(round(b2[2],8)))
 		out.write('\n'+str(round(b3[0],8))+' '+str(round(b3[1],8))+' '+str(round(b3[2],8)))
 
+# This function is writing kpoints path corresponding symmetry
 def make_symk(sym_file):
 	sym = open(sym_file,'r').readlines()
 	table = sym[0].split()[0]
@@ -394,6 +397,7 @@ def make_symk(sym_file):
 
 	return [symk,order,xticlabel,rec]
 
+
 def make_kp_for_band(symk,order,xticlabel,rec,KSPACING,opt,target):
 	# make path from the combination of high symmetry kpts
 	path = []
@@ -580,6 +584,7 @@ def calc_gap(fermi,spin,ncl,KPT,Band,nelect):
 
 	return gap
 
+# This function is for calulating band gap by finding CBM and VBM of band structure
 def gap_estimation(target,fermi,spin,ncl,KPT,Band,nelect):
 	VBM = []
 	CBM = []
@@ -704,6 +709,7 @@ def gap_estimation(target,fermi,spin,ncl,KPT,Band,nelect):
 	kpt_out.close()
 	return gap_final
 
+# This function is for making band data file for plotting
 def make_band_dat(xtic_file,Band,spin,target):
 	xtic = []
 	with open(xtic_file,'r') as inp:
@@ -717,6 +723,7 @@ def make_band_dat(xtic_file,Band,spin,target):
 					out.write('\t'+str(Band[n][k][i]))
 			out.write('\n')
 
+# This function is for making input file for gnuplot
 def make_band_in(title,xlabel_file,fermi,gap,nband,spin,plot_range,target):
 	with open(target+'/band.in','w') as out:
 		out.write("set terminal pdfcairo enhanced color font 'Arial, 14' size 7.2,5.4\n")

@@ -1,3 +1,4 @@
+# This is a code to build supercell for the Ising coefficient
 import os, math, sys, yaml
 import numpy as np
 import z_subr

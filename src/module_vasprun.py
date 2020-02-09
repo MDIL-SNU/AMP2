@@ -2,6 +2,7 @@
 ### Date: 2018-12-05			###
 ### yybbyb@snu.ac.kr			###
 ###########################################
+# This is a package of modules to run VASP.
 import subprocess
 from module_log import *
 from module_vector import *
@@ -351,6 +352,7 @@ def write_relaxed_poscar(target,pot_type):
 		new_atom_pos.append(atom_pos_rlx[i][0:3]+atom_pos_ori[i][3:])
 	write_poscar(axis_rlx,new_atom_pos,target+'/INPUT0/POSCAR_rlx_'+pot_type,'relaxed poscar')
 
+# This function works like shell command in python script 
 def pygrep(pattern,filename,prev_line,after_line):
 	results = ''
 	with open(filename,'r') as f:

@@ -2,10 +2,12 @@
 ### Date: 2018-12-05			###
 ### yybbyb@snu.ac.kr			###
 ###########################################
+# This is a package of modules for calculating dielectric tensor.
 import os
 from module_vasprun import *
 from module_vector import *
 
+# This function is for writing dielectri constant log in tensor form
 def write_diel_log(outcar_file,target):
 	import numpy as np
 	diel_file_error = 0 # 0 is no error
@@ -60,6 +62,7 @@ def write_diel_log(outcar_file,target):
 		diel_log.write('Dielectric constant diagonalization (ionic): '+' '.join(['{:10.3f}'.format(diel_i_dia[x]) for x in range(3)])+'\n')
 		diel_log.write('\nAveraged static dielectric constant: '+'{:10.3f}'.format(diel0)+'\n')
 
+# This function checks whether imarinagy part is or not
 def check_imaginary(outcar_file,target):
 	# return 0: no probelm, return 1: there are imaginary modes.
 	lines = pygrep('f/i',outcar_file,0,0).splitlines()

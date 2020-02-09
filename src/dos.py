@@ -2,6 +2,7 @@
 # Modifier : yybbyb@snu.ac.kr      #
 # data : 2018-12-05                #
 ####################################
+# This is for drawing density of states.
 import shutil, os, sys, subprocess, yaml
 from module_log import *
 from module_vasprun import *
@@ -10,6 +11,7 @@ from input_conf import set_on_off
 from _version import __version__
 code_data = 'Version '+__version__+'. Modified at 2019-12-17'
 
+# Set input
 dir = sys.argv[1]
 
 inp_file = sys.argv[2]

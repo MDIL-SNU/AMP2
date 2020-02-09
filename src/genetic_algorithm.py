@@ -2,6 +2,7 @@
 # date : 2019-04-08                #
 # Author : yybbyb@snu.ac.kr        #
 ####################################
+# This is for performing genetic algorithm to find the most stable magnetic spin ordering
 import sys,os,yaml
 from numpy import *
 import genetic_operator as go
@@ -34,6 +35,7 @@ mut_length = 6
 if mut_length*2 > mag_sum:
 	mut_length = mag_sum/2
 
+# get tot_population
 population = [inp_yaml['population']['best'],inp_yaml['population']['crossover'],inp_yaml['population']['mutation'],inp_yaml['population']['random']]
 tot_population = sum(population)
 if tot_population > 2**(mag_sum-1):
@@ -60,6 +62,7 @@ param_list = open(inp_yaml['pair_coeff'],'r').readlines()
 #param_val = []
 #param_len = []
 para_J = {}
+# set para_J
 for ll in param_list:
 	line = ll.split()
 	param_len = around(float(line[0]),decimals=2)
@@ -107,6 +110,7 @@ for kk in range(num_min_gene):
 	if abs(round(min_gene[kk][1]-min_gene[0][1],5)) < energy_tolerance:
 		loop_num = kk+1
 
+# make new poscar from the result of G.A.
 for kk in range(loop_num):
 	idx = 0
 	tmp_up = []
