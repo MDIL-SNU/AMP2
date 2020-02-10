@@ -2,12 +2,14 @@
 # Modifier : yybbyb@snu.ac.kr      #
 # data : 2019-08-08                #
 ####################################
+# This is a package of modules for generating input files for VASP from structure file.
 import os, sys, yaml, shutil, glob, math, subprocess
 from operator import itemgetter
 from module_log import *
 from module_vector import *
 from module_vasprun import pygrep,pyhead,pytail
 
+# This function is for making structure list from submit
 def make_list(inp_file):
 	with open(inp_file,'r') as f:
 		inp_yaml = yaml.safe_load(f)
@@ -49,6 +51,7 @@ def make_list(inp_file):
 		calc_list.append([POSCARs[i],'2'])
 	return calc_list
 
+# This function is for mapping k-points corresponding symmetry
 def make_sym(sp_group):
 	# Symmetry k-points table number
 	k_table = {'1' : '19', '2' : '19', '3' : '15', '4' : '15', '5' : '16', '6' : '15', '7' : '15', '8' : '16',
@@ -83,6 +86,7 @@ def make_sym(sp_group):
 	table = k_table[sp_group]
 	return table
 
+# This function of converting poscar from cif
 def make_poscar_from_cif(cif,target):
 	# Read cif file
 	f = open(cif,'r')
@@ -573,6 +577,7 @@ def read_cif_position(line,inform):
 	out = [atom_name,atom_name+atom_index,atom_charge,occupancy,pos]
 	return out
 
+# This function is for reading lattice vector and atomic position from poscar
 def read_poscar(poscar):
 	with open(poscar,'r') as pos:
 		lines = pos.readlines()
@@ -639,6 +644,7 @@ def impose_atom_type_index(axis,atom_pos):
 		new_atom_pos.append(atom_pos[i][0:3]+new_type_dic[str(atom_type[i])+'_'+str(equ_atoms[i])])
 	return new_atom_pos
 
+# This function is for writing poscar given lattice vector and atomic position
 def write_poscar(axis,atom_pos,out_pos,title):
 	new_atom_pos = {}
 	new_atom_pos[atom_pos[0][3]] = [atom_pos[0]]
@@ -667,6 +673,7 @@ def write_poscar(axis,atom_pos,out_pos,title):
 			for line in new_atom_pos[atom_name]:
 				pos.write('    '+'    '.join([str(x) for x in line[0:3]])+'  T  T  T ! '+line[4]+'\n')
 
+# This function is for getting primitive cell through spglib
 def get_primitive_cell(axis,atom_pos):
 	import spglib
 	import numpy as np

@@ -2,6 +2,7 @@
 ### Date: 2019-01-22			###
 ### yybbyb@snu.ac.kr			###
 ###########################################
+# This is a package of modules for calculating effective mass.
 import subprocess,os
 from module_band import EIGEN_to_array
 from module_vector import *
@@ -101,6 +102,7 @@ def pocket(target,band_path,carrier_type,E_width,search_space):
 		for i in range(len(pocket)) :
 			out.write(' '.join([str(x) for x in pocket[i][0]])+' :\t'+' '.join([str(x) for x in pocket[i][1:4]])+'\n')
 
+# This function is for making k-points for seaching space
 def make_kpts_for_searching_space(target,search_grid_size):
 	axis = poscar_to_axis(target+'/POSCAR')
 	rec_lat = reciprocal_lattice(axis)
@@ -267,6 +269,7 @@ def kpt_frac_in_cell(x_id_mod,y_id_mod,z_id_mod,grid_size,axis):
 	else:
 		return 1 # in,do calculation
 
+# This function is for calculating effective mass through pocket mesh grid 
 def calc_effm(target,carrier_type,Temp,oper):
 	import scipy.constants as sc
 	scp = sc.physical_constants
@@ -398,6 +401,7 @@ def idx_change(x_id,y_id,z_id,num,shift): # idx change for Band
 	new_idx = shift+x_id*num[2]*num[1]+y_id*num[2]+z_id
 	return new_idx
 
+# This function is for returning fermi distribution value
 def Fermi_dist(x,x0,carrier_type,Temp):
 	import scipy.constants as sc
 	scp = sc.physical_constants

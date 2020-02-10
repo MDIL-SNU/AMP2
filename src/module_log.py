@@ -2,8 +2,10 @@
 ### Date: 2018-12-05			###
 ### yybbyb@snu.ac.kr			###
 ###########################################
+# This is a package of modules to record log.
 import datetime, getpass, os
 
+# This function is for writing default amp2 log file
 def make_amp2_log_default(path,src_path,comment,node,code_data):
 	with open(path+'/amp2.log','a') as amp2_log:
 		amp2_start_time = datetime.datetime.now().strftime("\tThe calculation is started at %Y-%m-%d : %H:%M \n")

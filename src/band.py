@@ -2,6 +2,7 @@
 ### Date: 2018-12-05            ###
 ### yybbyb@snu.ac.kr            ###
 ###########################################
+# This is for drawing band structure and estimating band gap.
 import shutil, os, sys, subprocess, yaml
 from module_log import *
 from module_vasprun import *
@@ -11,6 +12,7 @@ from input_conf import set_on_off
 from _version import __version__
 code_data = 'Version '+__version__+'. Modified at 2019-12-17'
 
+# Set input
 dir = sys.argv[1]
 
 inp_file = sys.argv[2]
@@ -73,7 +75,7 @@ else:
 if no_rlx == 1 and set_on_off(inp_band['relax_check']) == 1:
     print(0)
     sys.exit()
-# Potential type
+# potential type is HSE
 if pot_type == 'HSE':
     if no_rlx == 1:
         copy_input(dir+'/INPUT0',dir_band,POT)
@@ -110,7 +112,7 @@ if pot_type == 'HSE':
         print(0)
         sys.exit() 
 
-# pot_type is LDA or GGA.
+# potential type is LDA or GGA.
 else:
     # check CHGCAR
     if os.path.isfile(dir_band+'/CHGCAR') and os.path.getsize(dir_band+'/CHGCAR') > 0 :

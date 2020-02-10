@@ -2,7 +2,10 @@
 ### Date: 2018-12-05			###
 ### yybbyb@snu.ac.kr			###
 ###########################################
+# This is for handling YAML type configuration.
 import os,sys,subprocess,yaml,collections
+
+# This function is for reading YAML type input and calling overriding function
 def input_conf(conf):
 	home = os.getcwd()
 	with open(conf,'r') as inp:
@@ -71,6 +74,7 @@ def input_conf(conf):
 #	return inp0_yaml
 	return conf_fin
 		
+# This function is for overriding the user's input into default input
 def inp_override(source,override):
 	for key in list(override.keys()):
 		if isinstance(source, collections.Mapping):
@@ -83,12 +87,14 @@ def inp_override(source,override):
 			source = {key: override[key]}
 	return source
 
+# This function is for switching specific setting between on and off
 def set_on_off(set_val):
 	if str(set_val).lower() in ['f','0','.f.','off','false']:
 		return 0
 	else:
 		return 1
 
+# This function is for flexible input regardless of upper/lower case
 def dic_to_lowercase(data):
 	if isinstance(data,dict):
 		t = type(data)()

@@ -2,6 +2,7 @@
 ### Date: 2018-12-05			###
 ### yybbyb@snu.ac.kr			###
 ###########################################
+# This is a package of modules for structure optimization.
 from module_log import *
 from module_vasprun import *
 from module_amp2_input import read_poscar

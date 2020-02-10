@@ -2,6 +2,7 @@
 # date : 2019-04-08                #
 # Author : yybbyb@snu.ac.kr        #
 ####################################
+# This is a package of modules for identifying the most stable magnetic spin ordering.
 import os,sys,yaml,subprocess
 import numpy as np
 from module_vector import *
@@ -31,6 +32,7 @@ def check_spin(ref_dir,inp_pos,min_mom):
 			mag_val[typ] = 0
 	return new_type_name,mag_val
 
+# This function is for finding the possible magnetic pairs
 def find_pair(poscar,cutoff,mag_atom_list,mag_val,tol):
 	[axis,atom_pos] = read_poscar(poscar)
 	sole_list = []
@@ -66,6 +68,7 @@ def find_pair(poscar,cutoff,mag_atom_list,mag_val,tol):
 								pair_list.append([length,atom_pos[i][4],atom_pos[j][4],i,j])
 	return [pair_list,sole_list,mag_list]
 
+# This function is for writing given magnetic pair list
 def write_pair_list(pair_list,sole_list,mag_list,target):
 	with open(target+'/pair_list_table.dat','w') as plw:
 		for line in pair_list:
@@ -101,6 +104,7 @@ def reduce_mag_list(mag_list):
 				num_spin.append(1)
 	return [spin,num_spin]
 
+# This function is for calculating ising parameter from magnetic pairs
 def calc_ising_param(sole_list,pair_list,ene_file):
 	with open(ene_file,'r') as enef:
 		lines = enef.readlines()
@@ -120,6 +124,7 @@ def write_ising_param(JJ,target):
 		for line in JJ:
 			pcw.write(str(line[0])+'\t'+str(line[3])+'\t'+line[1]+'\t'+line[2]+'\n')
 
+# This function is for writing inputs for genetic algorithm
 def write_inp_for_GA(mag_atom_list,inp_af,target):
 	inp_yaml = {}
 	for key in list(inp_af['genetic_algorithm'].keys()):
@@ -153,6 +158,7 @@ def set_supercell_list(poscar,mag_atom_list):
 		supercell_list.append(line[0:3])
 	return supercell_list
 
+# This function is for making distance matrix from poscar
 def get_bond_matrix(poscar):
 	[axis,atom_pos] = read_poscar(poscar)
 	bond_matrix = []
@@ -166,6 +172,7 @@ def get_bond_matrix(poscar):
 	
 	return sorted_bond_matrix
 
+# This function is for modifying kpoints corresponding target path
 def resized_kpoints(ref_path,targ_path):
 	sym = int(open(targ_path+'/sym','r').readline())
 	KPT_ref = [float(x) for x in open(ref_path+'/KPOINTS','r').readlines()[3].split()]

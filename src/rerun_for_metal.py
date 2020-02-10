@@ -2,6 +2,8 @@
 ### Date: 2019-01-23			###
 ### yybbyb@snu.ac.kr			###
 ###########################################
+# This is a code to restart the all calculations without the on-site U term
+# if the material was found to be metallic and U was applied.
 import os, sys, subprocess, yaml, shutil, glob
 from input_conf import input_conf
 from module_amp2_input import *
@@ -90,6 +92,7 @@ if 1 in list(cal_dic.values()) and not os.path.isfile(target+'/INPUT0/KPOINTS'):
 	make_amp2_log(target,'Warning!!! KPOINTS file should be located in INPUT0.')
 	shutil.move(target,ERROR_path+'/'+target.split('/')[-1])
 	sys.exit()
+# cutoff test
 if set_on_off(cal_dic['encut_test']) == 1:
 	try:
 		notice = subprocess.check_output([pypath,src_path+'/cutoff.py',target,inp_file,node,nproc],universal_newlines=True)
@@ -98,6 +101,7 @@ if set_on_off(cal_dic['encut_test']) == 1:
 	if not notice.splitlines()[-1][0] == '1':
 		shutil.move(target,ERROR_path+'/'+target.split('/')[-1])
 		sys.exit()
+# relaxation
 if set_on_off(cal_dic['relaxation']) == 1:
 	pot_type = inp_yaml['magnetic_ordering']['potential_type']
 	if pot_type in inp_yaml['relaxation']['potential_type']:
@@ -108,6 +112,7 @@ if set_on_off(cal_dic['relaxation']) == 1:
 		if not notice.splitlines()[-1][0] == '1':
 			shutil.move(target,ERROR_path+'/'+target.split('/')[-1])
 			sys.exit()
+# magnetic ordering
 if set_on_off(cal_dic['magnetic_ordering']) == 1:
 	if not os.path.isfile(target+'/INPUT0/KPOINTS'):
 		sys.exit()
@@ -118,6 +123,7 @@ if set_on_off(cal_dic['magnetic_ordering']) == 1:
 	if not notice.splitlines()[-1][0] == '1':
 		shutil.move(target,ERROR_path+'/'+target.split('/')[-1])
 		sys.exit()
+# relaxation if pot_type is different from pot_type of magnetic ordering
 if set_on_off(cal_dic['relaxation']) == 1:
 	for pot_type in inp_yaml['relaxation']['potential_type']:
 		if not pot_type == inp_yaml['magnetic_ordering']['potential_type']:
@@ -128,6 +134,7 @@ if set_on_off(cal_dic['relaxation']) == 1:
 			if not notice.splitlines()[-1][0] == '1':
 				shutil.move(target,ERROR_path+'/'+target.split('/')[-1])
 				sys.exit()
+# band calculation
 if set_on_off(cal_dic['band']) == 1:
 	for pot_type in inp_yaml['band_calculation']['potential_type']:
 		try:
@@ -141,6 +148,7 @@ if set_on_off(cal_dic['band']) == 1:
 		calc_out = 0
 		shutil.move(target,ERROR_path+'/'+target.split('/')[-1])
 		sys.exit()
+# density of states
 if set_on_off(cal_dic['density_of_states']) == 1:
 	for pot_type in inp_yaml['density_of_states']['potential_type']:
 		try:
@@ -154,6 +162,7 @@ if set_on_off(cal_dic['density_of_states']) == 1:
 		calc_out = 0
 		shutil.move(target,ERROR_path+'/'+target.split('/')[-1])
 		sys.exit()
+# dielectric constant
 if set_on_off(cal_dic['dielectric']) == 1:
 	for pot_type in inp_yaml['dielectric']['potential_type']:
 		try:
@@ -167,6 +176,7 @@ if set_on_off(cal_dic['dielectric']) == 1:
 		calc_out = 0
 		shutil.move(target,ERROR_path+'/'+target.split('/')[-1])
 		sys.exit()
+# HSE oneshot
 if set_on_off(cal_dic['hse_oneshot']) == 1:
 	for pot_type in inp_yaml['hybrid_oneshot']['potential_type']:
 		if isinstance(pot_type,list):

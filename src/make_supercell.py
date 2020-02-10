@@ -3,6 +3,7 @@
 ##### made by Joohee_Lee #####
 ##### modified by Yong  #####
 ##### (20190306) #####
+# This is a code to build supercell to find magnetic primitive cell.
 
 import sys, string
 

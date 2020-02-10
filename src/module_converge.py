@@ -2,6 +2,7 @@
 ### Date: 2018-12-31			###
 ### yybbyb@snu.ac.kr			###
 ###########################################
+# This is a package of modules for convergence test.
 import subprocess,sys
 from module_log import *
 from module_vector import dist_point
@@ -78,6 +79,7 @@ def write_conv_result(target,logfile):
 			log.write(str(ll)+' ')
 		log.write('kB\n')
 
+# This is function for making data file for plotting convergence test
 def make_conv_dat(target,typ):
 	# typ is 'kpoint' or 'cutoff'
 	conv = []
@@ -111,6 +113,7 @@ def make_conv_dat(target,typ):
 	xr = [round(test_val[0]-(test_val[1]-test_val[0])/2,1),round(test_val[-1]+(test_val[1]-test_val[0])/2,1)]
 	make_conv_plot(target,typ,xr)
 
+# This is function for plotting convergence test
 def make_conv_plot(target,typ,region):
 	if typ == 'kpoint':
 		xlabel = '(# of k-points)^{1/3}'
@@ -150,6 +153,7 @@ def make_conv_plot(target,typ,region):
 		inp.write("set xtics "+xtic+" nomirror\n")
 		inp.write("p 'conv_plot.dat' u 2:5 w linespoints pt 9 ps 2.5 lc rgb 'blue' title 'Force'\n")
 
+# This function is finding maximum force in OUTCAR
 def max_force(outcar_path):
 	nion = int(pygrep('NION',outcar_path,0,0).split()[-1])
 	force_list = pygrep('TOTAL-FORCE',outcar_path,0,nion+1).splitlines()

@@ -2,12 +2,14 @@
 ### Date: 2018-12-05			###
 ### yybbyb@snu.ac.kr			###
 ###########################################
+# This is a package of modules for calculating band gap with HSE@PBE scheme.
 from module_band import *
 from module_vector import *
 from module_vasprun import *
 import numpy as np
 import sys,binascii,os,subprocess, glob
 
+# This function is making KPOINTS for HSE calculation
 def make_kpts_for_hse(kpt_rlx_file,kpt_band_file,target,calc_type):
 	# calc_type is band or oneshot
 	with open(kpt_rlx_file,'r') as kpt_rlx_inp:
@@ -43,6 +45,7 @@ def make_kpts_for_hse(kpt_rlx_file,kpt_band_file,target,calc_type):
 		for i in range(len(kpt_total)):
 			out.write('    '+'    '.join([str(x) for x in kpt_total[i]])+'\n')
 
+# This function is for calculating dos indicator
 def DOS_ratio_fermi_to_vb(dos_file,fermi_width,vb_range):
 	DOS = []
 	with open(dos_file,'r') as dos_inp:
@@ -92,6 +95,7 @@ def DOS_ratio_fermi_to_vb(dos_file,fermi_width,vb_range):
 
 	return DF_DVB
 
+# This function is for finding extreme point from EIGENVAL
 def find_extreme_kpt_for_hse(dir_band,e_width,search_space):
 	spin = pygrep('ISPIN',dir_band+'/OUTCAR',0,0).split()[2]
 	ncl = pygrep('NONCOL',dir_band+'/OUTCAR',0,0).split()[2]
@@ -144,6 +148,7 @@ def find_extreme_kpt_for_hse(dir_band,e_width,search_space):
 		for i in range(len(fin_kpt)):
 			kpt_out.write('    '+'    '.join(fin_kpt[i])+'\t0\n')
 
+# This function is for calculating parameter alpha of hybrid functional
 def calc_alpha_auto(diel_path):
 	# alpha is defined as 1/e_inf
 #	import numpy as np
@@ -155,6 +160,7 @@ def calc_alpha_auto(diel_path):
 	avg_diel = (diel_e[0][0]+diel_e[1][1]+diel_e[2][2])/3.0
 	return 1.0/avg_diel
 
+# This function is for reading WAVECAR
 def read_wavecar(wave_file,min_band,max_band):
 	AU2Ang = 0.529177249
 	RY2Ev = 13.605826
@@ -547,6 +553,7 @@ def find_cb_gap(Band,fermi,dir_band):
 	return [vb_idx,cb_idx,eVBM,eCBM]
 	
 
+# This function is for finding CBM and VBM
 def find_cb(Band,Band_re,KPT,fermi,hse_path,target):
 	[gap_hse,vbm_kp,cbm_kp] = read_band_log(hse_path+'/Band_gap.log')
 	ref_kp_idx = []

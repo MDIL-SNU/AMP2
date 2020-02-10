@@ -2,6 +2,7 @@
 ### Date: 2018-12-05			###
 ### yybbyb@snu.ac.kr			###
 ###########################################
+# This is for estimating band gap with PBE@HSE scheme.
 import shutil, os, sys, subprocess, yaml
 import numpy as np
 from module_log import *
@@ -13,6 +14,7 @@ from module_relax import *
 from _version import __version__
 code_data = 'Version '+__version__+'. Modified at 2019-12-17'
 
+# Set input
 dir = sys.argv[1]
 
 inp_file = sys.argv[2]
@@ -82,6 +84,7 @@ else:
 		print(0)
 		sys.exit()
 
+# check band calculation
 if os.path.isfile(dir+'/band_'+pot_point+'/Band_gap.log'):
 	with open(dir+'/band_'+pot_point+'/Band_gap.log','r') as inp:
 		gap_log = inp.readline()
@@ -136,6 +139,7 @@ if 'etal' in gap_log:
 			sys.exit()
 		os.chdir(dir_hse)
 
+    # Check dos indicator
 	DF_DVB = round(DOS_ratio_fermi_to_vb(dir_dos+'/DOSCAR',inp_hse['fermi_width'],[inp_hse['vb_dos_min'],inp_hse['vb_dos_max']]),4)
 	if DF_DVB < inp_hse['cutoff_df_dvb']:
 		make_amp2_log(dir_hse,'DF/DVB is '+str(DF_DVB)+'. Band_gap can open.')

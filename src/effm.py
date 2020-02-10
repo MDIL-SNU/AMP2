@@ -2,6 +2,7 @@
 ### Date: 2018-12-05			###
 ### yybbyb@snu.ac.kr			###
 ###########################################
+# This is for estimating effective masses of hole and electron.
 import shutil, os, sys, subprocess, yaml
 from module_log import *
 from module_vasprun import *
@@ -9,6 +10,7 @@ from module_effm import *
 from _version import __version__
 code_data = 'Version '+__version__+'. Modified at 2019-12-17'
 
+# Set input
 dir = sys.argv[1]
 
 inp_file = sys.argv[2]
@@ -89,7 +91,6 @@ else:
 		make_amp2_log(dir_effm,'Band gap calculation should be performed.')
 		print(0)
 		sys.exit()
-
 
 
 if 'etal' in gap_log:

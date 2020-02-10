@@ -2,6 +2,8 @@
 # date : 2019-04-08				#
 # Author : yybbyb@snu.ac.kr		#
 ####################################
+# This is for identifying the most stable magnetic spin ordering.
+
 import os, sys, subprocess, yaml, glob, shutil
 from module_log import *
 from module_vasprun import *
@@ -103,6 +105,7 @@ if spin == '1':
 	print(1)
 	sys.exit()
 
+# Check whether magnetic atom is or not
 [mag_atom_list,mag_val] = check_spin(ref_dir,inp_pos,inp_af['minimum_moment'])
 if len(mag_atom_list) == 0:
 	make_amp2_log(target,'There is no magnetic atom.')
@@ -128,6 +131,7 @@ if not os.path.isfile(target+'/POSCAR_param'):
 		else:
 			min_cell_length = min_cell_length + 2
 
+# Check whether the genetic alrogirhm starts or not
 [axis_param,pos_param] = read_poscar(target+'/POSCAR_param')
 if isinstance(inp_af['maximum_atoms_number'],int) and inp_af['maximum_atoms_number'] > 0 and len(pos_param) > inp_af['maximum_atoms_number']:
 	make_amp2_log(target,'The number of atoms in supercell is larger than the criteria.')
@@ -149,7 +153,7 @@ if isinstance(inp_af['maximum_pair_type'],int) and inp_af['maximum_pair_type'] >
 	sys.exit()
 
 tot_mag_list = write_pair_list(pair_list,sole_list,mag_list,target)
-
+# Calculate for CHGCAR based on tot_mag_list
 for i in range(len(tot_mag_list)):
 	targ_dir = target+'/Spin_'+str(i)
 	if not os.path.isdir(targ_dir):   # check calculation is done or path exists
@@ -240,7 +244,7 @@ for cell in supercell_list:
 		try:
 			subprocess.call([pypath,src_path+'/genetic_algorithm.py',target+'/input_GA.yaml',ga_path+'/POSCAR_ref',energy_tolerance])
 		except:
-			make_amp2_log(targ_dir,'Error occurred shile running genetic algorithm.')
+			make_amp2_log(targ_dir,'Error occurred while running genetic algorithm.')
 			print (0)
 			sys.exit()
 

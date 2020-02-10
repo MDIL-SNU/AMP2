@@ -1,8 +1,10 @@
+# This is for summarizing the calculation results.
 import os,sys,json,shutil
 from module_vector import *
 from module_vasprun import poscar_to_axis
 from _version import __version__
 
+# This function is for writing the log of band gap with formatting
 def write_formatted_band_log(band_log,band_log_form):
 	with open(band_log,'r') as f:
 		lines = f.readlines()
