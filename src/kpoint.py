@@ -134,10 +134,8 @@ while convergence == 1 :
                 print(0)
                 sys.exit()
 
-            write_conv_result(now_path,kplog)
-
     # electronic step is converged.
-#    write_conv_result(now_path,kplog)
+    write_conv_result(now_path,kplog)
     if loopnum >= 3:
         convergence = convergence_check(now_path,dir+'/kptest/KP'+str(KPL-1),dir+'/kptest/KP'+str(KPL-2),ENCONV,PRCONV,FOCONV)
     KPL = KPL + 1 
