@@ -77,13 +77,14 @@ Brief description of each file:
 #               Installation                 #
 ##############################################
 
-AMP2 is written in Python 2.7. Currently, the
-package is not compatible with lower or higher
-version than 2.7. AMP2 is utilizes Python modules
-in the following with link to each site.
+AMP2 supprots Python 2.7 and 3. Currently, the
+package is not compatible with lower version
+than 2.7. AMP2 is utilizes Python modules in 
+the following with link to each site.
   - numpy [https://www.numpy.org]
   - scipy [https://www.scipy.org]
   - spglib [https://atztogo.github.io/spglib]
+  - PyYAML [https://pypi.org/project/PyYAML]
 These modules should be pre-installed. In addition,
 AMP2 needs gnuplot to draw various figures.
 
@@ -91,10 +92,6 @@ AMP2 needs gnuplot to draw various figures.
 #                Basic setup                 #
 ##############################################
 
-As we mentioned, AMP2 was written in Python 2.7. 
-Thus, to use AMP2, you should set to execute Python
-2.7 from 'python' command.
-----------------------------------------------
 AMP2 uses YAML style configuration file. All 
 setting parameters used in AMP2 can be controlled
 in 'config.yaml'. Before using AMP2, proper pathes
@@ -128,8 +125,12 @@ python [src_path]/main.py [path for configuration file] [path for nodefile] [the
 
 - [src_path] is the path for directory of source codes for AMP2.
 - [path for configuration file] is the path for configuration file (config.yaml).
-- [path for nodefile] is used to record the information of computing nodes.
+- [path for nodefile] is used to record the information of computing nodes such as
+  PBS_nodefile in Portable Batch System {PBS} and HOSTNAME in Sun Grid Engine (SGE).
+  In the PBS system, we recommand to use the command, "echo $PBS_nodefile > nodefile".
+  Also, users can save an arbitrary text by writing in the nodefile.
 - [the number of cores] is the number of cores to be used in parallel computing.
+
 For the convenience, we provide the shell script file (run.sh) as following.
 
 ================= run.sh ===================
