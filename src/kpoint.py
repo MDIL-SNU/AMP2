@@ -98,28 +98,34 @@ while convergence == 1 :
         incar_from_yaml(now_path,inp_conv['incar'])
         wincar(now_path+'/INCAR',now_path+'/INCAR',[['NSW','0'],['LCHARG','F'],['LWAVE','F']],[])
         out = run_vasp(now_path,nproc,vasprun,mpi)
-        if out == 1:  # error in vasp calculation
-            print(0)
-            sys.exit() 
-        
         if KPL == 1 or KPL == 2:
-            out = electronic_step_convergence_check(now_path)
-            
+            if out == 1:  # error in vasp calculation
+                make_amp2_log(dir+'/kptest','VASP error occurs, but pass because of too small kpoints.')
+                out = 3
+                loopnum = 0
+            else:
+                out = electronic_step_convergence_check(now_path)
+
             while out == 1:
                 make_amp2_log(dir+'/kptest','Calculation options are changed. New calculation starts.')
                 out = run_vasp(now_path,nproc,vasprun,mpi)
                 if out == 1:  # error in vasp calculation
-                    print(0)
-                    sys.exit()
-                out = electronic_step_convergence_check(now_path)
+                    make_amp2_log(dir+'/kptest','VASP error occurs, but pass because of too small kpoints.')
+                    out = 3
+                    loopnum = 0
+                else:
+                    out = electronic_step_convergence_check(now_path)
 
             if out == 2:  # electronic step is not converged. (algo = normal)
-                make_amp2_log(dir+'/kptest','The calculation stops but electronic step is not converged, but pass because of too small kpoints')
+                make_amp2_log(dir+'/kptest','The calculation stops but electronic step is not converged, but pass because of too small kpoints.')
                 loopnum = 0
-            else:
+            elif out < 2:
                 write_conv_result(now_path,kplog)
 
         else:
+            if out == 1:  # error in vasp calculation
+                print(0)
+                sys.exit() 
             out = electronic_step_convergence_check(now_path)
             while out == 1:
                 make_amp2_log(dir+'/kptest','Calculation options are changed. New calculation starts.')
@@ -135,7 +141,8 @@ while convergence == 1 :
                 sys.exit()
 
     # electronic step is converged.
-    write_conv_result(now_path,kplog)
+    if not loopnum == 0:
+        write_conv_result(now_path,kplog)
     if loopnum >= 3:
         convergence = convergence_check(now_path,dir+'/kptest/KP'+str(KPL-1),dir+'/kptest/KP'+str(KPL-2),ENCONV,PRCONV,FOCONV)
     KPL = KPL + 1 
