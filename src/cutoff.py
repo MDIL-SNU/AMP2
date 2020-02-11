@@ -69,6 +69,9 @@ for i in range(len(ENPOT)) :
 	if float(ENPOT[i].split()[5]) > ENSTART :
 		ENSTART = int(math.ceil(float(ENPOT[i].split()[5])/ENSTEP))*ENSTEP
 
+ENPOT = pygrep('ENMAX',dir+'/INPUT0/POTCAR_'+POT,0,0).splitlines()
+EN_recommend = max([float(ENPOT[x].split()[2].split(';')[0]) for x in range(len(ENPOT))]) # Maximum value in the ENMAX
+
 ENCUT = ENSTART
 loopnum = 0
 convergence = 1
@@ -106,26 +109,51 @@ while convergence == 1 :
 		wincar(now_path+'/INCAR',now_path+'/INCAR',[['ENCUT',str(ENCUT)],['NSW','0'],['LWAVE','F'],['LCHARG','F']],[])
 		# Running vasp
 		out = run_vasp(now_path,nproc,vasprun,mpi)
-		if out == 1:  # error in vasp calculation
-			print(0)
-			sys.exit() 
+		if ENCUT < EN_recommend:
+			if out == 1:
+				make_amp2_log(dir+'/cutoff','VASP error occurs, but pass because of lower encut than ENMAX in POTCAR')
+				out = 3
+				loopnum = 0
+			else:
+				out = electronic_step_convergence_check(now_path)
 
-		out = electronic_step_convergence_check(now_path)
-		while out == 1:
-			make_amp2_log(dir+'/cutoff','Calculation options are changed. New calculation starts.')
-			out = run_vasp(now_path,nproc,vasprun,mpi)
+			while out == 1:
+				make_amp2_log(dir+'/cutoff','Calculation options are changed. New calculation starts.')
+				out = run_vasp(now_path,nproc,vasprun,mpi)
+				if out == 1:  # error in vasp calculation
+					make_amp2_log(dir+'/cutoff','VASP error occurs, but pass because of lower encut than ENMAX in POTCAR')
+					out = 3
+					loopnum = 0
+				else:
+					out = electronic_step_convergence_check(now_path)
+
+			if out == 2:  # electronic step is not converged. (algo = normal)
+				make_amp2_log(dir+'/cutoff','The calculation stops but electronic step is not converged, but pass because of lower encut than ENMAX in POTCAR')
+				loopnum = 0
+			elif out < 2:
+				write_conv_result(now_path,enlog)
+
+		else:
 			if out == 1:  # error in vasp calculation
 				print(0)
-				sys.exit()
-			out = electronic_step_convergence_check(now_path)
+				sys.exit() 
 
-		if out == 2:  # electronic step is not converged. (algo = normal)
-			make_amp2_log(dir+'/cutoff','The calculation stops but electronic step is not converged.')
-			print(0)
-			sys.exit()
+			out = electronic_step_convergence_check(now_path)
+			while out == 1:
+				make_amp2_log(dir+'/cutoff','Calculation options are changed. New calculation starts.')
+				out = run_vasp(now_path,nproc,vasprun,mpi)
+				if out == 1:  # error in vasp calculation
+					print(0)
+					sys.exit()
+				out = electronic_step_convergence_check(now_path)
+
+			if out == 2:  # electronic step is not converged. (algo = normal)
+				make_amp2_log(dir+'/cutoff','The calculation stops but electronic step is not converged.')
+				print(0)
+				sys.exit()
+			write_conv_result(now_path,enlog)
 
 	# electronic step is converged.
-	write_conv_result(now_path,enlog)
 	if loopnum >= 3:
 		convergence = convergence_check(now_path,dir+'/cutoff/EN'+str(ENCUT-ENSTEP),dir+'/cutoff/EN'+str(ENCUT-2*ENSTEP),ENCONV,PRCONV,FOCONV)
 	ENCUT = ENCUT + ENSTEP

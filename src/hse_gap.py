@@ -158,7 +158,12 @@ if os.path.isfile(dir+'/band_'+pot_point+'/KPT') and count_line(dir+'/band_'+pot
 		copy_input_cont(dir+'/relax_'+pot_cell,dir_hse)
 		subprocess.call(['cp',dir+'/INPUT0/POTCAR_GGA',dir_hse+'/POTCAR'])  #HSE always needs POTCAR_GGA
 	# make reduce_KPOINTS
-	reduce_kpt =  convergence_check_E(dir)
+	if os.path.isdir(dir+'/kptest') and os.path.isfile(dir+'/kptest/kpoint.log'):
+		reduce_kpt =  convergence_check_E(dir)
+	elif os.path.isfile(dir+'/relax_'+pot_cell+'/IBZKPT'):
+		reduce_kpt = dir+'/relax_'+pot_cell
+	else:
+		make_amp2_log(dir_hse,'IBZKPT file is missing. Please check the kptest or relaxation.'
 	make_kpts_for_hse(reduce_kpt+'/IBZKPT',dir+'/band_'+pot_point+'/KPT',dir_hse,'oneshot')
 	# make INCAR
 	# delete LDAU tag

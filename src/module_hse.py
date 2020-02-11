@@ -604,25 +604,23 @@ def find_cb(Band,Band_re,KPT,fermi,hse_path,target):
 
 # check convergence for hse calculaton (only check energy)
 def convergence_check_E(target):
-    path_list = glob.glob(target+'/kptest/KP*')
-    if os.path.isfile(target+'/kptest/KPOINTS_converged'):
-        path_list.remove(target+'/kptest/KPOINTS_converged')
-    path_list.sort(key=lambda x:int(x.split('/')[-1][2:]))
-    if os.path.isfile(target+'/kptest/kpoint.log'):
-        ENCONV = float(pygrep('E/atom',target+'/kptest/kpoint.log',0,0).split()[-2])
-    else:
-        ENCONV = 0.01
+    with open(target+'/kptest/kpoint.log','r') as kplog:
+        lines = kplog.readlines()
+    ENERGY = []
+    ENCONV = 0.01
+    for line in lines:
+        if len(line.split()) > 4 and line.split()[0][:2] == 'KP':
+            ENERGY.append([line.split()[0],float(line.split()[1])])
+	elif line.split()[0] == 'Convergence' and line.split()[2] == 'E/atom':
+            ENCONV = float(line.split()[4])
     nion = int(pygrep('NION',path_list[0]+'/OUTCAR',0,0).splitlines()[-1].split()[11])
     check = 0
-    for i in range(len(path_list[:-2])):
-        ENERGY = []
-        if ENCONV > 0:
-            for j in range(3):
-                ENERGY.append(float(pygrep('free  ',path_list[i+j]+'/OUTCAR',0,0).splitlines()[-1].split()[4]))
-        converge = 0
+    for i in range(len(ENERGY)-2):
         # Convergence check for energy/atom
-        if (abs(ENERGY[0]-ENERGY[1])/nion < ENCONV and abs(ENERGY[0]-ENERGY[2])/nion < ENCONV and abs(ENERGY[1]-ENERGY[2])/nion < ENCONV) and check == 0:
-#            print path_list[i]
-            E_conv_kp = path_list[i]
+        if (abs(ENERGY[i][1]-ENERGY[i+1][1])/nion < ENCONV and abs(ENERGY[i][1]-ENERGY[i+2][1])/nion < ENCONV and abs(ENERGY[i+1][1]-ENERGY[i+2][1])/nion < ENCONV) and check == 0:
+            E_conv_kp = target+'/kptest/'+ENERGY[i][0]
             check = 1
+            break
+    if check == 0:
+        E_conv_kp = target+'/kptest/'+ENERGY[len(ENERGY)-2][0]
     return E_conv_kp
