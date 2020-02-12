@@ -95,6 +95,7 @@ while convergence == 1 :
 	if os.path.isfile(now_path+'/OUTCAR'):
 		if 'Voluntary' in pytail(now_path+'/OUTCAR'):
 			rerun = 1
+			write_conv_result(now_path,enlog)
 	if rerun == 0:
 		copy_input(dir+'/INPUT0',now_path,POT)
 		gam = set_parallel(now_path+'/KPOINTS',now_path+'/INCAR',npar,kpar)

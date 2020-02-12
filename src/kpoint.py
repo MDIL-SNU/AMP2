@@ -83,6 +83,7 @@ while convergence == 1 :
     if os.path.isfile(now_path+'/OUTCAR'):
         if 'Voluntary' in pytail(now_path+'/OUTCAR'):
             rerun = 1
+            write_conv_result(now_path,kplog)
     if rerun == 0:
         copy_input_no_kp(dir+'/INPUT0',now_path,POT)
         sym = int(open(dir+'/INPUT0/sym','r').readline())
@@ -139,10 +140,9 @@ while convergence == 1 :
                 make_amp2_log(dir+'/kptest','The calculation stops but electronic step is not converged.')
                 print(0)
                 sys.exit()
+            # electronic step is converged.
+            write_conv_result(now_path,kplog)
 
-    # electronic step is converged.
-    if not loopnum == 0:
-        write_conv_result(now_path,kplog)
     if loopnum >= 3:
         convergence = convergence_check(now_path,dir+'/kptest/KP'+str(KPL-1),dir+'/kptest/KP'+str(KPL-2),ENCONV,PRCONV,FOCONV)
     KPL = KPL + 1 
