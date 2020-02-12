@@ -1,9 +1,9 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.20 (TeX Live 2019) (preloaded format=pdflatex 2019.12.24)  27 JAN 2020 13:04
+This is pdfTeX, Version 3.14159265-2.6-1.40.20 (TeX Live 2019) (preloaded format=pdflatex 2019.12.24)  12 FEB 2020 10:50
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
-**AMP2.tex
-(./AMP2.tex
+**Manual.tex
+(./Manual.tex
 LaTeX2e <2019-10-01> patch level 3
 (./sphinxmanual.cls
 Document Class: sphinxmanual 2018/12/23 v2.0 Document class (Sphinx manual)
@@ -687,12 +687,12 @@ Package: hypcap 2016/05/16 v1.12 Adjusting the anchors of captions (HO)
 Package: sphinxmessages 2019/01/04 v2.0 Localized LaTeX macros (Sphinx team)
 )
 \@indexfile=\write4
-\openout4 = `AMP2.idx'.
+\openout4 = `Manual.idx'.
 
 
-Writing index file AMP2.idx
-(./AMP2.aux)
-\openout1 = `AMP2.aux'.
+Writing index file Manual.idx
+(./Manual.aux)
+\openout1 = `Manual.aux'.
 
 LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 81.
 LaTeX Font Info:    ... okay on input line 81.
@@ -796,9 +796,9 @@ Package: gettitlestring 2019/12/15 v1.6 Cleanup title references (HO)
 LaTeX Info: Redefining \ref on input line 81.
 LaTeX Info: Redefining \pageref on input line 81.
 LaTeX Info: Redefining \nameref on input line 81.
- (./AMP2.out) (./AMP2.out)
+ (./Manual.out) (./Manual.out)
 \@outlinefile=\write5
-\openout5 = `AMP2.out'.
+\openout5 = `Manual.out'.
 
 Package hyperref Info: Option `pageanchor' set `false' on input line 89.
 
@@ -862,7 +862,7 @@ LaTeX Font Info:    Font shape `T1/phv/bx/n' in size <12> not available
 ]
 LaTeX Font Info:    Font shape `T1/phv/bx/n' in size <14.4> not available
 (Font)              Font shape `T1/phv/b/n' tried instead on input line 91.
- (./AMP2.toc
+ (./Manual.toc
 LaTeX Font Info:    Font shape `T1/ptm/bx/n' in size <10> not available
 (Font)              Font shape `T1/ptm/b/n' tried instead on input line 2.
 
@@ -870,7 +870,7 @@ LaTeX Font Info:    Font shape `T1/ptm/bx/n' in size <10> not available
 
 ])
 \tf@toc=\write6
-\openout6 = `AMP2.toc'.
+\openout6 = `Manual.toc'.
 
  [2]
 Chapter 1.
@@ -917,12 +917,12 @@ Package hyperref Warning: Token not allowed in a PDF string (Unicode):
 LaTeX Font Info:    Font shape `T1/pcr/bx/n' in size <9> not available
 (Font)              Font shape `T1/pcr/b/n' tried instead on input line 171.
 LaTeX Font Info:    Trying to load font information for TS1+pcr on input line 1
-93.
+94.
 (/usr/local/texlive/2019/texmf-dist/tex/latex/psnfss/ts1pcr.fd
 File: ts1pcr.fd 2001/06/04 font definitions for TS1/pcr.
 )
 LaTeX Font Info:    Font shape `T1/phv/bx/n' in size <5> not available
-(Font)              Font shape `T1/phv/b/n' tried instead on input line 218.
+(Font)              Font shape `T1/phv/b/n' tried instead on input line 219.
 
 
 Package Fancyhdr Warning: \headheight is too small (12.0pt): 
@@ -933,149 +933,145 @@ This may cause the page layout to be inconsistent, however.
 [2]
 Chapter 2.
 LaTeX Font Info:    Font shape `T1/pcr/m/it' in size <9> not available
-(Font)              Font shape `T1/pcr/m/sl' tried instead on input line 232.
+(Font)              Font shape `T1/pcr/m/sl' tried instead on input line 233.
 [3
 
 ]
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `math shift' on input line 270.
+(hyperref)                removing `math shift' on input line 271.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `superscript' on input line 270.
+(hyperref)                removing `superscript' on input line 271.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `math shift' on input line 270.
+(hyperref)                removing `math shift' on input line 271.
 
 [4]
-<band_GGA3.png, id=308, 963.6pt x 722.7pt>
+<band_GGA3.png, id=313, 963.6pt x 722.7pt>
 File: band_GGA3.png Graphic file (type png)
 <use band_GGA3.png>
-Package pdftex.def Info: band_GGA3.png  used on input line 329.
+Package pdftex.def Info: band_GGA3.png  used on input line 330.
 (pdftex.def)             Requested size: 225.84229pt x 169.38239pt.
-<dos_GGA2.png, id=310, 481.8pt x 722.7pt>
+<dos_GGA2.png, id=315, 481.8pt x 722.7pt>
 File: dos_GGA2.png Graphic file (type png)
 <use dos_GGA2.png>
-Package pdftex.def Info: dos_GGA2.png  used on input line 335.
+Package pdftex.def Info: dos_GGA2.png  used on input line 336.
 (pdftex.def)             Requested size: 112.92114pt x 169.38239pt.
  [5 <./band_GGA3.png> <./dos_GGA2.png>] [6]
 Chapter 3.
 [7
 
 ]
-Underfull \vbox (badness 10000) detected at line 651
+Underfull \vbox (badness 10000) detected at line 652
  []
 
 
-Overfull \vbox (2.68169pt too high) detected at line 651
+Overfull \vbox (2.68169pt too high) detected at line 652
  []
 
 [8] [9] [10] [11] [12] [13] [14] [15]
 LaTeX Font Info:    Font shape `TS1/pcr/m/it' in size <9> not available
-(Font)              Font shape `TS1/pcr/m/sl' tried instead on input line 1372.
+(Font)              Font shape `TS1/pcr/m/sl' tried instead on input line 1373.
 
  [16]
-Underfull \vbox (badness 10000) detected at line 1406
+Underfull \vbox (badness 10000) detected at line 1407
  []
 
 
-Overfull \vbox (2.68169pt too high) detected at line 1406
+Overfull \vbox (2.68169pt too high) detected at line 1407
  []
 
 [17]
-Underfull \vbox (badness 10000) detected at line 1406
+Underfull \vbox (badness 10000) detected at line 1407
  []
 
 
-Overfull \vbox (13.68169pt too high) detected at line 1406
+Overfull \vbox (13.68169pt too high) detected at line 1407
  []
 
-[18] [19] [20
-
-]
+[18] [19] [20]
 Chapter 4.
-[21] [22] [23] [24
+[21
+
+] [22] [23] [24
 
 ]
 Chapter 5.
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `math shift' on input line 1632.
+(hyperref)                removing `math shift' on input line 1696.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `superscript' on input line 1632.
+(hyperref)                removing `superscript' on input line 1696.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `math shift' on input line 1632.
+(hyperref)                removing `math shift' on input line 1696.
 
 [25]
-<band_GGA.png, id=407, 963.6pt x 722.7pt>
+<band_GGA.png, id=415, 963.6pt x 722.7pt>
 File: band_GGA.png Graphic file (type png)
 <use band_GGA.png>
-Package pdftex.def Info: band_GGA.png  used on input line 1686.
+Package pdftex.def Info: band_GGA.png  used on input line 1750.
 (pdftex.def)             Requested size: 225.84229pt x 169.38239pt.
-<band_GGA_corrected.png, id=409, 963.6pt x 722.7pt>
+<band_GGA_corrected.png, id=417, 963.6pt x 722.7pt>
 File: band_GGA_corrected.png Graphic file (type png)
 <use band_GGA_corrected.png>
-Package pdftex.def Info: band_GGA_corrected.png  used on input line 1704.
+Package pdftex.def Info: band_GGA_corrected.png  used on input line 1768.
 (pdftex.def)             Requested size: 225.84229pt x 169.38239pt.
-<dos_GGA.png, id=410, 481.8pt x 722.7pt>
+<dos_GGA.png, id=418, 481.8pt x 722.7pt>
 File: dos_GGA.png Graphic file (type png)
 <use dos_GGA.png>
-Package pdftex.def Info: dos_GGA.png  used on input line 1710.
+Package pdftex.def Info: dos_GGA.png  used on input line 1774.
 (pdftex.def)             Requested size: 112.92114pt x 169.38239pt.
  [26 <./band_GGA.png> <./band_GGA_corrected.png>] [27 <./dos_GGA.png>]
-<band_GGA1.png, id=424, 963.6pt x 722.7pt>
+<band_GGA1.png, id=431, 963.6pt x 722.7pt>
 File: band_GGA1.png Graphic file (type png)
 <use band_GGA1.png>
-Package pdftex.def Info: band_GGA1.png  used on input line 1770.
+Package pdftex.def Info: band_GGA1.png  used on input line 1834.
 (pdftex.def)             Requested size: 225.84229pt x 169.38239pt.
-<band_GGA_corrected1.png, id=426, 963.6pt x 722.7pt>
+<band_GGA_corrected1.png, id=433, 963.6pt x 722.7pt>
 File: band_GGA_corrected1.png Graphic file (type png)
 <use band_GGA_corrected1.png>
-Package pdftex.def Info: band_GGA_corrected1.png  used on input line 1788.
+Package pdftex.def Info: band_GGA_corrected1.png  used on input line 1852.
 (pdftex.def)             Requested size: 225.84229pt x 169.38239pt.
 
 [28 <./band_GGA1.png> <./band_GGA_corrected1.png>]
-<band_GGA2.png, id=433, 963.6pt x 722.7pt>
+<band_GGA2.png, id=440, 963.6pt x 722.7pt>
 File: band_GGA2.png Graphic file (type png)
 <use band_GGA2.png>
-Package pdftex.def Info: band_GGA2.png  used on input line 1832.
+Package pdftex.def Info: band_GGA2.png  used on input line 1896.
 (pdftex.def)             Requested size: 225.84229pt x 169.38239pt.
-<dos_GGA1.png, id=434, 481.8pt x 722.7pt>
+<dos_GGA1.png, id=441, 481.8pt x 722.7pt>
 File: dos_GGA1.png Graphic file (type png)
 <use dos_GGA1.png>
-Package pdftex.def Info: dos_GGA1.png  used on input line 1838.
+Package pdftex.def Info: dos_GGA1.png  used on input line 1902.
 (pdftex.def)             Requested size: 112.92114pt x 169.38239pt.
  [29 <./band_GGA2.png>]
-[30 <./dos_GGA1.png>]
-Chapter 6.
-(./AMP2.ind)
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 1860.
- [31
+(./Manual.ind)
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 1910.
+ [30 <./dos_GGA1.png>]
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 1910.
+ (./Manual.aux)
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 1910.
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 1910.
 
-]
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 1860.
- (./AMP2.aux)
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 1860.
-Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 1860.
-
-Package rerunfilecheck Info: File `AMP2.out' has not changed.
-(rerunfilecheck)             Checksum: 6F82AB91226612E160D0D3C4FDB2A179;6692.
-Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 1860.
+Package rerunfilecheck Info: File `Manual.out' has not changed.
+(rerunfilecheck)             Checksum: 27108FFEA990FEFA647B3882A46E1D55;6914.
+Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 1910.
  ) 
 Here is how much of TeX's memory you used:
- 14133 strings out of 492163
- 200135 string characters out of 6125305
- 607532 words of memory out of 5000000
- 18029 multiletter control sequences out of 15000+600000
+ 14135 strings out of 492163
+ 200298 string characters out of 6125305
+ 607607 words of memory out of 5000000
+ 18031 multiletter control sequences out of 15000+600000
  71124 words of font info for 101 fonts, out of 8000000 for 9000
  1142 hyphenation exceptions out of 8191
- 40i,15n,51p,560b,591s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 40i,15n,51p,562b,591s stack positions out of 5000i,500n,10000p,200000b,80000s
 {/usr/local/texlive/2019/texmf-dist/fonts/enc/dvips/base/8r.enc}</usr/local/t
 exlive/2019/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></usr/local/te
 xlive/2019/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi5.pfb></usr/local/texl
@@ -1087,10 +1083,10 @@ t/fonts/type1/urw/courier/ucrro8a.pfb></usr/local/texlive/2019/texmf-dist/fonts
 urw/helvetic/uhvbo8a.pfb></usr/local/texlive/2019/texmf-dist/fonts/type1/urw/ti
 mes/utmb8a.pfb></usr/local/texlive/2019/texmf-dist/fonts/type1/urw/times/utmr8a
 .pfb></usr/local/texlive/2019/texmf-dist/fonts/type1/urw/times/utmri8a.pfb>
-Output written on AMP2.pdf (35 pages, 737648 bytes).
+Output written on Manual.pdf (34 pages, 738755 bytes).
 PDF statistics:
- 508 PDF objects out of 1000 (max. 8388607)
- 432 compressed objects within 5 object streams
+ 511 PDF objects out of 1000 (max. 8388607)
+ 436 compressed objects within 5 object streams
  85 named destinations out of 1000 (max. 500000)
- 458 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 466 words of extra memory for PDF output out of 10000 (max. 10000000)
 

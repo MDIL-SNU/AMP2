@@ -71,8 +71,8 @@
 \setcounter{secnumdepth}{3}
 
 
-\title{AMP$^\text{2}$ manual \\ \textit{0.9.5}}
-\date{Jan 27, 2020}
+\title{AMP$^\text{2}$ Manual \\ \textit{0.9.5}}
+\date{Feb 12, 2020}
 \release{}
 \author{Yong Youn \\ Seungwu Han}
 \newcommand{\sphinxlogo}{\vbox{}}
@@ -179,13 +179,14 @@ You can execute AMP$^{\text{2}}$ using Python command as following.
 
 \item {} 
 {[}path for nodefile{]} is used to record the information of computing nodes such as PBS\_nodefile in
-
-\end{itemize}
-
 Portable Batch System (PBS) and HOSTNAME in Sun Grid Engine (SGE). In the PBS system, we recommand to use
 the command, “echo \$PBS\_nodefile \textgreater{} nodefile”. Also, users can save an arbitrary text
 by writing in the nodefile.
-- {[}the number of cores{]} is the number of cores to be used in parallel computing.
+
+\item {} 
+{[}the number of cores{]} is the number of cores to be used in parallel computing.
+
+\end{itemize}
 
 For the convenience, we provide the shell script file (run.sh) as following.
 
@@ -1406,6 +1407,69 @@ config\_def.yaml:
 \end{sphinxVerbatim}
 
 
+\subsection{To get more accurate band gap}
+\label{\detokenize{Input/Advanced_configuration:to-get-more-accurate-band-gap}}
+We suggest two approaches to get more accurate band gap.
+\begin{itemize}
+\item {} 
+Band calculation with hybrid functional
+
+In the basic version, the band calculation is performed using PBE scheme.
+However, users can add the tags below to use hybrid functional for structure
+optimization and band calculation.
+
+\begin{sphinxVerbatim}[commandchars=\\\{\}]
+\PYG{n}{relaxation}\PYG{p}{:}
+  \PYG{n}{potential\PYGZus{}type}\PYG{p}{:}
+    \PYG{o}{\PYGZhy{}} \PYG{n}{HSE}
+\PYG{n}{band\PYGZus{}calculation}\PYG{p}{:}
+  \PYG{n}{potential\PYGZus{}type}\PYG{p}{:}
+    \PYG{o}{\PYGZhy{}} \PYG{n}{HSE}
+\end{sphinxVerbatim}
+
+\item {} 
+Using \sphinxhref{mailto:HSE@PBE}{HSE@PBE} scheme with hybrid structure
+
+Second approach is still using \sphinxhref{mailto:HSE@PBE}{HSE@PBE} method but the optimized structure is
+calculated using hybrid functional. Since the band calculation with hybrid functional
+is too expensive, the k-points corresponding to the VBM and CBM are determined by using
+GGA method. For this calculation, users can use the commands below.
+
+\begin{sphinxVerbatim}[commandchars=\\\{\}]
+\PYG{n}{relaxation}\PYG{p}{:}
+  \PYG{n}{potential\PYGZus{}type}\PYG{p}{:}
+    \PYG{o}{\PYGZhy{}} \PYG{n}{GGA}
+    \PYG{o}{\PYGZhy{}} \PYG{n}{HSE}
+\PYG{n}{hybrid\PYGZus{}oneshot}\PYG{p}{:}
+  \PYG{n}{potential\PYGZus{}type}\PYG{p}{:}
+    \PYG{o}{\PYGZhy{}} \PYG{o}{\PYGZhy{}} \PYG{n}{HSE}
+      \PYG{o}{\PYGZhy{}} \PYG{n}{GGA}
+\end{sphinxVerbatim}
+
+\end{itemize}
+
+
+\subsection{Organic crystal}
+\label{\detokenize{Input/Advanced_configuration:organic-crystal}}
+Organic crystals usually have lower Young’s modulus than inorganic materials.
+Thus, the error in the structural parameters can be substantial and they require
+high precision for calculation. The tags below can control the precision of calculation.
+
+\begin{sphinxVerbatim}[commandchars=\\\{\}]
+\PYG{n}{cif2vasp}\PYG{p}{:}
+  \PYG{n}{INCAR}\PYG{p}{:}
+    \PYG{n}{EDIFF}\PYG{p}{:} \PYG{l+m+mf}{1e\PYGZhy{}08}
+
+\PYG{n}{convergence\PYGZus{}test}\PYG{p}{:}
+  \PYG{n}{enconv}\PYG{p}{:} \PYG{l+m+mf}{0.001}
+  \PYG{n}{prconv}\PYG{p}{:} \PYG{l+m+mi}{1}
+
+\PYG{n}{relaxation}\PYG{p}{:}
+  \PYG{n}{pressure}\PYG{p}{:} \PYG{l+m+mi}{1}
+  \PYG{n}{force}\PYG{p}{:} \PYG{l+m+mf}{0.002}
+\end{sphinxVerbatim}
+
+
 \chapter{Output}
 \label{\detokenize{Output/Output:output}}\label{\detokenize{Output/Output::doc}}
 
@@ -1838,20 +1902,6 @@ Density of states (/Results/dos\_GGA.log)
 \noindent\sphinxincludegraphics[width=150\sphinxpxdimen]{{dos_GGA1}.png}
 \end{quote}
 \end{quote}
-
-
-\chapter{Indices and tables}
-\label{\detokenize{index:indices-and-tables}}\begin{itemize}
-\item {} 
-\DUrole{xref,std,std-ref}{genindex}
-
-\item {} 
-\DUrole{xref,std,std-ref}{modindex}
-
-\item {} 
-\DUrole{xref,std,std-ref}{search}
-
-\end{itemize}
 
 
 

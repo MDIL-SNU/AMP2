@@ -24,6 +24,8 @@
 \contentsline {subsection}{\numberline {3.2.6}Hybrid\_oneshot}{15}{subsection.3.2.6}%
 \contentsline {subsection}{\numberline {3.2.7}Effective\_mass}{16}{subsection.3.2.7}%
 \contentsline {section}{\numberline {3.3}Advanced configuration}{16}{section.3.3}%
+\contentsline {subsection}{\numberline {3.3.1}To get more accurate band gap}{19}{subsection.3.3.1}%
+\contentsline {subsection}{\numberline {3.3.2}Organic crystal}{19}{subsection.3.3.2}%
 \contentsline {chapter}{\numberline {4}Output}{21}{chapter.4}%
 \contentsline {section}{\numberline {4.1}Output files}{21}{section.4.1}%
 \contentsline {subsection}{\numberline {4.1.1}INPUT0}{21}{subsection.4.1.1}%
@@ -47,4 +49,3 @@
 \contentsline {subsection}{\numberline {5.3.1}Si}{25}{subsection.5.3.1}%
 \contentsline {subsection}{\numberline {5.3.2}Ge}{27}{subsection.5.3.2}%
 \contentsline {subsection}{\numberline {5.3.3}NiO}{28}{subsection.5.3.3}%
-\contentsline {chapter}{\numberline {6}Indices and tables}{31}{chapter.6}%

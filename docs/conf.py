@@ -133,8 +133,8 @@ latex_elements = {
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-    (master_doc, 'AMP2.tex', u'AMP$^\\text{2}$ Manual \\\\ \\textit{0.9.5}',
-     u'Yong Youn \\\\ Seungwu Han', 'Manual'),
+    (master_doc, 'Manual.tex', u'AMP$^\\text{2}$ Manual \\\\ \\textit{0.9.5}',
+     u'Yong Youn \\\\ Seungwu Han', 'manual'),
 ]
 
 
