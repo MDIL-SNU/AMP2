@@ -55,7 +55,7 @@ convergence_test:
   foconv: -1
   initial_kpl: 1
   max_kpl: 20
-  enstart: 200
+  enstart: 0
   enstep: 50
   enmax: 1000
   potential_type: GGA # Choose on potential in GGA, LDA, HSE
