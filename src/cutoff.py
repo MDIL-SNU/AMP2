@@ -64,13 +64,10 @@ if os.path.isfile(enlog):
 	os.remove(enlog)
 
 ### cutoff energy test setting ###
-ENPOT = pygrep('ENMIN',dir+'/INPUT0/POTCAR_'+POT,0,0).splitlines()
-for i in range(len(ENPOT)) :
-	if float(ENPOT[i].split()[5]) > ENSTART :
-		ENSTART = int(math.ceil(float(ENPOT[i].split()[5])/ENSTEP))*ENSTEP
-
 ENPOT = pygrep('ENMAX',dir+'/INPUT0/POTCAR_'+POT,0,0).splitlines()
 EN_recommend = max([float(ENPOT[x].split()[2].split(';')[0]) for x in range(len(ENPOT))]) # Maximum value in the ENMAX
+if EN_recommend - 50 > ENSTART:
+	ENSTART = int(math.ceil((EN_recommend-50)/ENSTEP))*ENSTEP
 
 ENCUT = ENSTART
 loopnum = 0
