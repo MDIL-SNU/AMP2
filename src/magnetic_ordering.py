@@ -403,20 +403,28 @@ if ferro == 0:
 		shutil.copytree(stable_path,dir+'/relax_'+pot_type)
 else:
 	if os.path.isdir(dir+'/relax_'+pot_type):
-		make_amp2_log(dir,'We changed the files in relax_'+pot_type+' from magnetic calculation.')
+#		make_amp2_log(dir,'We changed the files in relax_'+pot_type+' from magnetic calculation.')
 		shutil.move(dir+'/relax_'+pot_type,dir+'/relax_'+pot_type+'_old')
-		shutil.copytree(stable_path,dir+'/relax_'+pot_type)
-	else:
-		make_amp2_log(dir,'We changed the files in relax_'+pot_type+' from magnetic calculation.')
-		shutil.copytree(stable_path,dir+'/relax_'+pot_type)
+#		shutil.copytree(stable_path,dir+'/relax_'+pot_type)
+#	else:
+#		make_amp2_log(dir,'We changed the files in relax_'+pot_type+' from magnetic calculation.')
+#		shutil.copytree(stable_path,dir+'/relax_'+pot_type)
 	shutil.copytree(dir+'/INPUT0',dir+'/INPUT0_old')
+	shutil.move(dir+'/kptest',dir+'/kptest_old')
 	shutil.copy(stable_path+'/POSCAR0',dir+'/INPUT0/POSCAR')
-	write_relaxed_poscar(dir,pot_type)
+#	write_relaxed_poscar(dir,pot_type)
 	shutil.copy(stable_path+'/INCAR',dir+'/INPUT0/INCAR')
 	shutil.copy(stable_path+'/KPOINTS',dir+'/INPUT0/KPOINTS')
 	shutil.copy(stable_path+'/sym',dir+'/INPUT0/sym')
 	with open(stable_path+'/mag_info','r') as inp:
 		mag_info = inp.readline()
 	wincar(dir+'/INPUT0/spin_note',dir+'/INPUT0/spin_note',[['MAGMOM',mag_info]],[])
-
+	# Perform k-points test
+	try:
+		notice = subprocess.check_output([pypath,src_path+'/kpoint.py',dir,inp_file,sys.argv[3],nproc],universal_newlines=True)
+	except:
+		notice = '0'
+		if not notice.splitlines()[-1][0] == '1':
+			print(0)
+			sys.exit()
 print(1)

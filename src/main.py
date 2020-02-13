@@ -18,7 +18,7 @@ else:
 
 # input from shell
 conf_file = sys.argv[1]
-node = sys.argv[2]
+node = os.path.abspath(sys.argv[2])
 nproc = sys.argv[3]
 pypath = sys.executable
 
@@ -98,17 +98,16 @@ while len(make_list(inp_file)) > 0:
 			continue
 	if set_on_off(cal_dic['relaxation']) == 1:
 		for pot_type in inp_yaml['relaxation']['potential_type']:
-			if not pot_type == inp_yaml['magnetic_ordering']['potential_type']:
-				if not os.path.isfile(target+'/INPUT0/POTCAR_'+pot_type) and not pot_type == 'HSE':
-					make_amp2_log(target,'POTCAR_'+pot_type+' file is missing.')
-					continue
-				try:
-					notice = subprocess.check_output([pypath,src_path+'/relax.py',target,inp_file,node,nproc,pot_type],universal_newlines=True)
-				except:
-					notice = '0'
-				if not notice.splitlines()[-1][0] == '1':
-					shutil.move(target,ERROR_path+'/'+target.split('/')[-1])
-					continue
+			if not os.path.isfile(target+'/INPUT0/POTCAR_'+pot_type) and not pot_type == 'HSE':
+				make_amp2_log(target,'POTCAR_'+pot_type+' file is missing.')
+				continue
+			try:
+				notice = subprocess.check_output([pypath,src_path+'/relax.py',target,inp_file,node,nproc,pot_type],universal_newlines=True)
+			except:
+				notice = '0'
+			if not notice.splitlines()[-1][0] == '1':
+				shutil.move(target,ERROR_path+'/'+target.split('/')[-1])
+				continue
 	if set_on_off(cal_dic['band']) == 1:
 		for pot_type in inp_yaml['band_calculation']['potential_type']:
 			if not os.path.isfile(target+'/INPUT0/POTCAR_'+pot_type) and not pot_type == 'HSE':
