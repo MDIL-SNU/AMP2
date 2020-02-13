@@ -610,10 +610,10 @@ def convergence_check_E(target):
     ENCONV = 0.01
     for line in lines:
         if len(line.split()) > 4 and line.split()[0][:2] == 'KP':
-            ENERGY.append([line.split()[0],float(line.split()[1])])
-	elif line.split()[0] == 'Convergence' and line.split()[2] == 'E/atom':
+            ENERGY.append([line.split()[0].split(':')[0],float(line.split()[1])])
+        elif len(line.split()) > 1 and line.split()[0] == 'Convergence' and line.split()[2] == 'E/atom':
             ENCONV = float(line.split()[4])
-    nion = int(pygrep('NION',path_list[0]+'/OUTCAR',0,0).splitlines()[-1].split()[11])
+    nion = int(pygrep('NION',target+'/kptest/'+ENERGY[0][0]+'/OUTCAR',0,0).splitlines()[-1].split()[11])
     check = 0
     for i in range(len(ENERGY)-2):
         # Convergence check for energy/atom

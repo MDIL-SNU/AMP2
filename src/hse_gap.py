@@ -163,7 +163,7 @@ if os.path.isfile(dir+'/band_'+pot_point+'/KPT') and count_line(dir+'/band_'+pot
 	elif os.path.isfile(dir+'/relax_'+pot_cell+'/IBZKPT'):
 		reduce_kpt = dir+'/relax_'+pot_cell
 	else:
-		make_amp2_log(dir_hse,'IBZKPT file is missing. Please check the kptest or relaxation.'
+		make_amp2_log(dir_hse,'IBZKPT file is missing. Please check the kptest or relaxation.')
 	make_kpts_for_hse(reduce_kpt+'/IBZKPT',dir+'/band_'+pot_point+'/KPT',dir_hse,'oneshot')
 	# make INCAR
 	# delete LDAU tag
