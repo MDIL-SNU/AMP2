@@ -356,7 +356,7 @@ def make_incar_note(poscar,target,soc_target,u_value,magmom_def,src_path):
         'Cd':2, 'In':3, 'Sn':4, 'Sb':5, 'Te':6, 'I':7, 'Xe':0, 'Cs':1, 'Ba':2, 'La':3, 'Ce':4,
         'Pr':5, 'Nd':6, 'Pm':7, 'Sm':8, 'Eu':9, 'Gd':10, 'Tb':11, 'Dy':12, 'Ho':13, 'Er':14, 'Tm':15,
         'Yb':16, 'Lu':17, 'Hf':4, 'Ta':5, 'W':6, 'Re':7, 'Os':8, 'Ir':9, 'Pt':10, 'Au':11, 'Hg':12,
-        'Tl':3, 'Pb':4, 'Bi':5, 'Po':6, 'At':7, 'Rn':0, 'Ac':3, 'Th':4, 'Pa':5, 'U':6, 'Pu':8, 'No':16}
+        'Tl':3, 'Pb':4, 'Bi':5, 'Po':6, 'At':7, 'Rn':0, 'Ac':3, 'Th':4, 'Pa':5, 'U':6, 'Pu':8, 'No':16, 'D':1,'T':1}
 
 	pos = open(poscar,'r').readlines()
 	atom_z = pos[5].split()
@@ -405,7 +405,7 @@ def make_incar_note(poscar,target,soc_target,u_value,magmom_def,src_path):
 			soc_on = 1
 
 	# Checking metallic compounds (If all components are metallic elements, we do not impose +U.)
-	non_metal = ['H','He','B','C','N','O','F','Ne','Si','P','S','Cl','Ar','Ge','As','Se','Br','Kr','Sb','Te','I','Xe','At','Rn']
+	non_metal = ['H','He','B','C','N','O','F','Ne','Si','P','S','Cl','Ar','Ge','As','Se','Br','Kr','Sb','Te','I','Xe','At','Rn','D','T']
 	if not any([x in non_metal for x in atom_z]):
 		u_on = 0
 
