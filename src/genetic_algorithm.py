@@ -68,16 +68,16 @@ for ll in param_list:
 	param_len = around(float(line[0]),decimals=2)
 	param_val = float(line[1])
 	if line[2] == line[3]:
-		para_J[line[2]+line[3]+str(param_len)] = param_val
-		para_J[line[2]+line[3]+str(param_len+0.01)] = param_val
-		para_J[line[2]+line[3]+str(param_len-0.01)] = param_val
+		para_J[line[2]+line[3]+str(around(param_len,decimals=2))] = param_val
+		para_J[line[2]+line[3]+str(around(param_len+0.01,decimals=2))] = param_val
+		para_J[line[2]+line[3]+str(around(param_len-0.01,decimals=2))] = param_val
 	else:
-		para_J[line[2]+line[3]+str(param_len)] = param_val
-		para_J[line[3]+line[2]+str(param_len)] = param_val
-		para_J[line[2]+line[3]+str(param_len+0.01)] = param_val
-		para_J[line[3]+line[2]+str(param_len+0.01)] = param_val
-		para_J[line[2]+line[3]+str(param_len-0.01)] = param_val
-		para_J[line[3]+line[2]+str(param_len-0.01)] = param_val
+		para_J[line[2]+line[3]+str(around(param_len,decimals=2))] = param_val
+		para_J[line[3]+line[2]+str(around(param_len,decimals=2))] = param_val
+		para_J[line[2]+line[3]+str(around(param_len+0.01,decimals=2))] = param_val
+		para_J[line[3]+line[2]+str(around(param_len+0.01,decimals=2))] = param_val
+		para_J[line[2]+line[3]+str(around(param_len-0.01,decimals=2))] = param_val
+		para_J[line[3]+line[2]+str(around(param_len-0.01,decimals=2))] = param_val
 
 ERES = open('energy.dat', 'w')
 #print para_J
