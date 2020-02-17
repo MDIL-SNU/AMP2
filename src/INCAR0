@@ -13,7 +13,7 @@
    NELM   =   100     number of ELM steps
    EDIFF  =  1E-06    energy stopping-criterion for ELM
    LREAL  =  .F.      real-space projection (.FALSE., .TRUE., On, Auto)
-   ALGO   =  Fast     Normal, Fast, Very_Fast
+   ALGO   =  Normal     Normal, Fast, Very_Fast
    LWAVE  = .F.
    LCHARG = .F.
 

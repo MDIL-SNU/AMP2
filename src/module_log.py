@@ -2,8 +2,10 @@
 ### Date: 2018-12-05			###
 ### yybbyb@snu.ac.kr			###
 ###########################################
+# This is a package of modules to record log.
 import datetime, getpass, os
 
+# This function is for writing default amp2 log file
 def make_amp2_log_default(path,src_path,comment,node,code_data):
 	with open(path+'/amp2.log','a') as amp2_log:
 		amp2_start_time = datetime.datetime.now().strftime("\tThe calculation is started at %Y-%m-%d : %H:%M \n")
@@ -16,7 +18,7 @@ def make_amp2_log_default(path,src_path,comment,node,code_data):
 		amp2_log.write('\tThe current running path is '+full_path+'\n')
 		amp2_log.write('\tThe source path is '+full_src_path+'\n')
 		amp2_log.write('\t'+code_data+'\n')
-		amp2_log.write('\tRunning nodes are')
+		amp2_log.write('\tYour job was run at')
 		for node_index in node:
 			amp2_log.write(' '+node_index)
 		amp2_log.write('\n')
@@ -40,7 +42,6 @@ def node_simple(node_file):
 def read_code_head(code,head_num):
 	from module_vasprun import pyhead
 	code_ver = pyhead(code,head_num)
-#	code_ver = subprocess.check_output(['head','-'+str(head_num),code])
 	return code_ver
 
 def write_log_in_outcar(outcar_file,log_file):

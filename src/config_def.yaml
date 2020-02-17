@@ -55,7 +55,7 @@ convergence_test:
   foconv: -1
   initial_kpl: 1
   max_kpl: 20
-  enstart: 200
+  enstart: 0
   enstep: 50
   enmax: 1000
   potential_type: GGA # Choose on potential in GGA, LDA, HSE
@@ -67,7 +67,9 @@ relaxation:
 #    - LDA
 #    - HSE
   max_iteration: 10
-  converged_ionic_step: 5
+  converged_ionic_step: -1
+  length_tolerance: 0.002 # Tolerance of lattice length (ratio)
+  angle_tolerance: 0.1 # Tolerance of angle (degrees)
   pos_warning_percent: 1
   energy: -1
   pressure: 10
@@ -87,7 +89,7 @@ band_calculation:
 #    - HSE
   relax_check: 1
   incar:
-    EDIFF: 1e-06
+#    EDIFF: 1e-08
 
 hybrid_oneshot:
   alpha: 0.25
@@ -143,7 +145,7 @@ effective_mass:
 
 magnetic_ordering:
   potential_type: GGA # Choose on potential in GGA, LDA, HSE (If from relax:0, it must be same to potential_type in convergence.)
-  minimum_moment: 0.5
+  minimum_moment: 0.2
   from_relax: 1
   cutoff_for_parameter: 5.0
   tolerance: 0.01 # Tolerance to define identical pair for Ising coefficient

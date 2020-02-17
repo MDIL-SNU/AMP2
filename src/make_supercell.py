@@ -3,6 +3,7 @@
 ##### made by Joohee_Lee #####
 ##### modified by Yong  #####
 ##### (20190306) #####
+# This is a code to build supercell to find magnetic primitive cell.
 
 import sys, string
 
@@ -38,7 +39,7 @@ name=0
 line=f.readline()
 number_list=line.split()
 if isNum(number_list[0])==0:
-	name=line
+        name=line
         number_list=f.readline().split()
 
 # total atom number calculation 
@@ -75,12 +76,12 @@ if DorC[0]=='D':
 		for i in range(expand_a):
 			for j in range(expand_b):
 				for k in range(expand_c):
-                	                tempX=float(coor_list[t].split()[0]); tempY=float(coor_list[t].split()[1]); tempZ=float(coor_list[t].split()[2])
+					tempX=float(coor_list[t].split()[0]); tempY=float(coor_list[t].split()[1]); tempZ=float(coor_list[t].split()[2])
 					if '!' in coor_list[t]:
 						at_inform = coor_list[t].split('!')[-1]
 					else:
 						at_inform = '\n'
-                        	        pnw.write(" %(tx)19.16F %(ty)19.16F %(tz)19.16F   T   T   T !" % {'tx':(i+tempX)/expand_a,'ty':(j+tempY)/expand_b,'tz':(k+tempZ)/expand_c} + at_inform)
+					pnw.write(" %(tx)19.16F %(ty)19.16F %(tz)19.16F   T   T   T !" % {'tx':(i+tempX)/expand_a,'ty':(j+tempY)/expand_b,'tz':(k+tempZ)/expand_c} + at_inform)
 
 # else if it is Cartesian
 elif DorC[0]=='C':
@@ -89,10 +90,10 @@ elif DorC[0]=='C':
 		for i in range(expand_a):
 			for j in range(expand_b):
 				for k in range(expand_c):
-                	                tempX=float(coor_list[t].split()[0]); tempY=float(coor_list[t].split()[1]); tempZ=float(coor_list[t].split()[2])
+					tempX=float(coor_list[t].split()[0]); tempY=float(coor_list[t].split()[1]); tempZ=float(coor_list[t].split()[2])
 					if '!' in coor_list[t]:
 						at_inform = coor_list[t].split('!')[-1]
 					else:
 						at_inform = '\n'
 
-                        	        pnw.write(" %(tx)19.16F %(ty)19.16F %(tz)19.16F   T   T   T !" % {'tx':tempX+(i*A1)+(j*B1)+(k*C1),'ty':tempY+(i*A2)+(j*B2)+(k*C2),'tz':tempZ+(i*A3)+(j*B3)+(k*C3)}+at_inform)
+					pnw.write(" %(tx)19.16F %(ty)19.16F %(tz)19.16F   T   T   T !" % {'tx':tempX+(i*A1)+(j*B1)+(k*C1),'ty':tempY+(i*A2)+(j*B2)+(k*C2),'tz':tempZ+(i*A3)+(j*B3)+(k*C3)}+at_inform)

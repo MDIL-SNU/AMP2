@@ -7,7 +7,8 @@ import os, sys, subprocess, yaml
 from module_log import *
 from module_vasprun import *
 from module_converge import *
-code_data = 'Version 0.9.4. Modified at 2019-11-28'
+from _version import __version__
+code_data = 'Version '+__version__+'. Modified at 2019-12-17'
 
 # Set input
 dir = sys.argv[1]
@@ -42,11 +43,11 @@ if os.path.isdir(dir+'/kptest') and os.path.isfile(dir+'/kptest/KPOINTS_converge
     make_amp2_log_default(dir,src_path,'KPOINTS test',node,code_data)
 #   print('Success!')
     make_amp2_log(dir,'Already done')
-    print 1
+    print(1)
     sys.exit()
 
 if not os.path.isdir(dir+'/kptest') :
-    os.mkdir(dir+'/kptest', 0755)
+    os.mkdir(dir+'/kptest', 0o755)
     make_amp2_log_default(dir+'/kptest',src_path,'KPOINTS test',node,code_data)
     make_amp2_log(dir+'/kptest','New calculation.')
 else:
@@ -67,11 +68,11 @@ while convergence == 1 :
     if KPL > inp_conv['max_kpl'] :
         make_amp2_log(dir+'/kptest','Too many k-point mesh is required!')
 #       print("Too many k-point mesh is required!")
-        print 0
+        print(0)
         sys.exit()
 
     if not os.path.isdir(dir+'/kptest/KP'+str(KPL)) :
-        os.mkdir(dir+'/kptest/KP'+str(KPL), 0755)
+        os.mkdir(dir+'/kptest/KP'+str(KPL), 0o755)
 
     make_amp2_log(dir+'/kptest','KP'+str(KPL)+' calculation start')
     now_path = dir+'/kptest/KP'+str(KPL)
@@ -80,8 +81,9 @@ while convergence == 1 :
     
     rerun = 0 
     if os.path.isfile(now_path+'/OUTCAR'):
-        if 'Voluntary' in subprocess.check_output(['tail','-n','1',now_path+'/OUTCAR']):
+        if 'Voluntary' in pytail(now_path+'/OUTCAR'):
             rerun = 1
+            write_conv_result(now_path,kplog)
     if rerun == 0:
         copy_input_no_kp(dir+'/INPUT0',now_path,POT)
         sym = int(open(dir+'/INPUT0/sym','r').readline())
@@ -97,46 +99,50 @@ while convergence == 1 :
         incar_from_yaml(now_path,inp_conv['incar'])
         wincar(now_path+'/INCAR',now_path+'/INCAR',[['NSW','0'],['LCHARG','F'],['LWAVE','F']],[])
         out = run_vasp(now_path,nproc,vasprun,mpi)
-        if out == 1:  # error in vasp calculation
-            print 0
-            sys.exit() 
-        
         if KPL == 1 or KPL == 2:
-            out = electronic_step_convergence_check(now_path)
-            
+            if out == 1:  # error in vasp calculation
+                make_amp2_log(dir+'/kptest','VASP error occurs, but pass because of too small kpoints.')
+                out = 3
+                loopnum = 0
+            else:
+                out = electronic_step_convergence_check(now_path)
+
             while out == 1:
                 make_amp2_log(dir+'/kptest','Calculation options are changed. New calculation starts.')
                 out = run_vasp(now_path,nproc,vasprun,mpi)
                 if out == 1:  # error in vasp calculation
-                    print 0
-                    sys.exit()
-                out = electronic_step_convergence_check(now_path)
+                    make_amp2_log(dir+'/kptest','VASP error occurs, but pass because of too small kpoints.')
+                    out = 3
+                    loopnum = 0
+                else:
+                    out = electronic_step_convergence_check(now_path)
 
             if out == 2:  # electronic step is not converged. (algo = normal)
-                make_amp2_log(dir+'/kptest','The calculation stops but electronic step is not converged, but pass because of too small kpoints')
+                make_amp2_log(dir+'/kptest','The calculation stops but electronic step is not converged, but pass because of too small kpoints.')
                 loopnum = 0
-            else:
+            elif out < 2:
                 write_conv_result(now_path,kplog)
 
         else:
+            if out == 1:  # error in vasp calculation
+                print(0)
+                sys.exit() 
             out = electronic_step_convergence_check(now_path)
             while out == 1:
                 make_amp2_log(dir+'/kptest','Calculation options are changed. New calculation starts.')
                 out = run_vasp(now_path,nproc,vasprun,mpi)
                 if out == 1:  # error in vasp calculation
-                    print 0
+                    print(0)
                     sys.exit()
                 out = electronic_step_convergence_check(now_path)
 
             if out == 2:  # electronic step is not converged. (algo = normal)
                 make_amp2_log(dir+'/kptest','The calculation stops but electronic step is not converged.')
-                print 0
+                print(0)
                 sys.exit()
-
+            # electronic step is converged.
             write_conv_result(now_path,kplog)
 
-    # electronic step is converged.
-#    write_conv_result(now_path,kplog)
     if loopnum >= 3:
         convergence = convergence_check(now_path,dir+'/kptest/KP'+str(KPL-1),dir+'/kptest/KP'+str(KPL-2),ENCONV,PRCONV,FOCONV)
     KPL = KPL + 1 
@@ -163,4 +169,4 @@ with open(dir+'/kptest/amp2.log','r') as amp2_log:
     with open(dir+'/amp2.log','a') as amp2_log_tot:
         amp2_log_tot.write(amp2_log.read())
 
-print 1
+print(1)

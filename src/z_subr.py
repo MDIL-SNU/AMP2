@@ -1,14 +1,18 @@
+# This is a package of modules for 'mk_supercell.py'.
 import numpy as np
 import math
 from itertools import product
 from itertools import combinations
 
+# This function is for calculate dot product of two vector
 def dotproduct(v1, v2):
     return sum((a*b) for a, b in zip(v1, v2))
 
+# This function is for calculate norm of input vector
 def length(v):
     return math.sqrt(dotproduct(v, v))
 
+# This function is for calculate angle between two vector
 def angle(v1, v2):
     value =  dotproduct(v1, v2)/(length(v1)*length(v2))
     if value > 1.0: value = 1.0 
@@ -20,12 +24,14 @@ def read_file(target):
         lines=f1.readlines()
     return lines
 
+# This function is for reading the lattice vector from poscar
 def read_lat(poscar):
     lat_prim=[]
     for i in range(3):
         lat_prim.append([float(x) for x in poscar[2+i].split()])
     return lat_prim
 
+# This function is for reading atomic position from poscar
 def read_at_pos(poscar,totnum):
     at_prim=[]
     for i in range(totnum):
@@ -33,6 +39,7 @@ def read_at_pos(poscar,totnum):
         at_prim.append([float(x) for x in tmp[0:3]]+[tmp[-1]])
     return at_prim
 
+# This function is for reading lattice vector and atomic position from poscar
 def read_tot(poscar,totnum):
     lat_prim=[]
     for i in range(3):
@@ -43,24 +50,27 @@ def read_tot(poscar,totnum):
         at_prim.append([float(x) for x in tmp[0:3]]+[tmp[-1]])
     return lat_prim, at_prim
 
+# This function is for calculating length of lattice vector
 def cal_lat_len(lattice):
     lat_length = []
     for i in range(3):
         lat_length.append(np.sqrt(sum([x**2 for x in lattice[i]])))
     return lat_length
 
+# This function is for calculating angle of lattice vector
 def cal_angle(lattice):
     alpha = (angle(lattice[1],lattice[2]))
     beta = (angle(lattice[0],lattice[2]))
     gamma = (angle(lattice[0],lattice[1]))
     return [alpha, beta, gamma]
 
+# This function is for rotating matrix given rotating matrix
 def rotate_mat(lat_prim, rot_mat):
     lat_rot=np.array(np.matmul(np.array(lat_prim).transpose(), rot_mat)).transpose()
     return lat_rot 
 
 def mk_combination(m):
-    items= [range(-m,m+1)]*3
+    items= [list(range(-m,m+1))]*3
     rot = list(product(*items))
     return rot
 
@@ -113,10 +123,11 @@ def mk_rot_matrix(new_list):
         lat_sum = 0
         for j in range(3):
             lat_sum = lat_sum+sum(lattice[j])
-	if lat_sum > 0:
+        if lat_sum > 0:
             tmp_mat.append([rot_vec, lattice])
     return tmp_mat
 
+# This function is for removing the matrix whose determinant is zero
 def rm_det_0(basis_mat):
     tmp = []
     for i in range(len(basis_mat)):
@@ -144,6 +155,7 @@ def check_shape(basis_mat,min_ang,max_ang):
     basis_mat = tmp
     return basis_mat
 
+# This function is for calculating sum of vectors in list
 def sum_vector(list_of_lists):
 #    tmp=[]
 #    for i in range(len(a)):
@@ -173,6 +185,7 @@ def check_defect_length(basis_mat, len_min):
     basis_mat = tmp
     return basis_mat
 
+# This function is for calculating volume of structure given lattice vector
 def cal_volume(lat):
     return np.inner(lat[0],np.cross(lat[1],lat[2]))
 
@@ -187,6 +200,7 @@ def check_natom(basis_mat, lat_prim, natom, min_atom):
 
     return tmp
 
+# This function is for calculating reciprocal vector
 def cal_reci_vec(lat):
     [aa, bb, cc] = lat
     reci = []
@@ -197,7 +211,7 @@ def cal_reci_vec(lat):
 
     len_reci = []
     for i in range(3):
-        vector = math.sqrt(sum(map(lambda x: x**2, reci[i][0:3])))
+        vector = math.sqrt(sum([x**2 for x in reci[i][0:3]]))
 #        print vector
         len_reci.append(vector)
     return len_reci

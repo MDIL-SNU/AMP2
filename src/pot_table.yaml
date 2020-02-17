@@ -9,7 +9,7 @@
         'Rb':'Rb_pv', 'Re':'Re_pv', 'Rh':'Rh', 'Ru':'Ru', 'S':'S', 'Sb':'Sb', 'Sc':'Sc',
         'Se':'Se', 'Si':'Si', 'Sn':'Sn', 'Sr':'Sr_sv', 'Ta':'Ta_pv', 'Tc':'Tc_pv', 'Te':'Te',
         'Th':'Th', 'Ti':'Ti', 'Tl':'Tl', 'U':'U', 'V':'V', 'W':'W', 'Xe':'Xe', 'Y':'Y_sv',
-        'Zn':'Zn', 'Zr':'Zr_sv' },
+        'Zn':'Zn', 'Zr':'Zr_sv', 'D':'H', 'T':'H'},
 'GGA':{ 'Ac':'Ac', 'Ag':'Ag', 'Al':'Al', 'Ar':'Ar', 'As':'As', 'Au':'Au', 'B':'B', 'Ba':'Ba_sv',
         'Be':'Be', 'Bi':'Bi', 'Br':'Br', 'C':'C', 'Ca':'Ca_pv', 'Cd':'Cd', 'Ce':'Ce', 'Cl':'Cl',
         'Co':'Co', 'Cr':'Cr', 'Cs':'Cs_sv', 'Cu':'Cu', 'Dy':'Dy_3', 'Er':'Er_2', 'Eu':'Eu',
@@ -21,6 +21,6 @@
         'Rb':'Rb_pv', 'Re':'Re', 'Rh':'Rh', 'Ru':'Ru', 'S':'S', 'Sb':'Sb', 'Sc':'Sc_sv',
         'Se':'Se', 'Si':'Si', 'Sm':'Sm', 'Sn':'Sn', 'Sr':'Sr_sv', 'Ta':'Ta', 'Tb':'Tb_3',
         'Tc':'Tc', 'Te':'Te', 'Th':'Th', 'Ti':'Ti', 'Tl':'Tl', 'Tm':'Tm', 'U':'U', 'V':'V',
-        'W':'W', 'Xe':'Xe', 'Y':'Y_sv', 'Yb':'Yb', 'Zn':'Zn', 'Zr':'Zr_sv' }
+        'W':'W', 'Xe':'Xe', 'Y':'Y_sv', 'Yb':'Yb', 'Zn':'Zn', 'Zr':'Zr_sv', 'D':'H', 'T':'H'}
 }
 

@@ -91,7 +91,11 @@
 <li class="toctree-l1 current"><a class="reference internal" href="Input.html">Input</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="Input_files.html">Input files</a></li>
 <li class="toctree-l2"><a class="reference internal" href="Configuration.html">Configuration</a></li>
-<li class="toctree-l2 current"><a class="current reference internal" href="#">Advanced configuration</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Advanced configuration</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#to-get-more-accurate-band-gap">To get more accurate band gap</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#organic-crystal">Organic crystal</a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../Output/Output.html">Output</a></li>
@@ -266,6 +270,62 @@ the default configuration file (‘/src/cpnfig_def.yaml’).</p>
   <span class="n">temperature_for_fermi</span><span class="p">:</span> <span class="mi">300</span>            <span class="c1"># The temperature to estimate the Fermi distribution</span>
   <span class="n">fermi_for_cutoff</span><span class="p">:</span> <span class="mf">0.99</span>                <span class="c1"># Boundary condition for valid Fermi distribution (1-f)</span>
 </pre></div>
+</div>
+<div class="section" id="to-get-more-accurate-band-gap">
+<h2>To get more accurate band gap<a class="headerlink" href="#to-get-more-accurate-band-gap" title="Permalink to this headline">¶</a></h2>
+<p>We suggest two approaches to get more accurate band gap.</p>
+<ul>
+<li><p>Band calculation with hybrid functional</p>
+<p>In the basic version, the band calculation is performed using PBE scheme.
+However, users can add the tags below to use hybrid functional for structure
+optimization and band calculation.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">relaxation</span><span class="p">:</span>
+  <span class="n">potential_type</span><span class="p">:</span>
+    <span class="o">-</span> <span class="n">HSE</span>
+<span class="n">band_calculation</span><span class="p">:</span>
+  <span class="n">potential_type</span><span class="p">:</span>
+    <span class="o">-</span> <span class="n">HSE</span>
+</pre></div>
+</div>
+</li>
+<li><p>Using <a class="reference external" href="mailto:HSE&#37;&#52;&#48;PBE">HSE<span>&#64;</span>PBE</a> scheme with hybrid structure</p>
+<p>Second approach is still using <a class="reference external" href="mailto:HSE&#37;&#52;&#48;PBE">HSE<span>&#64;</span>PBE</a> method but the optimized structure is
+calculated using hybrid functional. Since the band calculation with hybrid functional
+is too expensive, the k-points corresponding to the VBM and CBM are determined by using
+GGA method. For this calculation, users can use the commands below. Here, if potential_type
+in hybrid_oneshot is the main category, the method tags (HSE and GGA) are child subcategory
+not parent subcategory. Please be careful.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">relaxation</span><span class="p">:</span>
+  <span class="n">potential_type</span><span class="p">:</span>
+    <span class="o">-</span> <span class="n">GGA</span>
+    <span class="o">-</span> <span class="n">HSE</span>
+<span class="n">hybrid_oneshot</span><span class="p">:</span>
+  <span class="n">potential_type</span><span class="p">:</span>
+    <span class="o">-</span> <span class="o">-</span> <span class="n">HSE</span>
+      <span class="o">-</span> <span class="n">GGA</span>
+</pre></div>
+</div>
+</li>
+</ul>
+</div>
+<div class="section" id="organic-crystal">
+<h2>Organic crystal<a class="headerlink" href="#organic-crystal" title="Permalink to this headline">¶</a></h2>
+<p>Organic crystals usually have lower Young’s modulus than inorganic materials.
+Thus, the error in the structural parameters can be substantial and they require
+high precision for calculation. The tags below can control the precision of calculation.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">cif2vasp</span><span class="p">:</span>
+  <span class="n">INCAR</span><span class="p">:</span>
+    <span class="n">EDIFF</span><span class="p">:</span> <span class="mf">1e-08</span>
+
+<span class="n">convergence_test</span><span class="p">:</span>
+  <span class="n">enconv</span><span class="p">:</span> <span class="mf">0.001</span>
+  <span class="n">prconv</span><span class="p">:</span> <span class="mi">1</span>
+
+<span class="n">relaxation</span><span class="p">:</span>
+  <span class="n">pressure</span><span class="p">:</span> <span class="mi">1</span>
+  <span class="n">force</span><span class="p">:</span> <span class="mf">0.002</span>
+</pre></div>
+</div>
 </div>
 </div>
 

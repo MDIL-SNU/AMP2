@@ -104,3 +104,57 @@ config_def.yaml:
         - electron
       temperature_for_fermi: 300            # The temperature to estimate the Fermi distribution
       fermi_for_cutoff: 0.99                # Boundary condition for valid Fermi distribution (1-f)
+
+To get more accurate band gap
+-----------------------------
+
+We suggest two approaches to get more accurate band gap.
+
+- Band calculation with hybrid functional
+
+  In the basic version, the band calculation is performed using PBE scheme.
+  However, users can add the tags below to use hybrid functional for structure
+  optimization and band calculation.
+  ::
+    relaxation:
+      potential_type:
+        - HSE
+    band_calculation:
+      potential_type:
+        - HSE
+
+- Using HSE@PBE scheme with hybrid structure
+
+  Second approach is still using HSE@PBE method but the optimized structure is 
+  calculated using hybrid functional. Since the band calculation with hybrid functional
+  is too expensive, the k-points corresponding to the VBM and CBM are determined by using
+  GGA method. For this calculation, users can use the commands below. Here, if potential_type
+  in hybrid_oneshot is the main category, the method tags (HSE and GGA) are child subcategory 
+  not parent subcategory. Please be careful.
+  ::
+    relaxation:
+      potential_type:
+        - GGA
+        - HSE
+    hybrid_oneshot:
+      potential_type:
+        - - HSE
+          - GGA
+
+Organic crystal
+---------------
+Organic crystals usually have lower Young's modulus than inorganic materials.
+Thus, the error in the structural parameters can be substantial and they require
+high precision for calculation. The tags below can control the precision of calculation.
+::
+  cif2vasp:
+    INCAR:
+      EDIFF: 1e-08
+
+  convergence_test:
+    enconv: 0.001
+    prconv: 1
+
+  relaxation:
+    pressure: 1
+    force: 0.002

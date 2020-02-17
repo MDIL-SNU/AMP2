@@ -1,7 +1,10 @@
+# This is for summarizing the calculation results.
 import os,sys,json,shutil
 from module_vector import *
 from module_vasprun import poscar_to_axis
+from _version import __version__
 
+# This function is for writing the log of band gap with formatting
 def write_formatted_band_log(band_log,band_log_form):
 	with open(band_log,'r') as f:
 		lines = f.readlines()
@@ -26,7 +29,7 @@ if not os.path.isdir(target+'/Results'):
 res_path = target+'/Results'
 DB = {}
 name =  target.split('/')[-1]
-DB['Version'] = '0.9.4'
+DB['Version'] = __version__
 DB['Material_name'] = name
 
 pot_list = ['GGA','LDA','HSE']
@@ -113,7 +116,7 @@ for POT in pot_list:
 			lines = inp.readlines()
 		diel_ele = []
 		diel_ion = []
-		diel_avg = float(lines[9].split()[-1])
+		diel_avg = float(lines[12].split()[-1])
 		for i in range(3):
 			ll1 = lines[1+i].split()
 			ll2 = lines[5+i].split()

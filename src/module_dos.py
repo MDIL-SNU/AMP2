@@ -2,7 +2,10 @@
 ### Date: 2018-12-05			###
 ### yybbyb@snu.ac.kr			###
 ###########################################
+# This is a package of modules for drawing density of states.
 import os
+
+# This function is for reading atomic information from poscar
 def poscar_to_atom_inform(poscar_file):
 	with open(poscar_file,'r') as pos_inp:
 		pos_lines = pos_inp.readlines()
@@ -10,6 +13,7 @@ def poscar_to_atom_inform(poscar_file):
 	atom_num = [int(x) for x in pos_lines[6].split()]
 	return [atom_name,atom_num]
 
+# This function is for making total and partial dos data file from DOSCAR
 def make_dos_dat(dos_file,spin,atom_num,ncl):
 	with open(dos_file,'r') as dos_inp:
 		dos = dos_inp.readlines()
@@ -75,7 +79,7 @@ def make_dos_dat(dos_file,spin,atom_num,ncl):
 
 def write_tot_dos(Ene,Tot_dos,fermi,target):
 	if not os.path.isdir(target+'/Pdos_dat'):
-		os.mkdir(target+'/Pdos_dat',0755)
+		os.mkdir(target+'/Pdos_dat',0o755)
 	with open(target+'/Pdos_dat/Tot_dos.dat','w') as dos_out:
 		dos_out.write('Energy')
 		if len(Tot_dos[0]) == 1:
@@ -91,7 +95,7 @@ def write_tot_dos(Ene,Tot_dos,fermi,target):
 def write_par_dos(Ene,par_dos,atom_name,fermi,target):
 	orb_name = ['s','p','d','f']
 	if not os.path.isdir(target+'/Pdos_dat'):
-		os.mkdir(target+'/Pdos_dat',0755)
+		os.mkdir(target+'/Pdos_dat',0o755)
 	for typ in range(len(atom_name)):
 		with open(target+'/Pdos_dat/'+atom_name[typ]+'_dos.dat','w') as dos_out:
 			dos_out.write('Energy')
@@ -107,6 +111,7 @@ def write_par_dos(Ene,par_dos,atom_name,fermi,target):
 						dos_out.write('\t'+str(dos))
 				dos_out.write('\n')
 
+# This function is for making input file for gnuplot
 def make_dos_in(target,atom_name,spin,orb_len,plot_range):
 	color_list = ['web-green','light-red','orange','web-blue','dark-violet','skyblue']
 	with open(target+'/Pdos_dat/dos.in','w') as out:
@@ -122,7 +127,7 @@ def make_dos_in(target,atom_name,spin,orb_len,plot_range):
 			out.write("replot '"+atom_name[i]+"_dos.dat' u (")
 			for k in range(orb_len-1):
 				out.write("$"+str((k*int(spin)+2))+"+")
-			out.write("$"+str(((orb_len-1)*int(spin)+2))+"):1 w filledcurves lc rgb '"+color_list[i]+"' title '"+atom_name[i]+"'\n")
+			out.write("$"+str(((orb_len-1)*int(spin)+2))+"):1 w filledcurves x1=0 lc rgb '"+color_list[i]+"' title '"+atom_name[i]+"'\n")
 
 			out.write("replot '"+atom_name[i]+"_dos.dat' u (")
 			for k in range(orb_len-1):
@@ -134,7 +139,7 @@ def make_dos_in(target,atom_name,spin,orb_len,plot_range):
 				out.write("replot '"+atom_name[i]+"_dos.dat' u (0-")
 				for k in range(orb_len-1):
 					out.write("$"+str((k*2+3))+"-")
-				out.write("$"+str(((orb_len-1)*2+3))+"):1 w filledcurves lc rgb '"+color_list[i]+"' notitle\n")
+				out.write("$"+str(((orb_len-1)*2+3))+"):1 w filledcurves x1=0 lc rgb '"+color_list[i]+"' notitle\n")
 
 				out.write("replot '"+atom_name[i]+"_dos.dat' u (0-")
 				for k in range(orb_len-1):

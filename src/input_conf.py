@@ -2,7 +2,10 @@
 ### Date: 2018-12-05			###
 ### yybbyb@snu.ac.kr			###
 ###########################################
+# This is for handling YAML type configuration.
 import os,sys,subprocess,yaml,collections
+
+# This function is for reading YAML type input and calling overriding function
 def input_conf(conf):
 	home = os.getcwd()
 	with open(conf,'r') as inp:
@@ -17,9 +20,9 @@ def input_conf(conf):
 	
 	inp_override(inp0_yaml,inp_yaml)
 
-	if 'potential_type' in inp0_yaml['calculation'].keys() and not inp0_yaml['calculation']['potential_type'] is None:
-		for cal_key in inp0_yaml.keys():
-			if 'potential_type' in inp0_yaml[cal_key].keys():
+	if 'potential_type' in list(inp0_yaml['calculation'].keys()) and not inp0_yaml['calculation']['potential_type'] is None:
+		for cal_key in list(inp0_yaml.keys()):
+			if 'potential_type' in list(inp0_yaml[cal_key].keys()):
 				# list type
 				if isinstance(inp0_yaml[cal_key]['potential_type'],list):
 					inp0_yaml[cal_key]['potential_type'] = [inp0_yaml['calculation']['potential_type']]
@@ -27,7 +30,7 @@ def input_conf(conf):
 				elif isinstance(inp0_yaml[cal_key]['potential_type'],str):
 					inp0_yaml[cal_key]['potential_type'] = inp0_yaml['calculation']['potential_type']
 
-	for dir_key in inp0_yaml['directory'].keys():
+	for dir_key in list(inp0_yaml['directory'].keys()):
 		inp0_yaml['directory'][dir_key] = os.path.expanduser(inp0_yaml['directory'][dir_key])	# home to absolute path
 		inp0_yaml['directory'][dir_key] = os.path.abspath(inp0_yaml['directory'][dir_key])	# absolute path
 		if dir_key in ['src_path','pot_path_gga','pot_path_lda']:
@@ -41,7 +44,7 @@ def input_conf(conf):
 		else:
 			if not os.path.isdir(inp0_yaml['directory'][dir_key]):
 				os.mkdir(inp0_yaml['directory'][dir_key])
-	for dir_key in inp0_yaml['program'].keys():
+	for dir_key in list(inp0_yaml['program'].keys()):
 		if not dir_key in ['mpi_command']:
 			inp0_yaml['program'][dir_key] = os.path.expanduser(inp0_yaml['program'][dir_key])	# home to absolute path
 			inp0_yaml['program'][dir_key] = os.path.abspath(inp0_yaml['program'][dir_key])	# absolute path
@@ -71,8 +74,9 @@ def input_conf(conf):
 #	return inp0_yaml
 	return conf_fin
 		
+# This function is for overriding the user's input into default input
 def inp_override(source,override):
-	for key in override.keys():
+	for key in list(override.keys()):
 		if isinstance(source, collections.Mapping):
 			if isinstance(override[key], collections.Mapping) and override[key]:
 				returned = inp_override(source.get(key, {}),override[key])
@@ -83,16 +87,18 @@ def inp_override(source,override):
 			source = {key: override[key]}
 	return source
 
+# This function is for switching specific setting between on and off
 def set_on_off(set_val):
 	if str(set_val).lower() in ['f','0','.f.','off','false']:
 		return 0
 	else:
 		return 1
 
+# This function is for flexible input regardless of upper/lower case
 def dic_to_lowercase(data):
 	if isinstance(data,dict):
 		t = type(data)()
-		for k, v in data.items():
+		for k, v in list(data.items()):
 			if k.lower() in ['pot_name','incar','u_value']:
 				t[k.lower()] = v
 			elif k.lower() in ['potential_type']:

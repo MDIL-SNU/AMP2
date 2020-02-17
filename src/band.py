@@ -2,15 +2,17 @@
 ### Date: 2018-12-05            ###
 ### yybbyb@snu.ac.kr            ###
 ###########################################
+# This is for drawing band structure and estimating band gap.
 import shutil, os, sys, subprocess, yaml
 from module_log import *
 from module_vasprun import *
 from module_band import *
 from module_hse import *
 from input_conf import set_on_off
+from _version import __version__
+code_data = 'Version '+__version__+'. Modified at 2019-12-17'
 
-code_data = 'Version 0.9.4. Modified at 2019-11-28'
-
+# Set input
 dir = sys.argv[1]
 
 inp_file = sys.argv[2]
@@ -43,17 +45,15 @@ dir_band = dir+'/band_'+pot_type
 if os.path.isdir(dir_band) and os.path.isfile(dir_band+'/Band_gap.log') :
     make_amp2_log_default(dir,src_path,'Band calculation with '+pot_type+' potential.',node,code_data)
     gap = pyhead(dir_band+'/Band_gap.log',1).split()[2]
-#   gap = subprocess.check_output(['head','-n','1',dir_band+'/Band_gap.log']).split()[2]
-#   print('Success! Band gap: '+gap)
     if gap == 'is':
         make_amp2_log(dir,'Band calculation is already done.\nIt is metallic.')
     else:
         make_amp2_log(dir,'Band calculation is already done.\nBand gap is '+gap+' eV.')
-    print 1
+    print(1)
     sys.exit()
 
 if not os.path.isdir(dir_band):
-    os.mkdir(dir_band,0755)
+    os.mkdir(dir_band,0o755)
 
 os.chdir(dir_band)
 
@@ -73,9 +73,9 @@ else:
         no_rlx = 1
 
 if no_rlx == 1 and set_on_off(inp_band['relax_check']) == 1:
-    print 0
+    print(0)
     sys.exit()
-# Potential type
+# potential type is HSE
 if pot_type == 'HSE':
     if no_rlx == 1:
         copy_input(dir+'/INPUT0',dir_band,POT)
@@ -92,7 +92,6 @@ if pot_type == 'HSE':
     vasprun = make_incar_for_ncl(dir_band,mag_on,kpar,npar,vasp_std,vasp_gam,vasp_ncl)
     incar_for_hse(dir_band+'/INCAR')
     hse_algo = pygrep('ALGO',dir+'/relax_'+pot_type+'/INCAR',0,0).split()[2]
-#   hse_algo = subprocess.check_output(['grep','ALGO',dir+'/relax_'+pot_type+'/INCAR']).split()[2]
     wincar(dir_band+'/INCAR',dir_band+'/INCAR',[['NSW','0'],['ALGO',hse_algo]],[])
     # Write k-points for band structure and band gap search
     make_sym_for_band(dir_band+'/POSCAR',dir_band+'/sym',dir_band)
@@ -110,10 +109,10 @@ if pot_type == 'HSE':
     # Band stucture calculation
     out = run_vasp(dir_band,nproc,vasprun,mpi)
     if out == 1:  # error in vasp calculation
-        print 0
+        print(0)
         sys.exit() 
 
-# pot_type is LDA or GGA.
+# potential type is LDA or GGA.
 else:
     # check CHGCAR
     if os.path.isfile(dir_band+'/CHGCAR') and os.path.getsize(dir_band+'/CHGCAR') > 0 :
@@ -139,7 +138,7 @@ else:
         # VASP calculation for CHGCAR
         out = run_vasp(dir_band,nproc,vasprun,mpi)
         if out == 1:  # error in vasp calculation
-            print 0
+            print(0)
             sys.exit() 
 
 
@@ -162,7 +161,7 @@ else:
     # Band stucture calculation
     out = run_vasp(dir_band,nproc,vasprun,mpi)
     if out == 1:  # error in vasp calculation
-        print 0
+        print(0)
         sys.exit() 
 
     out = electronic_step_convergence_check(dir_band)
@@ -171,20 +170,18 @@ else:
         make_amp2_log(dir_band,'Calculation options are changed. New calculation starts.')
         out = run_vasp(dir_band,nproc,vasprun,mpi)
         if out == 1:  # error in vasp calculation
-            print 0
+            print(0)
             sys.exit()
         out = electronic_step_convergence_check(dir_band)
 
     if out == 2:  # electronic step is not converged. (algo = normal)
         make_amp2_log(dir_band,'The calculation stops but electronic step is not converged.')
-        print 0
+        print(0)
         sys.exit()
 
 # Extract data from VASP output files
 spin = pygrep('ISPIN',dir_band+'/OUTCAR',0,0).split()[2]
-#spin = subprocess.check_output(['grep','ISPIN',dir_band+'/OUTCAR']).split()[2]
 ncl = pygrep('NONCOL',dir_band+'/OUTCAR',0,0).split()[2]
-#ncl = subprocess.check_output(['grep','NONCOL',dir_band+'/OUTCAR']).split()[2]
 [KPT,Band,nelect] = EIGEN_to_array(dir_band+'/EIGENVAL',spin)
 fermi = get_fermi_level(Band,nelect,ncl)
 
@@ -198,10 +195,8 @@ if gap == 'metal':
     make_amp2_log(dir,'Band calculation is already done.\nIt is metallic.')
     if os.path.isdir(dir+'/dos_'+POT):
         fermi = float(pyhead(dir+'/dos_'+POT+'/DOSCAR',6).splitlines()[-1].split()[3])
-#       fermi = float(subprocess.check_output(['head',dir+'/dos_'+POT+'/DOSCAR','-n','6']).splitlines()[-1].split()[3])
     elif os.path.isdir(dir+'/relax_'+POT):
         fermi = float(pyhead(dir+'/relax_'+POT+'/DOSCAR',6).splitlines()[-1].split()[3])
-#       fermi = float(subprocess.check_output(['head',dir+'/relax_'+POT+'/DOSCAR','-n','6']).splitlines()[-1].split()[3])
 else:
     make_amp2_log(dir_band,'Band calculation is done.\nBand gap is '+gap+' eV.')
     os.remove(dir_band+'/WAVECAR')
@@ -219,5 +214,4 @@ with open(dir_band+'/amp2.log','r') as amp2_log:
     with open(dir+'/amp2.log','a') as amp2_log_tot:
         amp2_log_tot.write(amp2_log.read())
 
-print 1
-#print('Success! Band gap: '+gap)
+print(1)

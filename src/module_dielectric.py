@@ -2,16 +2,17 @@
 ### Date: 2018-12-05			###
 ### yybbyb@snu.ac.kr			###
 ###########################################
+# This is a package of modules for calculating dielectric tensor.
 import os
 from module_vasprun import *
 from module_vector import *
 
+# This function is for writing dielectri constant log in tensor form
 def write_diel_log(outcar_file,target):
 	import numpy as np
 	diel_file_error = 0 # 0 is no error
 	try:
 		diel = pygrep('DIELECTRIC TENSOR (including',outcar_file,0,4).splitlines()[-3:]
-#		diel = subprocess.check_output(['grep','-A4','DIELECTRIC TENSOR (including',outcar_file]).splitlines()[-3:]
 		diel_e = []
 		for i in range(3) :
 			diel_e.append(diel[i].split())
@@ -20,7 +21,6 @@ def write_diel_log(outcar_file,target):
 		diel_file_error = 1
 	try:
 		diel = pygrep('DIELECTRIC TENSOR IONIC',outcar_file,0,4).splitlines()[-3:]
-#		diel = subprocess.check_output(['grep','-A4','DIELECTRIC TENSOR IONIC',outcar_file]).splitlines()[-3:]
 		diel_i = []
 		for i in range(3) :
 			diel_i.append(diel[i].split())
@@ -62,10 +62,10 @@ def write_diel_log(outcar_file,target):
 		diel_log.write('Dielectric constant diagonalization (ionic): '+' '.join(['{:10.3f}'.format(diel_i_dia[x]) for x in range(3)])+'\n')
 		diel_log.write('\nAveraged static dielectric constant: '+'{:10.3f}'.format(diel0)+'\n')
 
+# This function checks whether imarinagy part is or not
 def check_imaginary(outcar_file,target):
 	# return 0: no probelm, return 1: there are imaginary modes.
 	lines = pygrep('f/i',outcar_file,0,0).splitlines()
-#	lines = subprocess.check_output(['grep','f/i',outcar_file]).splitlines()
 	max_mode = 0
 	if len(lines) > 3:
 		make_amp2_log(target,'Warning!! Imaginary phonon mode is observed.')

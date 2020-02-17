@@ -1,20 +1,23 @@
+# This is a package of modules for performing genetic algorithm.
 import sys
 from numpy import *
 
+# fix stagle genes to appear next generation
 def fixStableGene(list_gene, probab, num_selected):
-	sort_idx = sorted(range(len(probab)), key=lambda x:probab[x], reverse=True)
+	sort_idx = sorted(list(range(len(probab))), key=lambda x:probab[x], reverse=True)
 	fixed_gene = []
 	for i in range(num_selected):
 		fixed_gene.append(list_gene[sort_idx[i]])
 
 	return fixed_gene
 
+# crossover between 2 genes
 def crossover(gene1, gene2, num_cut):
 	len_gene1 = len(gene1)
 	len_gene2 = len(gene2)
 
 	if len_gene1 != len_gene2:
-		print 'length of two genes is different'
+		print('length of two genes is different')
 	else:
 		child_gene = []
 		prev_num = 1
@@ -29,11 +32,12 @@ def crossover(gene1, gene2, num_cut):
 
 		if i%2 == 1:
 			child_gene = child_gene + gene1[prev_num-1:]
-                else:
-                        child_gene = child_gene + gene2[prev_num-1:]
+		else:
+			child_gene = child_gene + gene2[prev_num-1:]
 
 		return child_gene
 
+# mutate one of configuration in gene by random number
 def mutation(gene, wid_range):
 	spin = [-1, 1]
 
@@ -54,6 +58,7 @@ def mutation(gene, wid_range):
 
 	return ndarray.tolist(child_gene)
 
+# make fully random spin configuration
 def randomGen(num_at):
 	spin = [-1,1]
 	rand_gene = random.choice(spin, num_at)

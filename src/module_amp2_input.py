@@ -2,12 +2,14 @@
 # Modifier : yybbyb@snu.ac.kr      #
 # data : 2019-08-08                #
 ####################################
+# This is a package of modules for generating input files for VASP from structure file.
 import os, sys, yaml, shutil, glob, math, subprocess
 from operator import itemgetter
 from module_log import *
 from module_vector import *
 from module_vasprun import pygrep,pyhead,pytail
 
+# This function is for making structure list from submit
 def make_list(inp_file):
 	with open(inp_file,'r') as f:
 		inp_yaml = yaml.safe_load(f)
@@ -49,6 +51,7 @@ def make_list(inp_file):
 		calc_list.append([POSCARs[i],'2'])
 	return calc_list
 
+# This function is for mapping k-points corresponding symmetry
 def make_sym(sp_group):
 	# Symmetry k-points table number
 	k_table = {'1' : '19', '2' : '19', '3' : '15', '4' : '15', '5' : '16', '6' : '15', '7' : '15', '8' : '16',
@@ -83,6 +86,7 @@ def make_sym(sp_group):
 	table = k_table[sp_group]
 	return table
 
+# This function of converting poscar from cif
 def make_poscar_from_cif(cif,target):
 	# Read cif file
 	f = open(cif,'r')
@@ -201,9 +205,9 @@ def make_poscar_from_cif(cif,target):
 
 	### make poscar from atomic information
 	# lattice parameter	
-        alpha = math.radians(alpha)
-        beta = math.radians(beta)
-        gamma = math.radians(gamma)
+	alpha = math.radians(alpha)
+	beta = math.radians(beta)
+	gamma = math.radians(gamma)
 	
 	aa = [a,0.0,0.0]
 	bb = [b*math.cos(gamma),b*math.sin(gamma),0.0]
@@ -229,9 +233,9 @@ def make_poscar_from_cif(cif,target):
 		# atom_pos[i] = [x,y,z,atom_type,atom_name]
 		for j in range(len(sym)) :
 			[x, y, z] = atoms[index][4]
-			exec 'xx='+sym[j][0]
-			exec 'yy='+sym[j][1]
-			exec 'zz='+sym[j][2]
+			xx = eval(sym[j][0])
+			yy = eval(sym[j][1])
+			zz = eval(sym[j][2])
 			[xx,yy,zz] = setBasis(xx,yy,zz)
 			check = 0
 			for l in range(len(atom_pos)) :
@@ -280,10 +284,10 @@ def make_potcar(poscar,pot_path_gga,pot_path_lda,target,src_path,pot_name):
 	POT_LDA = yaml.safe_load(open(src_path+'/pot_table.yaml','r'))['LDA']
 	POT_GGA = yaml.safe_load(open(src_path+'/pot_table.yaml','r'))['GGA']
 	if not pot_name['GGA'] is None:
-		for pot_key in pot_name['GGA'].keys() :
+		for pot_key in list(pot_name['GGA'].keys()) :
 			POT_GGA[pot_key] = pot_name['GGA'][pot_key]
 	if not pot_name['LDA'] is None:
-		for pot_key in pot_name['LDA'].keys() :
+		for pot_key in list(pot_name['LDA'].keys()) :
 			POT_GGA[pot_key] = pot_name['LDA'][pot_key]
 
 	POT_dir_GGA = pot_path_gga+'/'
@@ -325,15 +329,15 @@ def make_incar_note(poscar,target,soc_target,u_value,magmom_def,src_path):
 	# U-J values for LDA+U method
 	TMU = yaml.safe_load(open(src_path+'/U_table.yaml','r'))
 	if not u_value is None:
-		if 'All' in u_value.keys() :
-			for u_key in TMU.keys():
+		if 'All' in list(u_value.keys()) :
+			for u_key in list(TMU.keys()):
 				TMU[u_key] = u_value['All']
-		elif 'all' in u_value.keys() :
-			for u_key in TMU.keys():
+		elif 'all' in list(u_value.keys()) :
+			for u_key in list(TMU.keys()):
 				TMU[u_key] = u_value['all']
-		for u_key in u_value.keys() :
+		for u_key in list(u_value.keys()) :
 			TMU[u_key] = u_value[u_key]
-		for u_key in TMU.keys():
+		for u_key in list(TMU.keys()):
 			if TMU[u_key] == 0:
 				TMU.pop(u_key)
 	
@@ -352,7 +356,7 @@ def make_incar_note(poscar,target,soc_target,u_value,magmom_def,src_path):
         'Cd':2, 'In':3, 'Sn':4, 'Sb':5, 'Te':6, 'I':7, 'Xe':0, 'Cs':1, 'Ba':2, 'La':3, 'Ce':4,
         'Pr':5, 'Nd':6, 'Pm':7, 'Sm':8, 'Eu':9, 'Gd':10, 'Tb':11, 'Dy':12, 'Ho':13, 'Er':14, 'Tm':15,
         'Yb':16, 'Lu':17, 'Hf':4, 'Ta':5, 'W':6, 'Re':7, 'Os':8, 'Ir':9, 'Pt':10, 'Au':11, 'Hg':12,
-        'Tl':3, 'Pb':4, 'Bi':5, 'Po':6, 'At':7, 'Rn':0, 'Ac':3, 'Th':4, 'Pa':5, 'U':6, 'Pu':8, 'No':16}
+        'Tl':3, 'Pb':4, 'Bi':5, 'Po':6, 'At':7, 'Rn':0, 'Ac':3, 'Th':4, 'Pa':5, 'U':6, 'Pu':8, 'No':16, 'D':1,'T':1}
 
 	pos = open(poscar,'r').readlines()
 	atom_z = pos[5].split()
@@ -369,7 +373,6 @@ def make_incar_note(poscar,target,soc_target,u_value,magmom_def,src_path):
 
 	for j in range(len(atom_z)) :
 		pot_line = pygrep('ZVAL',target+'/INPUT0/POTCAR_GGA',0,0).splitlines()[j].split()[5]
-#		pot_line = subprocess.check_output(['grep','ZVAL',target+'/INPUT0/POTCAR_GGA']).splitlines()[j].split()[5]
 		nelect = nelect + int(atom_cnt[j])*int(float(pot_line))
 		if atom_z[j] in TMd :
 			if atom_z[j] in TMU :
@@ -402,7 +405,7 @@ def make_incar_note(poscar,target,soc_target,u_value,magmom_def,src_path):
 			soc_on = 1
 
 	# Checking metallic compounds (If all components are metallic elements, we do not impose +U.)
-	non_metal = ['H','He','B','C','N','O','F','Ne','Si','P','S','Cl','Ar','Ge','As','Se','Br','Kr','Sb','Te','I','Xe','At','Rn']
+	non_metal = ['H','He','B','C','N','O','F','Ne','Si','P','S','Cl','Ar','Ge','As','Se','Br','Kr','Sb','Te','I','Xe','At','Rn','D','T']
 	if not any([x in non_metal for x in atom_z]):
 		u_on = 0
 
@@ -499,7 +502,6 @@ def make_incar(poscar,target,src_path,max_nelm):
 
 	for j in range(len(atom_z)) :
 		pot_line = pygrep('ZVAL',target+'/INPUT0/POTCAR_GGA',0,0).splitlines()[j].split()[5]
-#		pot_line = subprocess.check_output(['grep','ZVAL',target+'/INPUT0/POTCAR_GGA']).splitlines()[j].split()[5]
 		nelect = nelect + int(atom_cnt[j])*int(float(pot_line))
 
 	# Set maximum number of electronic steps
@@ -518,7 +520,6 @@ def make_incar(poscar,target,src_path,max_nelm):
 			out_inc.write(f.read())
 		with open(target+'/INPUT0/spin_note','r') as f:
 			out_inc.write(f.read())
-#		subprocess.call(['cat',target+'/INPUT0/INCAR0',target+'/INPUT0/U_note',target+'/INPUT0/spin_note'], stdout=out_inc)
 
 def read_cif_lattice(line):
 	a = line.replace('\n','').replace('\r','')
@@ -576,6 +577,7 @@ def read_cif_position(line,inform):
 	out = [atom_name,atom_name+atom_index,atom_charge,occupancy,pos]
 	return out
 
+# This function is for reading lattice vector and atomic position from poscar
 def read_poscar(poscar):
 	with open(poscar,'r') as pos:
 		lines = pos.readlines()
@@ -624,7 +626,7 @@ def impose_atom_type_index(axis,atom_pos):
 	index = 0
 	for line in atom_pos:
 		pos.append(line[0:3])
-		if not line[4] in atom_dic.keys():
+		if not line[4] in list(atom_dic.keys()):
 			atom_dic[line[4]] = index
 			type_dic[index] = [line[3],line[4]]
 			index = index+1
@@ -636,12 +638,13 @@ def impose_atom_type_index(axis,atom_pos):
 	new_index = [1 for x in range(index)]
 	new_atom_pos = []
 	for i in range(len(atom_pos)):
-		if not str(atom_type[i])+'_'+str(equ_atoms[i]) in new_type_dic.keys():
+		if not str(atom_type[i])+'_'+str(equ_atoms[i]) in list(new_type_dic.keys()):
 			new_type_dic[str(atom_type[i])+'_'+str(equ_atoms[i])] = [atom_pos[i][3],atom_pos[i][3]+str(new_index[atom_type[i]])]
 			new_index[atom_type[i]] = new_index[atom_type[i]]+1
 		new_atom_pos.append(atom_pos[i][0:3]+new_type_dic[str(atom_type[i])+'_'+str(equ_atoms[i])])
 	return new_atom_pos
 
+# This function is for writing poscar given lattice vector and atomic position
 def write_poscar(axis,atom_pos,out_pos,title):
 	new_atom_pos = {}
 	new_atom_pos[atom_pos[0][3]] = [atom_pos[0]]
@@ -649,7 +652,7 @@ def write_poscar(axis,atom_pos,out_pos,title):
 	atom_num[atom_pos[0][3]] = 1
 	atom_type = [atom_pos[0][3]]
 	for i in range(1,len(atom_pos)):
-		if atom_pos[i][3] in new_atom_pos.keys():
+		if atom_pos[i][3] in list(new_atom_pos.keys()):
 			new_atom_pos[atom_pos[i][3]].append(atom_pos[i])
 			atom_num[atom_pos[i][3]] = atom_num[atom_pos[i][3]] + 1
 		else:
@@ -670,6 +673,7 @@ def write_poscar(axis,atom_pos,out_pos,title):
 			for line in new_atom_pos[atom_name]:
 				pos.write('    '+'    '.join([str(x) for x in line[0:3]])+'  T  T  T ! '+line[4]+'\n')
 
+# This function is for getting primitive cell through spglib
 def get_primitive_cell(axis,atom_pos):
 	import spglib
 	import numpy as np
@@ -681,7 +685,7 @@ def get_primitive_cell(axis,atom_pos):
 	index = 0
 	for line in atom_pos:
 		pos.append(line[0:3])
-		if not line[4] in atom_dic.keys():
+		if not line[4] in list(atom_dic.keys()):
 			atom_dic[line[4]] = index
 			type_dic[index] = [line[3],line[4]]
 			index = index+1

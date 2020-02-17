@@ -62,9 +62,9 @@ You can execute AMP\ :sup:`2`\  using Python command as following.
 - [src_path] is the path for directory of source codes for AMP\ :sup:`2`\.
 - [path for configuration file] is the path for configuration file (config.yaml).
 - [path for nodefile] is used to record the information of computing nodes such as PBS_nodefile in 
-Portable Batch System (PBS) and HOSTNAME in Sun Grid Engine (SGE). In the PBS system, we recommand to use
-the command, "echo $PBS_nodefile > nodefile". Also, users can save an arbitrary text
-by writing in the nodefile.
+  Portable Batch System (PBS) and HOSTNAME in Sun Grid Engine (SGE). In the PBS system, we recommand to use
+  the command, "echo $PBS_nodefile > nodefile". Also, users can save an arbitrary text
+  by writing in the nodefile.
 - [the number of cores] is the number of cores to be used in parallel computing.
 
 For the convenience, we provide the shell script file (run.sh) as following.

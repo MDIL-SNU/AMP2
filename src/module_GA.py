@@ -1,10 +1,11 @@
+# This is a package of modules for genetic algorithm.
 import sys,os,yaml
 from numpy import *
 import genetic_operator as go
 from module_vector import *
 from copy import deepcopy as dcopy
 
-#function
+# This function is for generating next generation in genetic algorithm.
 def genNextGeneration(size_gene, list_gene, probab, portion, mut_range):
 	newlist_gene = []
 
@@ -40,7 +41,7 @@ def genNextGeneration(size_gene, list_gene, probab, portion, mut_range):
 
 	return newlist_gene
 
-
+# This function is for select parents making child configuration
 def selectParents(probab, s_num):
 	list_selected = []
 	probab_copy = copy(probab)
@@ -59,6 +60,7 @@ def selectParents(probab, s_num):
 
 	return list_selected
 
+# This function is for converting from energy to probability
 def energyToProbab(energy, gamma):
 	proba = []
 	E_max = max(energy); E_min = min(energy)
@@ -67,6 +69,7 @@ def energyToProbab(energy, gamma):
 
 	return proba
 
+# This function is for calculating energy after switching spin
 def getEnergy(list_gene, info_pair, para_J):
 	list_E = []
 	for gene in list_gene:
@@ -77,6 +80,7 @@ def getEnergy(list_gene, info_pair, para_J):
 	
 	return list_E
 
+# This function is for making pair list
 def pairCategorize(atom_pos, axis, mag_true, cutoff):
 	list_pair = []
 	mag_atom_pos = []
@@ -91,7 +95,7 @@ def pairCategorize(atom_pos, axis, mag_true, cutoff):
 
 	return list_pair
 			
-
+# This function is for calculating distance considered periodic boundary condition
 def calcDistwithPBC(lparam, ptA, ptB, cutoff):
         dist = []
         vecAB = array(ptA) - array(ptB)
