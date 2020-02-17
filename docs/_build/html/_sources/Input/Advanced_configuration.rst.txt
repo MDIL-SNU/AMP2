@@ -128,7 +128,9 @@ We suggest two approaches to get more accurate band gap.
   Second approach is still using HSE@PBE method but the optimized structure is 
   calculated using hybrid functional. Since the band calculation with hybrid functional
   is too expensive, the k-points corresponding to the VBM and CBM are determined by using
-  GGA method. For this calculation, users can use the commands below.
+  GGA method. For this calculation, users can use the commands below. Here, if potential_type
+  in hybrid_oneshot is the main category, the method tags (HSE and GGA) are child subcategory 
+  not parent subcategory. Please be careful.
   ::
     relaxation:
       potential_type:

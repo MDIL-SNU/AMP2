@@ -72,7 +72,7 @@
 
 
 \title{AMP$^\text{2}$ Manual \\ \textit{0.9.5}}
-\date{Feb 12, 2020}
+\date{Feb 17, 2020}
 \release{}
 \author{Yong Youn \\ Seungwu Han}
 \newcommand{\sphinxlogo}{\vbox{}}
@@ -1295,6 +1295,27 @@ Default:
 
 \end{description}
 
+\item {} \begin{description}
+\item[{temperature\_for\_fermi:}] \leavevmode
+It controls the temperature to estimate the hole or electron distribution
+based on the Fermi-Dirac function.
+
+Usage:
+
+\begin{sphinxVerbatim}[commandchars=\\\{\}]
+\PYG{n}{effective\PYGZus{}mass}\PYG{p}{:}
+  \PYG{n}{temperature\PYGZus{}for\PYGZus{}fermi}\PYG{p}{:} \PYG{p}{[}\PYG{n}{real}\PYG{p}{]}
+\end{sphinxVerbatim}
+
+Default:
+
+\begin{sphinxVerbatim}[commandchars=\\\{\}]
+\PYG{n}{effective\PYGZus{}mass}\PYG{p}{:}
+  \PYG{n}{temperature\PYGZus{}for\PYGZus{}fermi}\PYG{p}{:} \PYG{l+m+mi}{300}
+\end{sphinxVerbatim}
+
+\end{description}
+
 \end{itemize}
 
 
@@ -1433,7 +1454,9 @@ Using \sphinxhref{mailto:HSE@PBE}{HSE@PBE} scheme with hybrid structure
 Second approach is still using \sphinxhref{mailto:HSE@PBE}{HSE@PBE} method but the optimized structure is
 calculated using hybrid functional. Since the band calculation with hybrid functional
 is too expensive, the k-points corresponding to the VBM and CBM are determined by using
-GGA method. For this calculation, users can use the commands below.
+GGA method. For this calculation, users can use the commands below. Here, if potential\_type
+in hybrid\_oneshot is the main category, the method tags (HSE and GGA) are child subcategory
+not parent subcategory. Please be careful.
 
 \begin{sphinxVerbatim}[commandchars=\\\{\}]
 \PYG{n}{relaxation}\PYG{p}{:}

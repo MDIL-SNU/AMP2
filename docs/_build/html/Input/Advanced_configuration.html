@@ -292,7 +292,9 @@ optimization and band calculation.</p>
 <p>Second approach is still using <a class="reference external" href="mailto:HSE&#37;&#52;&#48;PBE">HSE<span>&#64;</span>PBE</a> method but the optimized structure is
 calculated using hybrid functional. Since the band calculation with hybrid functional
 is too expensive, the k-points corresponding to the VBM and CBM are determined by using
-GGA method. For this calculation, users can use the commands below.</p>
+GGA method. For this calculation, users can use the commands below. Here, if potential_type
+in hybrid_oneshot is the main category, the method tags (HSE and GGA) are child subcategory
+not parent subcategory. Please be careful.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">relaxation</span><span class="p">:</span>
   <span class="n">potential_type</span><span class="p">:</span>
     <span class="o">-</span> <span class="n">GGA</span>

@@ -414,3 +414,16 @@ The details are explained in the paper.
               carrier_type:
                 - hole
                 - electron
+
+    - temperature_for_fermi:
+        It controls the temperature to estimate the hole or electron distribution 
+        based on the Fermi-Dirac function.
+
+        Usage:
+        ::
+            effective_mass:
+              temperature_for_fermi: [real]
+        Default:
+        ::
+            effective_mass:
+              temperature_for_fermi: 300
