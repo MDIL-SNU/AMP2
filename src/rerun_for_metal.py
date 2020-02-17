@@ -120,20 +120,24 @@ if set_on_off(cal_dic['magnetic_ordering']) == 1:
 		notice = subprocess.check_output([pypath,src_path+'/magnetic_ordering.py',target,inp_file,node,nproc],universal_newlines=True)
 	except:
 		notice = '0'
-	if not notice.splitlines()[-1][0] == '1':
+	if notice.splitlines()[-1][0] == '2':
 		shutil.move(target,ERROR_path+'/'+target.split('/')[-1])
 		sys.exit()
+	elif not notice.splitlines()[-1][0] == '1':
+		with open(target+'/magnetic_ordering/amp2.log','r') as amp2_log:
+			with open(target+'/amp2.log','a') as amp2_log_tot:
+				amp2_log_tot.write(amp2_log.read())
+		make_amp2_log(target,'AMP2 failed to identify the most stable magnetic ordering. Ferromagnetic ordering is used.')
 # relaxation if pot_type is different from pot_type of magnetic ordering
 if set_on_off(cal_dic['relaxation']) == 1:
 	for pot_type in inp_yaml['relaxation']['potential_type']:
-		if not pot_type == inp_yaml['magnetic_ordering']['potential_type']:
-			try:
-				notice = subprocess.check_output([pypath,src_path+'/relax.py',target,inp_file,node,nproc,pot_type],universal_newlines=True)
-			except:
-				notice = '0'
-			if not notice.splitlines()[-1][0] == '1':
-				shutil.move(target,ERROR_path+'/'+target.split('/')[-1])
-				sys.exit()
+		try:
+			notice = subprocess.check_output([pypath,src_path+'/relax.py',target,inp_file,node,nproc,pot_type],universal_newlines=True)
+		except:
+			notice = '0'
+		if not notice.splitlines()[-1][0] == '1':
+			shutil.move(target,ERROR_path+'/'+target.split('/')[-1])
+			sys.exit()
 # band calculation
 if set_on_off(cal_dic['band']) == 1:
 	for pot_type in inp_yaml['band_calculation']['potential_type']:

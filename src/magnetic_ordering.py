@@ -425,6 +425,6 @@ else:
 	except:
 		notice = '0'
 		if not notice.splitlines()[-1][0] == '1':
-			print(0)
+			print(2)
 			sys.exit()
 print(1)

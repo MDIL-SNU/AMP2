@@ -93,9 +93,14 @@ while len(make_list(inp_file)) > 0:
 			notice = subprocess.check_output([pypath,src_path+'/magnetic_ordering.py',target,inp_file,node,nproc],universal_newlines=True)
 		except:
 			notice = '0'
-		if not notice.splitlines()[-1][0] == '1':
+		if notice.splitlines()[-1][0] == '2':
 			shutil.move(target,ERROR_path+'/'+target.split('/')[-1])
 			continue
+		elif not notice.splitlines()[-1][0] == '1':
+			with open(target+'/magnetic_ordering/amp2.log','r') as amp2_log:
+				with open(target+'/amp2.log','a') as amp2_log_tot:
+					amp2_log_tot.write(amp2_log.read())
+			make_amp2_log(target,'AMP2 failed to identify the most stable magnetic ordering. Ferromagnetic ordering is used.')
 	if set_on_off(cal_dic['relaxation']) == 1:
 		for pot_type in inp_yaml['relaxation']['potential_type']:
 			if not os.path.isfile(target+'/INPUT0/POTCAR_'+pot_type) and not pot_type == 'HSE':
