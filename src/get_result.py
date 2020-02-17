@@ -116,7 +116,7 @@ for POT in pot_list:
 			lines = inp.readlines()
 		diel_ele = []
 		diel_ion = []
-		diel_avg = float(lines[9].split()[-1])
+		diel_avg = float(lines[12].split()[-1])
 		for i in range(3):
 			ll1 = lines[1+i].split()
 			ll2 = lines[5+i].split()

@@ -402,6 +402,16 @@ if ferro == 0:
 		make_amp2_log(dir,'We changed the files in relax_'+pot_type+' from magnetic calculation.')
 		shutil.copytree(stable_path,dir+'/relax_'+pot_type)
 else:
+#	if os.path.isdir(dir+'/relax_'+pot_type):
+#		if os.path.isfile(dir+'/relax_'+pot_type+'/free'):
+#			energy_ferro = float(pytail(dir+'/relax_'+pot_type+'/free').split()[4])
+#			energy_difference = stable_ene[1]/float(optimized_supercell[0]*optimized_supercell[1]*optimized_supercell[2]) - energy_ferro
+#			if energy_difference > 0:
+#				make_amp2_log(dir,'Warning! Identifying spin configuration from Ising model is less stable than ferromagnetic ordering.')
+#				make_amp2_log(dir,'In the most of cases, however, it is safe becuase the change of k-points results in the energy difference.')
+#				make_amp2_log(dir,'We did not change the files in relax_'+pot_type+' for magnetic calculation.')
+#				print (1)
+#				sys.exit()
 	if os.path.isdir(dir+'/relax_'+pot_type):
 #		make_amp2_log(dir,'We changed the files in relax_'+pot_type+' from magnetic calculation.')
 		shutil.move(dir+'/relax_'+pot_type,dir+'/relax_'+pot_type+'_old')
