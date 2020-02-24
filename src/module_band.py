@@ -678,7 +678,7 @@ def gap_estimation(target,fermi,spin,ncl,KPT,Band,nelect):
 		gap_simple.write('     metal\n')
 		if metal == 2 :
 			gap_log.write('! If it is not hybrid calculation, additional search is required for hybrid calculation.\n')
-			gap_simple.write('! If it is not hybrid calculation, Additional search is required for hybrid calculation.\n')
+			gap_simple.write('! If it is not hybrid calculation, additional search is required for hybrid calculation.\n')
 		else :
 			gap_log.write("Use the 'KPT' file for hybrid calculation\n")
 			kpt_out.write("Example file\n               0\nReciprocal\n")
@@ -793,3 +793,24 @@ def band_warning(Band,target):
 			make_amp2_log(target,'\tIndex of kpts: '+str(warn_list[0]+1)+'\t from '+str(warn_list[1][0]+1)+' th band')
 
 	return warn
+
+def check_half_metal(target):
+	spin = pygrep('ISPIN',target+'/OUTCAR',0,0).split()[2]
+	ncl = pygrep('NONCOL',target+'/OUTCAR',0,0).split()[2]
+	if not (spin == '2' and ncl =='F'):
+		half_metal = 0
+	else:
+		[KPT,Band,nelect] = EIGEN_to_array(target+'/EIGENVAL',spin)
+		fermi = get_fermi_level(Band,nelect,ncl)
+		half_metal = 0
+		for i in range(int(spin)) :
+			metal = 0
+			for n in range(len(Band)) :
+				single_band = [Band[n][x][i] for x in range(len(KPT))]
+				band_max = max(single_band)
+				band_min = min(single_band)
+				if band_max > fermi and band_min < fermi:
+					metal = 1
+			if metal = 0:
+				half_metal = 1
+	return half_metal

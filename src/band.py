@@ -34,7 +34,8 @@ nproc = sys.argv[4]
 
 pot_type = sys.argv[5]
 if pot_type == 'LDA':
-    POT = 'LDA'
+pin
+/spinPOT = 'LDA'
 else:
     POT = 'GGA'
 

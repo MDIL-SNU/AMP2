@@ -326,7 +326,7 @@ def make_multiple_kpts(kp_log,kpt_file,pos_file,kp_multi,sym,gam_option):
 		KP_ori = khead[3].split()
 		KP=[]
 		for i in range(3) :
-			if sym == 5 or sym == 6:
+			if sym in [5,6,10]:
 				KP.append(str(max([int(x) for x in KP_ori[i]])*kp_multi))
 			else:
 				KP.append(str(int(KP_ori[i])*kp_multi))

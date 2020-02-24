@@ -86,7 +86,7 @@ Results
     - Band_gap_hybrid_GGA.log: 
         Information of band gap with HSE@PBE scheme
         
-    - dos_GGA.pnd (dos_GGA.pdf): 
+    - dos_GGA.png (dos_GGA.pdf): 
         Density of states image
 
     - dielectric_GGA.log: 

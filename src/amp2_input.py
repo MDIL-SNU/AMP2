@@ -2,7 +2,7 @@
 ### Date: 2019-04-08			###
 ### yybbyb@snu.ac.kr			###
 ###########################################
-import math, glob, os, shutil, sys, subprocess
+import math, os, shutil, sys, subprocess
 import yaml
 from module_vasprun import wincar,incar_from_yaml
 from module_log import *
