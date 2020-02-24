@@ -15,16 +15,16 @@ program:
   mpi_command: mpirun
 
 calculation:
-  kp_test: 1
-  encut_test: 1
-  relaxation: 1
-  band: 1
-  density_of_states: 1
-  hse_oneshot: 1
-  dielectric: 1
-  effective_mass: 1
-  plot: 1
-  magnetic_ordering: 1
+  kp_test: T
+  encut_test: T
+  relaxation: T
+  band: T
+  density_of_states: T
+  hse_oneshot: T
+  dielectric: T
+  effective_mass: T
+  plot: T
+  magnetic_ordering: T
   large_off: -1
 
 cif2vasp:

@@ -8,6 +8,7 @@ import os, sys, subprocess, yaml, shutil, glob
 from input_conf import input_conf
 from module_amp2_input import *
 from module_log import *
+from module_band import check_half_metal
 from input_conf import set_on_off
 from _version import __version__
 code_data = 'Version '+__version__+'. Modified at 2020-01-15'
@@ -52,6 +53,16 @@ with open(target+'/INPUT0/INCAR') as inp:
 			if 'T' in line.split()[2]:
 				U_on = 1
 if U_on == 0 :
+	sys.exit()
+
+# Check half metal
+if os.path.isfile(target+'/band_GGA/Band_gap.log'):
+	if check_half_metal(target+'/band_GGA') == 1:
+		sys.exit()
+elif os.path.isfile(target+'/band_LDA/Band_gap.log'):
+	if check_half_metal(target+'/band_LDA') == 1:
+		sys.exit()
+else:
 	sys.exit()
 
 # Backup +U calculation results
