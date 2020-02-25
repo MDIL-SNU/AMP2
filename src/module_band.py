@@ -811,6 +811,6 @@ def check_half_metal(target):
 				band_min = min(single_band)
 				if band_max > fermi and band_min < fermi:
 					metal = 1
-			if metal = 0:
+			if metal == 0:
 				half_metal = 1
 	return half_metal
