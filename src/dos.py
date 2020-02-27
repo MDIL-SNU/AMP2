@@ -97,17 +97,31 @@ if pot_type == 'HSE':
 	with open(dir+'/INPUT0/sym','r') as symf:
 		sym = int(symf.readline().split()[0])
 
-	make_multiple_kpts(dir+'/kptest/kpoint.log',dir_dos+'/KPOINTS',dir_dos+'/POSCAR',inp_dos['kp_multiplier'],sym,gam_option)
+	while 1:
+		make_multiple_kpts(dir+'/kptest/kpoint.log',dir_dos+'/KPOINTS',dir_dos+'/POSCAR',inp_dos['kp_multiplier'],sym,gam_option)
 
-	incar_for_hse(dir_dos+'/INCAR')
-	hse_algo = pygrep('ALGO',dir+'/relax_'+pot_type+'/INCAR',0,0).split()[2]
-	wincar(dir_dos+'/INCAR',dir_dos+'/INCAR',[['NSW','0'],['ALGO',hse_algo]],[])
-	vasprun = vasp_std
-	# VASP calculation
-	out = run_vasp(dir_dos,nproc,vasprun,mpi)
-	if out == 1:  # error in vasp calculation
-		print(0)
-		sys.exit() 
+		incar_for_hse(dir_dos+'/INCAR')
+		hse_algo = pygrep('ALGO',dir+'/relax_'+pot_type+'/INCAR',0,0).split()[2]
+		wincar(dir_dos+'/INCAR',dir_dos+'/INCAR',[['NSW','0'],['ALGO',hse_algo]],[])
+		vasprun = vasp_std
+		# VASP calculation
+		out = run_vasp(dir_dos,nproc,vasprun,mpi)
+		if out == 0:
+			break
+		if out == 1:  # error in vasp calculation
+			if os.path.isfile(dir_dos+'/IBZKPT'):
+				with open(dir_dos+'/IBZKPT','r') as f:
+					num_kpts = int(f.readlines()[1].split()[0])
+				if num_kpts < 4:
+					inp_dos['kp_multiplier'] = inp_dos['kp_multiplier'] + 1
+					make_amp2_log(dir_dos,'Tetrahedron method requires NKPT >= 4. AMP2 increases kp_multiplier to '+str(inp_dos['kp_multiplier'])+'.')
+				else:
+					print(0)
+					sys.exit()
+			else:
+				print(0)
+				sys.exit()
+	
 	out = electronic_step_convergence_check(dir_dos)
 	while out == 1:
 		make_amp2_log(dir_dos,'Calculation options are changed. New calculation starts.')
@@ -172,20 +186,33 @@ else:
 	with open(dir+'/INPUT0/sym','r') as symf:
 		sym = int(symf.readline().split()[0])
 
-	make_multiple_kpts(dir+'/kptest/kpoint.log',dir_dos+'/KPOINTS',dir_dos+'/POSCAR',inp_dos['kp_multiplier'],sym,gam_option)
+	while 1:
+		make_multiple_kpts(dir+'/kptest/kpoint.log',dir_dos+'/KPOINTS',dir_dos+'/POSCAR',inp_dos['kp_multiplier'],sym,gam_option)
 
-	wincar(dir_dos+'/INCAR',dir_dos+'/INCAR',[['NSW','0'],['ISTART','1'],['ICHARG','11'],['LCHARG','.F.']],[])
-	# make INCAR for CHGCAR
-	if no_rlx == 1:
-		mag_on = 2
-	else:
-		mag_on = check_magnet(dir+'/relax_'+pot_type,inp_yaml['magnetic_ordering']['minimum_moment'])
-	vasprun = make_incar_for_ncl(dir_dos,mag_on,kpar,npar,vasp_std,vasp_gam,vasp_ncl)
-	# VASP calculation
-	out = run_vasp(dir_dos,nproc,vasprun,mpi)
-	if out == 1:  # error in vasp calculation
-		print(0)
-		sys.exit() 
+		wincar(dir_dos+'/INCAR',dir_dos+'/INCAR',[['NSW','0'],['ISTART','1'],['ICHARG','11'],['LCHARG','.F.']],[])
+		if no_rlx == 1:
+			mag_on = 2
+		else:
+			mag_on = check_magnet(dir+'/relax_'+pot_type,inp_yaml['magnetic_ordering']['minimum_moment'])
+		vasprun = make_incar_for_ncl(dir_dos,mag_on,kpar,npar,vasp_std,vasp_gam,vasp_ncl)
+		# VASP calculation
+		out = run_vasp(dir_dos,nproc,vasprun,mpi)
+		if out == 0:
+			break
+		if out == 1:  # error in vasp calculation
+			if os.path.isfile(dir_dos+'/IBZKPT'):
+				with open(dir_dos+'/IBZKPT','r') as f:
+					num_kpts = int(f.readlines()[1].split()[0])
+				if num_kpts < 4:
+					inp_dos['kp_multiplier'] = inp_dos['kp_multiplier'] + 1
+					make_amp2_log(dir_dos,'Tetrahedron method requires NKPT >= 4. AMP2 increases kp_multiplier to '+str(inp_dos['kp_multiplier'])+'.')
+				else:
+					print(0)
+					sys.exit()
+			else:
+				print(0)
+				sys.exit()
+	
 	out = electronic_step_convergence_check(dir_dos)
 	while out == 1:
 		make_amp2_log(dir_dos,'Calculation options are changed. New calculation starts.')
