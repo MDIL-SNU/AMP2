@@ -115,6 +115,7 @@ if 'etal' in gap_log:
 		subprocess.call(['cp',dir+'/band_'+pot_point+'/CHGCAR',dir_dos+'/.'])
 		mag_on = int(spin)-1
 		vasprun = make_incar_for_ncl(dir_dos,mag_on,kpar,npar,vasp_std,vasp_gam,vasp_ncl)
+		vasprun = vasp_std
 		wincar(dir_dos+'/INCAR',dir_dos+'/INCAR',[['NEDOS','3001'],['ISMEAR','0'],['SIGMA','0.05'],['LWAVE','F']],[])
 		with open(dir+'/INPUT0/sym','r') as symf:
 			sym = int(symf.readline().split()[0])
