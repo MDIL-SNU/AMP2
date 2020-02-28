@@ -90,8 +90,8 @@ If there is no directory in the path for Output, Done and ERROR, AMP\ :sup:`2`\ 
         Default:
         ::
             directory:
-              pot_path_GGA: ./PBE
-              pot_path_LDA: ./LDA
+              pot_path_GGA: ./pot/PBE
+              pot_path_LDA: ./pot/LDA
 
 Program
 -------
@@ -145,7 +145,7 @@ The all tags in program determine the path of executable files except mpi_comman
         Default:
         ::
             Program:
-              gnuplot: /gnuplot
+              gnuplot: /usr/local/bin/gnuplot
 
     - mpi_command:
         mpi_command tag should be set to be the operation command to conduct parallel computing calculation.
