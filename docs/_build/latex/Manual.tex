@@ -72,9 +72,9 @@
 
 
 \title{AMP$^\text{2}$ Manual \\ \textit{0.9.5}}
-\date{Feb 17, 2020}
+\date{Feb 28, 2020}
 \release{}
-\author{Yong Youn \\ Seungwu Han}
+\author{Yong Youn \\ Miso Lee \\ Changho Hong \\ Doyeon Kim \\ Sangtae Kim \\ Jisu Jung \\ Kanghoon Yim \\ Seungwu Han}
 \newcommand{\sphinxlogo}{\vbox{}}
 \renewcommand{\releasename}{}
 \makeindex
@@ -235,14 +235,14 @@ config.yaml:
   \PYG{n}{done}\PYG{p}{:} \PYG{o}{.}\PYG{o}{/}\PYG{n}{Done}                          \PYG{c+c1}{\PYGZsh{} the path of the directory where results are saved}
   \PYG{n}{error}\PYG{p}{:} \PYG{o}{.}\PYG{o}{/}\PYG{n}{ERROR}                        \PYG{c+c1}{\PYGZsh{} the path of the directory where the materials with error are saved}
   \PYG{n}{src\PYGZus{}path}\PYG{p}{:} \PYG{o}{.}\PYG{o}{/}\PYG{n}{src}                       \PYG{c+c1}{\PYGZsh{} the path of the directory of AMP2 source codes}
-  \PYG{n}{pot\PYGZus{}path\PYGZus{}gga}\PYG{p}{:} \PYG{o}{/}\PYG{n}{data}\PYG{o}{/}\PYG{n}{vasp4us}\PYG{o}{/}\PYG{n}{pot}\PYG{o}{/}\PYG{n}{PBE52} \PYG{c+c1}{\PYGZsh{} the path of directory for GGA pseudopotential}
-  \PYG{n}{pot\PYGZus{}path\PYGZus{}lda}\PYG{p}{:} \PYG{o}{/}\PYG{n}{data}\PYG{o}{/}\PYG{n}{vasp4us}\PYG{o}{/}\PYG{n}{pot}\PYG{o}{/}\PYG{n}{LDA52} \PYG{c+c1}{\PYGZsh{} the path of directory for LDA pseudopotential}
+  \PYG{n}{pot\PYGZus{}path\PYGZus{}gga}\PYG{p}{:} \PYG{o}{.}\PYG{o}{/}\PYG{n}{pot}\PYG{o}{/}\PYG{n}{PBE}               \PYG{c+c1}{\PYGZsh{} the path of directory for GGA pseudopotential}
+  \PYG{n}{pot\PYGZus{}path\PYGZus{}lda}\PYG{p}{:} \PYG{o}{.}\PYG{o}{/}\PYG{n}{pot}\PYG{o}{/}\PYG{n}{LDA}               \PYG{c+c1}{\PYGZsh{} the path of directory for LDA pseudopotential}
 
 \PYG{n}{program}\PYG{p}{:}
-  \PYG{n}{vasp\PYGZus{}std}\PYG{p}{:} \PYG{o}{/}\PYG{n}{data}\PYG{o}{/}\PYG{n}{vasp4us}\PYG{o}{/}\PYG{n}{vasp\PYGZus{}std}      \PYG{c+c1}{\PYGZsh{} the path of standard version of VASP}
-  \PYG{n}{vasp\PYGZus{}gam}\PYG{p}{:} \PYG{o}{/}\PYG{n}{data}\PYG{o}{/}\PYG{n}{vasp4us}\PYG{o}{/}\PYG{n}{vasp\PYGZus{}gam}      \PYG{c+c1}{\PYGZsh{} the path of gamma\PYGZhy{}only version of VASP}
-  \PYG{n}{vasp\PYGZus{}ncl}\PYG{p}{:} \PYG{o}{/}\PYG{n}{data}\PYG{o}{/}\PYG{n}{vasp4us}\PYG{o}{/}\PYG{n}{vasp\PYGZus{}ncl}      \PYG{c+c1}{\PYGZsh{} the path of noncollinear version of VASP}
-  \PYG{n}{gnuplot}\PYG{p}{:} \PYG{o}{/}\PYG{n}{gnuplot}                     \PYG{c+c1}{\PYGZsh{} the path of executable file for gnuplot}
+  \PYG{n}{vasp\PYGZus{}std}\PYG{p}{:} \PYG{o}{.}\PYG{o}{/}\PYG{n}{vasp\PYGZus{}std}                  \PYG{c+c1}{\PYGZsh{} the path of standard version of VASP}
+  \PYG{n}{vasp\PYGZus{}gam}\PYG{p}{:} \PYG{o}{.}\PYG{o}{/}\PYG{n}{vasp\PYGZus{}gam}                  \PYG{c+c1}{\PYGZsh{} the path of gamma\PYGZhy{}only version of VASP}
+  \PYG{n}{vasp\PYGZus{}ncl}\PYG{p}{:} \PYG{o}{.}\PYG{o}{/}\PYG{n}{vasp\PYGZus{}ncl}                  \PYG{c+c1}{\PYGZsh{} the path of noncollinear version of VASP}
+  \PYG{n}{gnuplot}\PYG{p}{:} \PYG{o}{/}\PYG{n}{usr}\PYG{o}{/}\PYG{n}{local}\PYG{o}{/}\PYG{n+nb}{bin}\PYG{o}{/}\PYG{n}{gnuplot}       \PYG{c+c1}{\PYGZsh{} the path of executable file for gnuplot}
   \PYG{n}{mpi\PYGZus{}command}\PYG{p}{:} \PYG{n}{mpirun}                   \PYG{c+c1}{\PYGZsh{} mpi command (ex. mpirun, mpiexec, ...)}
 
 \PYG{n}{vasp\PYGZus{}parallel}\PYG{p}{:}
@@ -610,13 +610,13 @@ config.yaml:
   \PYG{n}{done}\PYG{p}{:} \PYG{o}{.}\PYG{o}{/}\PYG{n}{Done}                          \PYG{c+c1}{\PYGZsh{} the path of the directory where results are saved}
   \PYG{n}{error}\PYG{p}{:} \PYG{o}{.}\PYG{o}{/}\PYG{n}{ERROR}                        \PYG{c+c1}{\PYGZsh{} the path of the directory where the materials with error are saved}
   \PYG{n}{src\PYGZus{}path}\PYG{p}{:} \PYG{o}{.}\PYG{o}{/}\PYG{n}{src}                       \PYG{c+c1}{\PYGZsh{} the path of the directory of AMP2 source codes}
-  \PYG{n}{pot\PYGZus{}path\PYGZus{}gga}\PYG{p}{:} \PYG{o}{/}\PYG{n}{data}\PYG{o}{/}\PYG{n}{vasp4us}\PYG{o}{/}\PYG{n}{pot}\PYG{o}{/}\PYG{n}{PBE52} \PYG{c+c1}{\PYGZsh{} the path of directory for GGA pseudopotential}
-  \PYG{n}{pot\PYGZus{}path\PYGZus{}lda}\PYG{p}{:} \PYG{o}{/}\PYG{n}{data}\PYG{o}{/}\PYG{n}{vasp4us}\PYG{o}{/}\PYG{n}{pot}\PYG{o}{/}\PYG{n}{LDA52} \PYG{c+c1}{\PYGZsh{} the path of directory for LDA pseudopotential}
+  \PYG{n}{pot\PYGZus{}path\PYGZus{}gga}\PYG{p}{:} \PYG{o}{.}\PYG{o}{/}\PYG{n}{pot}\PYG{o}{/}\PYG{n}{PBE}               \PYG{c+c1}{\PYGZsh{} the path of directory for GGA pseudopotential}
+  \PYG{n}{pot\PYGZus{}path\PYGZus{}lda}\PYG{p}{:} \PYG{o}{.}\PYG{o}{/}\PYG{n}{pot}\PYG{o}{/}\PYG{n}{LDA}               \PYG{c+c1}{\PYGZsh{} the path of directory for LDA pseudopotential}
 
 \PYG{n}{program}\PYG{p}{:}
-  \PYG{n}{vasp\PYGZus{}std}\PYG{p}{:} \PYG{o}{/}\PYG{n}{data}\PYG{o}{/}\PYG{n}{vasp4us}\PYG{o}{/}\PYG{n}{vasp\PYGZus{}std}      \PYG{c+c1}{\PYGZsh{} the path of standard version of VASP}
-  \PYG{n}{vasp\PYGZus{}gam}\PYG{p}{:} \PYG{o}{/}\PYG{n}{data}\PYG{o}{/}\PYG{n}{vasp4us}\PYG{o}{/}\PYG{n}{vasp\PYGZus{}gam}      \PYG{c+c1}{\PYGZsh{} the path of gamma\PYGZhy{}only version of VASP}
-  \PYG{n}{vasp\PYGZus{}ncl}\PYG{p}{:} \PYG{o}{/}\PYG{n}{data}\PYG{o}{/}\PYG{n}{vasp4us}\PYG{o}{/}\PYG{n}{vasp\PYGZus{}ncl}      \PYG{c+c1}{\PYGZsh{} the path of noncollinear version of VASP}
+  \PYG{n}{vasp\PYGZus{}std}\PYG{p}{:} \PYG{o}{.}\PYG{o}{/}\PYG{n}{vasp\PYGZus{}std}                  \PYG{c+c1}{\PYGZsh{} the path of standard version of VASP}
+  \PYG{n}{vasp\PYGZus{}gam}\PYG{p}{:} \PYG{o}{.}\PYG{o}{/}\PYG{n}{vasp\PYGZus{}gam}                  \PYG{c+c1}{\PYGZsh{} the path of gamma\PYGZhy{}only version of VASP}
+  \PYG{n}{vasp\PYGZus{}ncl}\PYG{p}{:} \PYG{o}{.}\PYG{o}{/}\PYG{n}{vasp\PYGZus{}ncl}                  \PYG{c+c1}{\PYGZsh{} the path of noncollinear version of VASP}
   \PYG{n}{gnuplot}\PYG{p}{:} \PYG{o}{/}\PYG{n}{gnuplot}                     \PYG{c+c1}{\PYGZsh{} the path of executable file for gnuplot}
   \PYG{n}{mpi\PYGZus{}command}\PYG{p}{:} \PYG{n}{mpirun}                   \PYG{c+c1}{\PYGZsh{} mpi command (ex. mpirun, mpiexec, ...)}
 
@@ -789,8 +789,8 @@ Default:
 
 \begin{sphinxVerbatim}[commandchars=\\\{\}]
 \PYG{n}{directory}\PYG{p}{:}
-  \PYG{n}{pot\PYGZus{}path\PYGZus{}GGA}\PYG{p}{:} \PYG{o}{.}\PYG{o}{/}\PYG{n}{PBE}
-  \PYG{n}{pot\PYGZus{}path\PYGZus{}LDA}\PYG{p}{:} \PYG{o}{.}\PYG{o}{/}\PYG{n}{LDA}
+  \PYG{n}{pot\PYGZus{}path\PYGZus{}GGA}\PYG{p}{:} \PYG{o}{.}\PYG{o}{/}\PYG{n}{pot}\PYG{o}{/}\PYG{n}{PBE}
+  \PYG{n}{pot\PYGZus{}path\PYGZus{}LDA}\PYG{p}{:} \PYG{o}{.}\PYG{o}{/}\PYG{n}{pot}\PYG{o}{/}\PYG{n}{LDA}
 \end{sphinxVerbatim}
 
 \end{description}
@@ -879,7 +879,7 @@ Default:
 
 \begin{sphinxVerbatim}[commandchars=\\\{\}]
 \PYG{n}{Program}\PYG{p}{:}
-  \PYG{n}{gnuplot}\PYG{p}{:} \PYG{o}{/}\PYG{n}{gnuplot}
+  \PYG{n}{gnuplot}\PYG{p}{:} \PYG{o}{/}\PYG{n}{usr}\PYG{o}{/}\PYG{n}{local}\PYG{o}{/}\PYG{n+nb}{bin}\PYG{o}{/}\PYG{n}{gnuplot}
 \end{sphinxVerbatim}
 
 \end{description}
@@ -1333,14 +1333,14 @@ config\_def.yaml:
   \PYG{n}{done}\PYG{p}{:} \PYG{o}{.}\PYG{o}{/}\PYG{n}{Done}                          \PYG{c+c1}{\PYGZsh{} the path of the directory where results are saved}
   \PYG{n}{error}\PYG{p}{:} \PYG{o}{.}\PYG{o}{/}\PYG{n}{ERROR}                        \PYG{c+c1}{\PYGZsh{} the path of the directory where the materials with error are saved}
   \PYG{n}{src\PYGZus{}path}\PYG{p}{:} \PYG{o}{.}\PYG{o}{/}\PYG{n}{src}                       \PYG{c+c1}{\PYGZsh{} the path of the directory of AMP2 source codes}
-  \PYG{n}{pot\PYGZus{}path\PYGZus{}gga}\PYG{p}{:} \PYG{o}{/}\PYG{n}{data}\PYG{o}{/}\PYG{n}{vasp4us}\PYG{o}{/}\PYG{n}{pot}\PYG{o}{/}\PYG{n}{PBE52} \PYG{c+c1}{\PYGZsh{} the path of directory for GGA pseudopotential}
-  \PYG{n}{pot\PYGZus{}path\PYGZus{}lda}\PYG{p}{:} \PYG{o}{/}\PYG{n}{data}\PYG{o}{/}\PYG{n}{vasp4us}\PYG{o}{/}\PYG{n}{pot}\PYG{o}{/}\PYG{n}{LDA52} \PYG{c+c1}{\PYGZsh{} the path of directory for LDA pseudopotential}
+  \PYG{n}{pot\PYGZus{}path\PYGZus{}gga}\PYG{p}{:} \PYG{o}{.}\PYG{o}{/}\PYG{n}{pot}\PYG{o}{/}\PYG{n}{PB}                \PYG{c+c1}{\PYGZsh{} the path of directory for GGA pseudopotential}
+  \PYG{n}{pot\PYGZus{}path\PYGZus{}lda}\PYG{p}{:} \PYG{o}{.}\PYG{o}{/}\PYG{n}{pot}\PYG{o}{/}\PYG{n}{LDA}               \PYG{c+c1}{\PYGZsh{} the path of directory for LDA pseudopotential}
 
 \PYG{n}{program}\PYG{p}{:}
-  \PYG{n}{vasp\PYGZus{}std}\PYG{p}{:} \PYG{o}{/}\PYG{n}{data}\PYG{o}{/}\PYG{n}{vasp4us}\PYG{o}{/}\PYG{n}{vasp\PYGZus{}std}      \PYG{c+c1}{\PYGZsh{} the path of standard version of VASP}
-  \PYG{n}{vasp\PYGZus{}gam}\PYG{p}{:} \PYG{o}{/}\PYG{n}{data}\PYG{o}{/}\PYG{n}{vasp4us}\PYG{o}{/}\PYG{n}{vasp\PYGZus{}gam}      \PYG{c+c1}{\PYGZsh{} the path of gamma\PYGZhy{}only version of VASP}
-  \PYG{n}{vasp\PYGZus{}ncl}\PYG{p}{:} \PYG{o}{/}\PYG{n}{data}\PYG{o}{/}\PYG{n}{vasp4us}\PYG{o}{/}\PYG{n}{vasp\PYGZus{}ncl}      \PYG{c+c1}{\PYGZsh{} the path of noncollinear version of VASP}
-  \PYG{n}{gnuplot}\PYG{p}{:} \PYG{o}{/}\PYG{n}{gnuplot}                     \PYG{c+c1}{\PYGZsh{} the path of executable file for gnuplot}
+  \PYG{n}{vasp\PYGZus{}std}\PYG{p}{:} \PYG{o}{.}\PYG{o}{/}\PYG{n}{vasp\PYGZus{}std}                  \PYG{c+c1}{\PYGZsh{} the path of standard version of VASP}
+  \PYG{n}{vasp\PYGZus{}gam}\PYG{p}{:} \PYG{o}{.}\PYG{o}{/}\PYG{n}{vasp\PYGZus{}gam}                  \PYG{c+c1}{\PYGZsh{} the path of gamma\PYGZhy{}only version of VASP}
+  \PYG{n}{vasp\PYGZus{}ncl}\PYG{p}{:} \PYG{o}{.}\PYG{o}{/}\PYG{n}{vasp\PYGZus{}ncl}                  \PYG{c+c1}{\PYGZsh{} the path of noncollinear version of VASP}
+  \PYG{n}{gnuplot}\PYG{p}{:} \PYG{o}{/}\PYG{n}{usr}\PYG{o}{/}\PYG{n}{local}\PYG{o}{/}\PYG{n+nb}{bin}\PYG{o}{/}\PYG{n}{gnuplot}       \PYG{c+c1}{\PYGZsh{} the path of executable file for gnuplot}
   \PYG{n}{mpi\PYGZus{}command}\PYG{p}{:} \PYG{n}{mpirun}                   \PYG{c+c1}{\PYGZsh{} mpi command (ex. mpirun, mpiexec, ...)}
 
 \PYG{n}{vasp\PYGZus{}parallel}\PYG{p}{:}
@@ -1648,7 +1648,7 @@ Information of band gap with \sphinxhref{mailto:HSE@PBE}{HSE@PBE} scheme
 \end{description}
 
 \item {} \begin{description}
-\item[{dos\_GGA.pnd (dos\_GGA.pdf):}] \leavevmode
+\item[{dos\_GGA.png (dos\_GGA.pdf):}] \leavevmode
 Density of states image
 
 \end{description}
