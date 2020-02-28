@@ -547,8 +547,8 @@ def find_cb_gap(Band,fermi,dir_band):
 			else:
 				vb_idx[i].append(n)
 
-	eVBM = max([max([Band[vb_idx[i][-1]][x][y] for x in range(len(Band[0]))]) for y in range(len(Band[0][0]))])
-	eCBM = min([min([Band[cb_idx[i][0]][x][y] for x in range(len(Band[0]))]) for y in range(len(Band[0][0]))])
+	eVBM = max([max([Band[vb_idx[y][-1]][x][y] for x in range(len(Band[0]))]) for y in range(len(Band[0][0]))])
+	eCBM = min([min([Band[cb_idx[y][0]][x][y] for x in range(len(Band[0]))]) for y in range(len(Band[0][0]))])
 
 	return [vb_idx,cb_idx,eVBM,eCBM]
 	
