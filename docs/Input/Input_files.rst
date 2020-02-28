@@ -36,13 +36,13 @@ Configuration
           done: ./Done                          # the path of the directory where results are saved
           error: ./ERROR                        # the path of the directory where the materials with error are saved
           src_path: ./src                       # the path of the directory of AMP2 source codes
-          pot_path_gga: /data/vasp4us/pot/PBE52 # the path of directory for GGA pseudopotential
-          pot_path_lda: /data/vasp4us/pot/LDA52 # the path of directory for LDA pseudopotential
+          pot_path_gga: ./pot/PBE               # the path of directory for GGA pseudopotential
+          pot_path_lda: ./pot/LDA               # the path of directory for LDA pseudopotential
 
         program:
-          vasp_std: /data/vasp4us/vasp_std      # the path of standard version of VASP
-          vasp_gam: /data/vasp4us/vasp_gam      # the path of gamma-only version of VASP
-          vasp_ncl: /data/vasp4us/vasp_ncl      # the path of noncollinear version of VASP
+          vasp_std: ./vasp_std                  # the path of standard version of VASP
+          vasp_gam: ./vasp_gam                  # the path of gamma-only version of VASP
+          vasp_ncl: ./vasp_ncl                  # the path of noncollinear version of VASP
           gnuplot: /gnuplot                     # the path of executable file for gnuplot
           mpi_command: mpirun                   # mpi command (ex. mpirun, mpiexec, ...)
 

@@ -4,14 +4,14 @@ directory:
   done: ./Done                         
   error: ./ERROR                       
   src_path: ./src                      
-  pot_path_gga: /data/vasp4us/pot/PBE52
-  pot_path_lda: /data/vasp4us/pot/LDA52
+  pot_path_gga: ./pot/PBE
+  pot_path_lda: ./pot/LDA
 
 program:
-  vasp_std: /data/vasp4us/vasp_std     
-  vasp_gam: /data/vasp4us/vasp_gam     
-  vasp_ncl: /data/vasp4us/vasp_ncl     
-  gnuplot: /gnuplot                    
+  vasp_std: ./vasp_std     
+  vasp_gam: ./vasp_gam     
+  vasp_ncl: ./vasp_ncl     
+  gnuplot: /usr/local/bin/gnuplot                    
   mpi_command: mpirun                  
 
 vasp_parallel:
