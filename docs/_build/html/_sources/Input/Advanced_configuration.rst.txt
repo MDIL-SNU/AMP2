@@ -12,7 +12,7 @@ config_def.yaml:
       done: ./Done                          # the path of the directory where results are saved
       error: ./ERROR                        # the path of the directory where the materials with error are saved
       src_path: ./src                       # the path of the directory of AMP2 source codes
-      pot_path_gga: ./pot/PB                # the path of directory for GGA pseudopotential
+      pot_path_gga: ./pot/PBE               # the path of directory for GGA pseudopotential
       pot_path_lda: ./pot/LDA               # the path of directory for LDA pseudopotential
 
     program:
