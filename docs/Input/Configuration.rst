@@ -273,7 +273,7 @@ npar and kpar tags are used to enhance the efficiency of parallel computing calc
               npar: 2
 
     - kpar: 
-        kpar tag determines the number of kpoints that are treated in parallel. It is same to NPAR tag in VASP.
+        kpar tag determines the number of kpoints that are treated in parallel. It is same to KPAR tag in VASP.
        
         Usage:
         ::
