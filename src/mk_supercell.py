@@ -1,7 +1,7 @@
 # This is a code to build supercell for the Ising coefficient
 import os, math, sys, yaml
 import numpy as np
-import z_subr
+import module_subr
 from itertools import permutations
 from itertools import combinations
 import operator
@@ -24,13 +24,13 @@ min_natom = 100
 max_angle = 115
 min_angle = 65
 # Using relaxed position file 
-poslines = z_subr.read_file(pos_file)
+poslines = module_subr.read_file(pos_file)
 
 # Read lattice vector & atom position
-lat_prim=z_subr.read_lat(poslines)
+lat_prim=module_subr.read_lat(poslines)
 atnames= poslines[5].split()
 totnum= sum([int(x) for x in poslines[6].split()])
-at_prim = z_subr.read_at_pos(poslines,totnum)
+at_prim = module_subr.read_at_pos(poslines,totnum)
 vol_prim = np.inner(lat_prim[0],np.cross(lat_prim[1],lat_prim[2]))
 
 # Make combination of rotation vector ex) [-2,1,2]
@@ -39,9 +39,9 @@ len_check = 1
 tmp = []
 bf_list = []
 while len_check:
-    rot = z_subr.mk_combination(m)
+    rot = module_subr.mk_combination(m)
     if m!=1:
-        rot_small = z_subr.mk_combination(m-1)
+        rot_small = module_subr.mk_combination(m-1)
         rot_new = [x for x in rot if x not in rot_small] 
         bf_list = new_list
         rot = rot_new
@@ -50,7 +50,7 @@ while len_check:
     rot_sort = rot
     
     # Check length criterion
-    [new_list,min_sw] = z_subr.check_length(rot_sort, lat_prim, len_min, len_crit)
+    [new_list,min_sw] = module_subr.check_length(rot_sort, lat_prim, len_min, len_crit)
     if (len(bf_list) !=0) and (len(new_list) == 0):
         len_check = 0
     else:
@@ -66,22 +66,22 @@ new_list = tmp
 
 # make rotation matrix using basis
 # format : [[rot_mat],[lattice_mat]]
-basis_mat = z_subr.mk_rot_matrix(new_list)
+basis_mat = module_subr.mk_rot_matrix(new_list)
 
 # remove det = 0
-basis_mat = z_subr.rm_det_0(basis_mat)
+basis_mat = module_subr.rm_det_0(basis_mat)
 
 # remove too sharp shape structures
-basis_mat = z_subr.check_shape(basis_mat, min_angle, max_angle)
+basis_mat = module_subr.check_shape(basis_mat, min_angle, max_angle)
 
 # Check the number of atoms:
-basis_mat = z_subr.check_natom(basis_mat, lat_prim, totnum, min_natom)
+basis_mat = module_subr.check_natom(basis_mat, lat_prim, totnum, min_natom)
 
 # Check defect distance:
-basis_mat = z_subr.check_defect_length(basis_mat, len_min)    
+basis_mat = module_subr.check_defect_length(basis_mat, len_min)    
 
 # Check kpt
-reci_prim = z_subr.cal_reci_vec(lat_prim)
+reci_prim = module_subr.cal_reci_vec(lat_prim)
 KPT = [float(x) for x in open(kp_file,'r').readlines()[3].split()]
 min_dk =  max([x/y for x,y in zip(reci_prim,KPT)])
 
@@ -89,12 +89,12 @@ if gamma_on == 1:
     tmp = []
     for i in range(len(basis_mat)):
         lat_mat = basis_mat[i][1]
-        reci_mat = z_subr.cal_reci_vec(lat_mat)
+        reci_mat = module_subr.cal_reci_vec(lat_mat)
         kpt_new = [x/min_dk for x in reci_mat]
         if max(kpt_new) < 1.01:
             tmp.append(basis_mat[i])
             lat_mat = basis_mat[i][1]
-            natoms = z_subr.cal_volume(lat_mat)/vol_prim*totnum
+            natoms = module_subr.cal_volume(lat_mat)/vol_prim*totnum
     basis_mat = tmp
 
 if len(basis_mat) == 0 :
@@ -107,8 +107,8 @@ best = 'Null'
 best_set = []
 for i in range(len(basis_mat)):
     lat_mat = basis_mat[i][1]
-    length = z_subr.cal_lat_len(lat_mat)
-    tot_atom = z_subr.cal_volume(lat_mat)/vol_prim*totnum
+    length = module_subr.cal_lat_len(lat_mat)
+    tot_atom = module_subr.cal_volume(lat_mat)/vol_prim*totnum
 
     if (max(length)-min(length))/max(length) < latt_diff:
         if tot_atom < best_natom:
@@ -129,7 +129,7 @@ for i in range(len(best_set)):
         best = best_set[i]
 det = int(round(best_natom))//int(totnum)
 # Set atomic position
-at = z_subr.set_atom(at_prim, best[0])
+at = module_subr.set_atom(at_prim, best[0])
 lat_mat = best[1]
 
 # Create POSCAR files (GGA/HSE)
