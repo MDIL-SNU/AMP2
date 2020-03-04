@@ -33,7 +33,6 @@ src/
     main.py
     relax.py
     rerun_for_metal.py
-    z_subr.py
     make_supercell.py
     mk_supercell.py
     module_AF.py
@@ -46,6 +45,7 @@ src/
     module_effm.py
     module_hse.py
     module_log.py
+    module_subr.py
     module_relax.py
     module_vasprun.py
     module_vector.py
