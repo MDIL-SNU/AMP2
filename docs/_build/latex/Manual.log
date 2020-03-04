@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.20 (TeX Live 2019) (preloaded format=pdflatex 2019.12.24)  28 FEB 2020 20:29
+This is pdfTeX, Version 3.14159265-2.6-1.40.20 (TeX Live 2019) (preloaded format=pdflatex 2019.12.24)  4 MAR 2020 14:03
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -965,31 +965,31 @@ Chapter 3.
 [7
 
 ]
-Underfull \vbox (badness 10000) detected at line 652
+Underfull \vbox (badness 10000) detected at line 656
  []
 
 
-Overfull \vbox (2.68169pt too high) detected at line 652
+Overfull \vbox (2.68169pt too high) detected at line 656
  []
 
 [8] [9] [10] [11] [12] [13] [14] [15]
 LaTeX Font Info:    Font shape `TS1/pcr/m/it' in size <9> not available
-(Font)              Font shape `TS1/pcr/m/sl' tried instead on input line 1394.
+(Font)              Font shape `TS1/pcr/m/sl' tried instead on input line 1398.
 
  [16]
-Underfull \vbox (badness 10000) detected at line 1428
+Underfull \vbox (badness 10000) detected at line 1432
  []
 
 
-Overfull \vbox (13.68169pt too high) detected at line 1428
+Overfull \vbox (13.68169pt too high) detected at line 1432
  []
 
 [17]
-Underfull \vbox (badness 10000) detected at line 1428
+Underfull \vbox (badness 10000) detected at line 1432
  []
 
 
-Overfull \vbox (13.68169pt too high) detected at line 1428
+Overfull \vbox (13.68169pt too high) detected at line 1432
  []
 
 [18] [19] [20]
@@ -1002,67 +1002,67 @@ Chapter 4.
 Chapter 5.
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `math shift' on input line 1719.
+(hyperref)                removing `math shift' on input line 1723.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `superscript' on input line 1719.
+(hyperref)                removing `superscript' on input line 1723.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `math shift' on input line 1719.
+(hyperref)                removing `math shift' on input line 1723.
 
 [25]
 <band_GGA.png, id=415, 963.6pt x 722.7pt>
 File: band_GGA.png Graphic file (type png)
 <use band_GGA.png>
-Package pdftex.def Info: band_GGA.png  used on input line 1773.
+Package pdftex.def Info: band_GGA.png  used on input line 1777.
 (pdftex.def)             Requested size: 225.84229pt x 169.38239pt.
 <band_GGA_corrected.png, id=417, 963.6pt x 722.7pt>
 File: band_GGA_corrected.png Graphic file (type png)
 <use band_GGA_corrected.png>
-Package pdftex.def Info: band_GGA_corrected.png  used on input line 1791.
+Package pdftex.def Info: band_GGA_corrected.png  used on input line 1795.
 (pdftex.def)             Requested size: 225.84229pt x 169.38239pt.
 <dos_GGA.png, id=418, 481.8pt x 722.7pt>
 File: dos_GGA.png Graphic file (type png)
 <use dos_GGA.png>
-Package pdftex.def Info: dos_GGA.png  used on input line 1797.
+Package pdftex.def Info: dos_GGA.png  used on input line 1801.
 (pdftex.def)             Requested size: 112.92114pt x 169.38239pt.
  [26 <./band_GGA.png> <./band_GGA_corrected.png>] [27 <./dos_GGA.png>]
 <band_GGA1.png, id=431, 963.6pt x 722.7pt>
 File: band_GGA1.png Graphic file (type png)
 <use band_GGA1.png>
-Package pdftex.def Info: band_GGA1.png  used on input line 1857.
+Package pdftex.def Info: band_GGA1.png  used on input line 1861.
 (pdftex.def)             Requested size: 225.84229pt x 169.38239pt.
 <band_GGA_corrected1.png, id=433, 963.6pt x 722.7pt>
 File: band_GGA_corrected1.png Graphic file (type png)
 <use band_GGA_corrected1.png>
-Package pdftex.def Info: band_GGA_corrected1.png  used on input line 1875.
+Package pdftex.def Info: band_GGA_corrected1.png  used on input line 1879.
 (pdftex.def)             Requested size: 225.84229pt x 169.38239pt.
 
 [28 <./band_GGA1.png> <./band_GGA_corrected1.png>]
 <band_GGA2.png, id=440, 963.6pt x 722.7pt>
 File: band_GGA2.png Graphic file (type png)
 <use band_GGA2.png>
-Package pdftex.def Info: band_GGA2.png  used on input line 1919.
+Package pdftex.def Info: band_GGA2.png  used on input line 1923.
 (pdftex.def)             Requested size: 225.84229pt x 169.38239pt.
 <dos_GGA1.png, id=441, 481.8pt x 722.7pt>
 File: dos_GGA1.png Graphic file (type png)
 <use dos_GGA1.png>
-Package pdftex.def Info: dos_GGA1.png  used on input line 1925.
+Package pdftex.def Info: dos_GGA1.png  used on input line 1929.
 (pdftex.def)             Requested size: 112.92114pt x 169.38239pt.
  [29 <./band_GGA2.png>]
 (./Manual.ind)
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 1933.
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 1937.
  [30 <./dos_GGA1.png>]
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 1933.
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 1937.
  (./Manual.aux)
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 1933.
-Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 1933.
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 1937.
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 1937.
 
 Package rerunfilecheck Info: File `Manual.out' has not changed.
 (rerunfilecheck)             Checksum: 27108FFEA990FEFA647B3882A46E1D55;6914.
-Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 1933.
+Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 1937.
  ) 
 Here is how much of TeX's memory you used:
  14135 strings out of 492163
@@ -1083,7 +1083,7 @@ t/fonts/type1/urw/courier/ucrro8a.pfb></usr/local/texlive/2019/texmf-dist/fonts
 urw/helvetic/uhvbo8a.pfb></usr/local/texlive/2019/texmf-dist/fonts/type1/urw/ti
 mes/utmb8a.pfb></usr/local/texlive/2019/texmf-dist/fonts/type1/urw/times/utmr8a
 .pfb></usr/local/texlive/2019/texmf-dist/fonts/type1/urw/times/utmri8a.pfb>
-Output written on Manual.pdf (34 pages, 709071 bytes).
+Output written on Manual.pdf (34 pages, 709408 bytes).
 PDF statistics:
  511 PDF objects out of 1000 (max. 8388607)
  436 compressed objects within 5 object streams
