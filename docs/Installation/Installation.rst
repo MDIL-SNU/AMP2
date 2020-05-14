@@ -16,8 +16,8 @@ System requirements
     - spglib [https://atztogo.github.io/spglib]
     - PyYAML [https://pypi.org/project/PyYAML]
 
-    These modules should be pre-installed. In addition, AMP\ :sup:`2`\  needs gnuplot to draw
-    various figures.
+    These modules should be pre-installed. In addition, AMP\ :sup:`2`\  needs gnuplot
+    supporting 'pngcairo' and 'pdfcairo' to draw various figures.
 
 
 Installation

@@ -24,7 +24,7 @@ copyright = u'2019, Materials Data and Informatics Labarotary'
 author = u'Yong Youn, Miso Lee, Changho Hong, Doyeon Kim, Sangtae Kim, Jisu Jung, Kanghoon Yim and Seungwu Han'
 
 # The short X.Y version
-version = u'0.9.5'
+version = u'0.9.6'
 # The full version, including alpha/beta/rc tags
 release = u''
 
@@ -133,7 +133,7 @@ latex_elements = {
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-    (master_doc, 'Manual.tex', u'AMP$^\\text{2}$ Manual \\\\ \\textit{0.9.5}',
+    (master_doc, 'Manual.tex', u'AMP$^\\text{2}$ Manual \\\\ \\textit{0.9.6}',
      u'Yong Youn \\\\ Miso Lee \\\\ Changho Hong \\\\ Doyeon Kim \\\\ Sangtae Kim \\\\ Jisu Jung \\\\ Kanghoon Yim \\\\ Seungwu Han', 'manual'),
 ]
 
