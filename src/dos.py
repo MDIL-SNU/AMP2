@@ -9,7 +9,7 @@ from module_vasprun import *
 from module_dos import *
 from input_conf import set_on_off
 from _version import __version__
-code_data = 'Version '+__version__+'. Modified at 2019-12-17'
+code_data = 'Version '+__version__+'. Modified at 2020-05-12'
 
 # Set input
 dir = sys.argv[1]
@@ -247,9 +247,14 @@ write_par_dos(Ene,par_dos,atom_name,fermi,dir_dos)
 
 make_dos_in(dir_dos,atom_name,spin,len(par_dos[0][0]),[inp_dos['y_min'],inp_dos['y_max']+gap])
 
+if not os.path.isfile(inp_yaml['program']['gnuplot']):
+    make_amp2_log(dir_dos,'If you want to draw figure, please check the path of gnuplot.')
 if inp_yaml['calculation']['plot'] == 1:
 	os.chdir(dir_dos+'/Pdos_dat')
-	subprocess.call([gnuplot,dir_dos+'/Pdos_dat/dos.in'])
+	try:
+		subprocess.call([gnuplot,dir_dos+'/Pdos_dat/dos.in'])
+	except:
+		make_amp2_log(dir_dos,'Error occured drawing figure. Please check gnuplot.')
 
 make_amp2_log(dir_dos,'DOS calculation is done.')
 

@@ -60,7 +60,7 @@
             
             
               <div class="version">
-                0.9.5
+                0.9.6
               </div>
             
           
@@ -194,14 +194,14 @@ The basic format of config.yaml and structure files are like below:</p>
 <p>Structure file (VASP structure file format):</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>Primitive Cell
    1.000000000
-      0.0    2.714895    2.714895
-      2.714895    0.0    2.714895
+      0.0         2.714895    2.714895
+      2.714895    0.0         2.714895
       2.714895    2.714895    0.0
     Si
     2
 Selective dynamics
 Direct
-    0.5    0.5    0.5  T  T  T ! Si1
+    0.5     0.5     0.5   T  T  T ! Si1
     0.75    0.75    0.75  T  T  T ! Si1
 </pre></div>
 </div>
@@ -227,8 +227,8 @@ More details for output files are written in <a class="reference internal" href=
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>relaxed poscar
 1.000000000
     2.53085784423    1.46119145764    4.60391533726
-    -2.53085784423    1.46119145764    4.60391533726
-    0.0    -2.9223829153    4.60391533726
+   -2.53085784423    1.46119145764    4.60391533726
+    0.0             -2.9223829153     4.60391533726
     Cr    O
     4    6
 Selective dynamics
@@ -237,12 +237,12 @@ Direct
     0.848055231569    0.848055231569    0.848055231569  T  T  T ! Cr1_up
     0.151944768431    0.151944768431    0.151944768431  T  T  T ! Cr1_down
     0.651944768431    0.651944768431    0.651944768431  T  T  T ! Cr1_down
-    0.553903778143    0.946096221857    0.25  T  T  T ! O1
-    0.946096221857    0.25    0.553903778143  T  T  T ! O1
-    0.25    0.553903778143    0.946096221857  T  T  T ! O1
-    0.0539037781426    0.75    0.446096221857  T  T  T ! O1
-    0.75    0.446096221857    0.0539037781426  T  T  T ! O1
-    0.446096221857    0.0539037781426    0.75  T  T  T ! O1
+    0.553903778143    0.946096221857    0.25            T  T  T ! O1
+    0.946096221857    0.25              0.553903778143  T  T  T ! O1
+    0.25              0.553903778143    0.946096221857  T  T  T ! O1
+    0.0539037781426   0.75              0.446096221857  T  T  T ! O1
+    0.75              0.446096221857    0.0539037781426 T  T  T ! O1
+    0.446096221857    0.0539037781426   0.75            T  T  T ! O1
 </pre></div>
 </div>
 <p>Band_gap_GGA.log:</p>
@@ -335,7 +335,8 @@ Direct
 </dl>
 </li>
 <li><dl class="simple">
-<dt>rerun_for_metal.py:</dt><dd><p>This is a code to restart the all calculations without the on-site Uterm if the material was found to be metallic and Uwas applied.</p>
+<dt>rerun_for_metal.py:</dt><dd><p>This is a code to restart the all calculations without the on-site <em>U</em>
+term if the material was found to be metallic and <em>U</em> was applied.</p>
 </dd>
 </dl>
 </li>
@@ -361,7 +362,7 @@ spin ordering.</p>
 </dl>
 </li>
 <li><dl class="simple">
-<dt>z_subr.py:</dt><dd><p>This is a package of modules for ’mk_supercell.py’.</p>
+<dt>module_subr.py:</dt><dd><p>This is a package of modules for ‘mk_supercell.py’.</p>
 </dd>
 </dl>
 </li>
@@ -370,7 +371,11 @@ spin ordering.</p>
 </dd>
 </dl>
 </li>
-<li><p>module_converge.py: This is a package of modules for convergence test.</p></li>
+<li><dl class="simple">
+<dt>module_converge.py:</dt><dd><p>This is a package of modules for convergence test.</p>
+</dd>
+</dl>
+</li>
 <li><dl class="simple">
 <dt>module_relax.py:</dt><dd><p>This is a package of modules for structure optimization.</p>
 </dd>
@@ -430,12 +435,12 @@ spin ordering.</p>
 <p>Additionally, there are files for predefined variables.</p>
 <ul class="simple">
 <li><dl class="simple">
-<dt>INCAR0:</dt><dd><p>This is for default configuration for ’INCAR’.</p>
+<dt>INCAR0:</dt><dd><p>This is for default configuration for ‘INCAR’.</p>
 </dd>
 </dl>
 </li>
 <li><dl class="simple">
-<dt>U_table.yaml:</dt><dd><p>This is for default Uparameters.</p>
+<dt>U_table.yaml:</dt><dd><p>This is for default <em>U</em> parameters.</p>
 </dd>
 </dl>
 </li>
@@ -445,7 +450,7 @@ spin ordering.</p>
 </dl>
 </li>
 <li><dl class="simple">
-<dt>config_def.yaml:</dt><dd><p>This is default configuration for ’config.yaml’.</p>
+<dt>config_def.yaml:</dt><dd><p>This is default configuration for ‘config.yaml’.</p>
 </dd>
 </dl>
 </li>

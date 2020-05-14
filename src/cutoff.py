@@ -9,7 +9,7 @@ from module_vasprun import *
 from module_converge import *
 import math
 from _version import __version__
-code_data = 'Version '+__version__+'. Modified at 2019-12-17'
+code_data = 'Version '+__version__+'. Modified at 2020-05-12'
 
 # Set input
 dir = sys.argv[1]
@@ -169,9 +169,14 @@ with open(enlog,'a') as result:
 	wincar(dir+'/INPUT0/INCAR',dir+'/INPUT0/INCAR',[['ENCUT',str(ENCUT-3*ENSTEP)]],[])
 
 make_conv_dat(dir+'/cutoff','cutoff')
+if not os.path.isfile(inp_yaml['program']['gnuplot']):
+    make_amp2_log(dir+'/cutoff','If you want to draw figure, please check the path of gnuplot.')
 if inp_yaml['calculation']['plot'] == 1:
 	os.chdir(dir+'/cutoff')
-	subprocess.call([gnuplot,dir+'/cutoff/conv_plot.in'])
+	try:
+		subprocess.call([gnuplot,dir+'/cutoff/conv_plot.in'])
+	except:
+		make_amp2_log(dir+'/cutoff','Error occured drawing figure. Please check gnuplot.')
 
 with open(dir+'/cutoff/amp2.log','r') as amp2_log:
 	with open(dir+'/amp2.log','a') as amp2_log_tot:

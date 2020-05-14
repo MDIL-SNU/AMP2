@@ -11,7 +11,7 @@ from module_log import *
 from module_band import check_half_metal
 from input_conf import set_on_off
 from _version import __version__
-code_data = 'Version '+__version__+'. Modified at 2020-01-15'
+code_data = 'Version '+__version__+'. Modified at 2020-05-12'
 
 # input from shell
 inp_file = sys.argv[1]
@@ -28,11 +28,24 @@ ERROR_path = inp_yaml['directory']['error']
 Done_path = inp_yaml['directory']['done']
 
 # Check metal in HSE
-if os.path.isfile(target+'/HSE/Band_gap.log'):
-	with open(target+'/HSE/Band_gap.log','r') as inp:
-		gap_log = inp.readline()
+for pot_type in inp_yaml['hybrid_oneshot']['potential_type']:
+	if isinstance(pot_type,list):
+		if len(pot_type) == 1:
+			pot_cell = pot_type[0]
+			pot_point = pot_type[0]
+		else:
+			pot_cell = pot_type[0]
+			pot_point = pot_type[1]
+	else:
+		pot_cell = pot_type
+		pot_point = pot_type
+	if os.path.isfile(target+'/hybrid'+pot_cell+'_'+pot_point+'/Band_gap.log'):
+		with open(target+'/hybrid'+pot_cell+'_'+pot_point+'/Band_gap.log','r') as inp:
+			gap_log = inp.readline()
+		if not 'etal' in gap_log:
+			sys.exit()
 # Check metal in GGA or LDA
-elif os.path.isfile(target+'/band_GGA/Band_gap.log'):
+if os.path.isfile(target+'/band_GGA/Band_gap.log'):
 	with open(target+'/band_GGA/Band_gap.log','r') as inp:
 		gap_log = inp.readline()
 elif os.path.isfile(target+'/band_LDA/Band_gap.log'):

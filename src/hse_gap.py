@@ -12,7 +12,7 @@ from module_hse import *
 from input_conf import set_on_off
 from module_relax import *
 from _version import __version__
-code_data = 'Version '+__version__+'. Modified at 2019-12-17'
+code_data = 'Version '+__version__+'. Modified at 2020-05-12'
 
 # Set input
 dir = sys.argv[1]
@@ -171,9 +171,9 @@ if os.path.isfile(dir+'/band_'+pot_point+'/KPT') and count_line(dir+'/band_'+pot
 	incar_for_hse(dir_hse+'/INCAR')
 	if PBE0_on == 1:
 		inp_hse['alpha'] = calc_alpha_auto(diel_path+'/dielectric.log')
-		wincar(dir_hse+'/INCAR',dir_hse+'/INCAR',[['NSW','0'],['HFSCREEN','0.0'],['ALGO','ALL'],['AEXX',str(inp_hse['alpha'])]],[])
+		wincar(dir_hse+'/INCAR',dir_hse+'/INCAR',[['NSW','0'],['HFSCREEN','0.0'],['ALGO','All'],['AEXX',str(inp_hse['alpha'])]],[])
 	else:
-		wincar(dir_hse+'/INCAR',dir_hse+'/INCAR',[['NSW','0'],['HFSCREEN','0.2'],['ALGO','ALL'],['AEXX',str(inp_hse['alpha'])]],[])
+		wincar(dir_hse+'/INCAR',dir_hse+'/INCAR',[['NSW','0'],['HFSCREEN','0.2'],['ALGO','All'],['AEXX',str(inp_hse['alpha'])]],[])
 	incar_from_yaml(dir_hse,inp_hse['incar'])
 	mag_on = check_magnet(dir+'/relax_'+pot_cell,inp_yaml['magnetic_ordering']['minimum_moment'])
 	vasprun = make_incar_for_ncl(dir_hse,mag_on,kpar,npar,vasp_std,vasp_gam,vasp_ncl)
@@ -219,9 +219,14 @@ if os.path.isfile(dir+'/band_'+pot_point+'/KPT') and count_line(dir+'/band_'+pot
 					for k in range(len(KPT)):
 						Band[n][k][i] = Band[n][k][i] + E_shift
 			plot_band_corrected_structure(spin,Band,eVBM,dir_band+'/xtic.dat',dir_band+'/xlabel.dat',[inp_band['y_min'],inp_band['y_max']+E_shift],dir_band)
+			if not os.path.isfile(inp_yaml['program']['gnuplot']):
+				make_amp2_log(dir_hse,'If you want to draw figure, please check the path of gnuplot.')
 			if inp_yaml['calculation']['plot'] == 1:
 				os.chdir(dir_band)
-				subprocess.call([gnuplot,dir_band+'/band_corrected.in'])
+				try:
+					subprocess.call([gnuplot,dir_band+'/band_corrected.in'])
+				except:
+					make_amp2_log(dir_hse,'Error occured drawing figure. Please check gnuplot.')
 
 		# Metal in GGA. Band reordering is required.
 		else:
@@ -252,9 +257,14 @@ if os.path.isfile(dir+'/band_'+pot_point+'/KPT') and count_line(dir+'/band_'+pot
 					fermi = get_fermi_level(Band_reorder,nelect,ncl)
 					if calc_gap(fermi,spin,ncl,KPT[:num_kpt_for_image],Band_reorder,nelect) > 0.01:
 						plot_band_corrected_structure(spin,Band_reorder,eVBM,dir_band+'/xtic.dat',dir_band+'/xlabel.dat',[inp_band['y_min'],inp_band['y_max']+float(gap)],dir_band)
+						if not os.path.isfile(inp_yaml['program']['gnuplot']):
+							make_amp2_log(dir_hse,'If you want to draw figure, please check the path of gnuplot.')
 						if inp_yaml['calculation']['plot'] == 1:
 							os.chdir(dir_band)
-							subprocess.call([gnuplot,dir_band+'/band_corrected.in'])
+							try:
+								subprocess.call([gnuplot,dir_band+'/band_corrected.in'])
+							except:
+								make_amp2_log(dir_hse,'Error occured drawing figure. Please check gnuplot.')
 					else:
 						make_amp2_log(dir_hse,'Warning. We cannot correct the band structure.')
 				else:

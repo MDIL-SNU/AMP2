@@ -35,14 +35,14 @@ The basic format of config.yaml and structure files are like below:
     ::
         Primitive Cell
            1.000000000
-              0.0    2.714895    2.714895
-              2.714895    0.0    2.714895
+              0.0         2.714895    2.714895
+              2.714895    0.0         2.714895
               2.714895    2.714895    0.0
             Si
             2
         Selective dynamics
         Direct
-            0.5    0.5    0.5  T  T  T ! Si1
+            0.5     0.5     0.5   T  T  T ! Si1
             0.75    0.75    0.75  T  T  T ! Si1
 
 Running AMP\ :sup:`2`\
@@ -66,8 +66,8 @@ More details for output files are written in :doc:`/Output/Output`.
         relaxed poscar
         1.000000000
             2.53085784423    1.46119145764    4.60391533726
-            -2.53085784423    1.46119145764    4.60391533726
-            0.0    -2.9223829153    4.60391533726
+           -2.53085784423    1.46119145764    4.60391533726
+            0.0             -2.9223829153     4.60391533726
             Cr    O
             4    6
         Selective dynamics
@@ -76,12 +76,12 @@ More details for output files are written in :doc:`/Output/Output`.
             0.848055231569    0.848055231569    0.848055231569  T  T  T ! Cr1_up
             0.151944768431    0.151944768431    0.151944768431  T  T  T ! Cr1_down
             0.651944768431    0.651944768431    0.651944768431  T  T  T ! Cr1_down
-            0.553903778143    0.946096221857    0.25  T  T  T ! O1
-            0.946096221857    0.25    0.553903778143  T  T  T ! O1
-            0.25    0.553903778143    0.946096221857  T  T  T ! O1
-            0.0539037781426    0.75    0.446096221857  T  T  T ! O1
-            0.75    0.446096221857    0.0539037781426  T  T  T ! O1
-            0.446096221857    0.0539037781426    0.75  T  T  T ! O1
+            0.553903778143    0.946096221857    0.25            T  T  T ! O1
+            0.946096221857    0.25              0.553903778143  T  T  T ! O1
+            0.25              0.553903778143    0.946096221857  T  T  T ! O1
+            0.0539037781426   0.75              0.446096221857  T  T  T ! O1
+            0.75              0.446096221857    0.0539037781426 T  T  T ! O1
+            0.446096221857    0.0539037781426   0.75            T  T  T ! O1
 
     Band_gap_GGA.log:
     ::
@@ -149,8 +149,8 @@ AMP\ :sup:`2`\  consists of several python codes as follows:
     This is for handling YAML type configuration.
 
 - rerun_for_metal.py:
-    This is a code to restart the all calculations without the on-site \U\
-    term if the material was found to be metallic and \U\ was applied.
+    This is a code to restart the all calculations without the on-site *U*
+    term if the material was found to be metallic and *U* was applied.
 
 - genetic_algorithm.py:
     This is for performing genetic algorithm to find the most stable magnetic 
@@ -165,13 +165,14 @@ AMP\ :sup:`2`\  consists of several python codes as follows:
 - mk_suprecell.py:
     This is a code to build supercell for the Ising coefficient.
 
-- z_subr.py:
-    This is a package of modules for ’mk_supercell.py’.
+- module_subr.py:
+    This is a package of modules for 'mk_supercell.py'.
 
 - module_amp2_input.py:
     This is a package of modules for generating input files for VASP from structure file.
 
-- module_converge.py: This is a package of modules for convergence test.
+- module_converge.py: 
+    This is a package of modules for convergence test.
 
 - module_relax.py:
     This is a package of modules for structure optimization.
@@ -209,13 +210,13 @@ AMP\ :sup:`2`\  consists of several python codes as follows:
 Additionally, there are files for predefined variables.
 
 - INCAR0:
-    This is for default configuration for ’INCAR’.
+    This is for default configuration for 'INCAR'.
 
 - U_table.yaml:
-    This is for default \U\ parameters.
+    This is for default *U* parameters.
 
 - pot_table.yaml:
     This is for default potential files.
 
 - config_def.yaml:
-    This is default configuration for ’config.yaml’.
+    This is default configuration for 'config.yaml'.
