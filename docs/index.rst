@@ -15,4 +15,5 @@ AMP\ :sup:`2`\  Manual
    Input/Input
    Output/Output
    Examples/Examples
+   Test/Test
 
