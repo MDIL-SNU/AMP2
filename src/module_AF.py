@@ -3,11 +3,12 @@
 # Author : yybbyb@snu.ac.kr        #
 ####################################
 # This is a package of modules for identifying the most stable magnetic spin ordering.
-import os,sys,yaml,subprocess
+import os,sys,yaml,subprocess, re
 import numpy as np
 from module_vector import *
 from module_vasprun import *
 from module_amp2_input import *
+from module_GA import *
 
 def check_spin(ref_dir,inp_pos,min_mom):
 	[axis,atom_pos] = read_poscar(inp_pos)
@@ -103,6 +104,86 @@ def reduce_mag_list(mag_list):
 				spin.append(i)
 				num_spin.append(1)
 	return [spin,num_spin]
+## for modified Ising model ##
+def mk_p_list(target):
+    with open(target+'/pair_list_table.dat','r') as f1:
+        plt_lines = f1.readlines()
+    p_list = []
+    for i in range(len(plt_lines)):
+        tmp_list = [0 for j in range(3)]
+        tmp = plt_lines[i].split()
+        for j in range(1,3):
+            tmp_list[j-1] = float(re.findall('\d+',tmp[j])[0])
+        tmp_list[2] = round(float(tmp[0]),2)
+        p_list.append(tmp_list[0:3])
+    return p_list
+ 
+def mk_modi_ising_list(mag_lines,p_list,target,mag_atom_list,axis,atom_pos):
+    pattern = re.compile(r'((-)?\d{1,3}(,\d{3})*(\.\d+)?)')
+    m_atoms = mag_lines.split()
+    m_atoms = list(map(float,[x.split('*')[0] for x in mag_lines.split()]))
+    s_atoms = list(map(float,[x.split('*')[1] for x in mag_lines.split()]))
+    atom_pos_cart = []
+    for j in range(len(m_atoms)):
+        for k in range(int(sum(m_atoms[0:j])),int(sum(m_atoms[0:j+1]))):
+            if s_atoms[j] < 0:
+                atom_pos_cart.append(dir_to_cart(atom_pos[k][0:3],axis)+atom_pos[k][3:])
+                atom_pos_cart[k][-1] = atom_pos_cart[k][-1]+'_down'
+            else:
+                atom_pos_cart.append(dir_to_cart(atom_pos[k][0:3],axis)+atom_pos[k][3:])
+                atom_pos_cart[k][-1] = atom_pos_cart[k][-1]+'_up'
+    mag_true = []
+    mag_sum = 0    
+    for j in range(len(atom_pos_cart)):
+        if atom_pos_cart[j][4] in mag_atom_list:
+            mag_true.append(1)
+            mag_sum = mag_sum +1
+        else:
+            mag_true.append(0)
+    info_pair = pairCategorize(atom_pos_cart,axis,mag_true,5.0)
+    count = {}
+    for line in info_pair:
+        if line[5] in list(count.keys()):
+            count[line[5]] = count[line[5]] +1
+        else:
+            count[line[5]] = 1
+    keys = list(count.keys())
+    tot_list=[]
+    for j in range(len(keys)): #info_pair to list, format ex) [[1,2,3.66(pair length),4(count),Fe1_upFe2_down3.66(info_pair key)]] 
+        tmp_list = []
+        idx_check = pattern.findall(keys[j])
+        if idx_check[0][0] >= idx_check[1][0]:
+            tmp_list.append(float(idx_check[1][0]))
+            tmp_list.append(float(idx_check[0][0]))
+            tmp_list.append(float(idx_check[2][0]))
+        else:
+            tmp_list.append(float(idx_check[0][0]))
+            tmp_list.append(float(idx_check[1][0]))
+            tmp_list.append(float(idx_check[2][0]))
+        tmp_list.append(count[keys[j]])
+        tmp_list.append(keys[j])
+        tot_list.append(tmp_list)
+    
+    m_list = [[] for j in range(len(p_list))]
+    for j in range(len(tot_list)):
+        for k in range(len(p_list)):
+            if tot_list[j][0:3] == p_list[k]:
+                m_list[k].append(tot_list[j])
+    return m_list
+
+def cal_pinv(e_list,N_list,target):
+    e_array = array(e_list)
+    N_array = array(N_list)
+    JJ = dot(linalg.pinv(N_array),e_array)
+    return JJ
+
+def mk_e_list(target):
+    with open(target+'/energy','r') as f1:
+        e_lines = f1.readlines()
+    e_list = []
+    for i in range(len(e_lines)):
+        e_list.append(float(e_lines[i].split()[-1]))
+    return e_list 
 
 # This function is for calculating ising parameter from magnetic pairs
 def calc_ising_param(sole_list,pair_list,ene_file):
@@ -123,6 +204,48 @@ def write_ising_param(JJ,target):
 	with open(target+'/Pair_coeff.dat','w') as pcw:
 		for line in JJ:
 			pcw.write(str(line[0])+'\t'+str(line[3])+'\t'+line[1]+'\t'+line[2]+'\n')
+
+# This function is for calculating modified ising parameter from magnetic pairs
+def calc_ising_param_modi(mag_atom_list,target):
+    up_p = re.compile(r'up')
+    down_p = re.compile(r'down')
+    spin_atom_list = []
+    for i in range(len(mag_atom_list)):
+        spin_atom_list.append(mag_atom_list[i]+'_up')
+        spin_atom_list.append(mag_atom_list[i]+'_down')
+    p_list = mk_p_list(target)
+    [axis, atom_pos] = read_poscar(target+'/POSCAR_param')
+    with open(target+'/mag','r') as f1:
+        mag_lines = f1.readlines()
+    N_list = []
+    for i in range(len(mag_lines)):
+        # m_list format = [[1,1,3.82,4,Fe1_upFe1_up3.82][1,1,3.02,6,Fe1_upFe1_down3.02]]..[mag_atom_a,mag_atom_b,pair_length,count,spin_info]
+        m_list = mk_modi_ising_list(mag_lines[i],p_list,target,spin_atom_list,axis,atom_pos)
+        N_tmp = [1]
+        for j in range(len(p_list)):
+            ferro = 0
+            af = 0
+            for k in range(len(m_list[j])):
+                a = up_p.findall(m_list[j][k][-1])
+                b = down_p.findall(m_list[j][k][-1])
+                if len(a) == 2 or len(b) == 2:
+                    ferro += m_list[j][k][-2]
+                if len(a) == 1 and len(b) == 1:
+                    af += m_list[j][k][-2]
+            tmp = (ferro-af)/2
+            N_tmp.append(tmp)
+        N_list.append(N_tmp)
+    e_list = mk_e_list(target)
+    JJ = cal_pinv(e_list,N_list,target)
+    return JJ
+
+def write_ising_param_modi(JJ,target):
+    with open(target+'/pair_list_table.dat','r') as f1:
+        pt_lines = f1.readlines()
+    with open(target+'/Pair_coeff.dat','w') as f1:
+        for i in range(len(pt_lines)):
+            p_lines = pt_lines[i].split()
+            f1.write('{}\t {} \t {} \t {} \n'.format(p_lines[0],JJ[i+1],p_lines[1],p_lines[2]))
 
 # This function is for writing inputs for genetic algorithm
 def write_inp_for_GA(mag_atom_list,inp_af,target):
@@ -224,3 +347,52 @@ def set_mag_info(atom_pos,target,mag_val):
 	[spin,num_spin] = reduce_mag_list(magmom)
 	with open(target+'/mag_info','w') as inp:
 		inp.write(' '.join([str(num_spin[x])+'*'+str(spin[x]) for x in range(len(spin))]))
+
+def mk_kpoints_modi(c_dir):
+    axis_conv = poscar_to_axis(c_dir+'/relax_GGA/POSCAR')
+    recipro_latt_conv = reciprocal_lattice(axis_conv)
+    l_conv = []
+    for i in range(3):
+        l_conv.append((recipro_latt_conv[i][0]**2.+recipro_latt_conv[i][1]**2.+recipro_latt_conv[i][2]**2.)**0.5)
+    axis_modi = poscar_to_axis(c_dir+'/magnetic_ordering/POSCAR_param')
+    recipro_latt_modi = reciprocal_lattice(axis_modi)
+    l_modi = []
+    for i in range(3):
+        l_modi.append((recipro_latt_modi[i][0]**2.+recipro_latt_modi[i][1]**2.+recipro_latt_modi[i][2]**2.)**0.5)
+    l_ratio = [l_modi[x]/l_conv[x] for x in range(3) ]
+    with open(c_dir+'/INPUT0/KPOINTS','r') as f1:
+        kp_lines = f1.readlines()
+    kp_conv = kp_lines[3].split()
+    kp_conv = list(map(int,kp_conv))
+    with open(c_dir+'/INPUT0/KPOINTS_modi','w') as kp_modi:
+        for j in range(3):
+            kp_modi.write(kp_lines[j])
+        KP = []
+        for j in range(3):
+            KP.append(str(int(round(kp_conv[j]*l_ratio[j]))))
+            if KP[-1] == '0':
+                KP[-1] = '1'
+        kp_modi.write("  "+KP[0]+"  "+ KP[1]+"  "+KP[2]+"\n  0  0  0\n")
+
+def mk_mag_list_modi(targ_dir):
+    datfile = open(targ_dir+'/OUTCAR','r') 
+    tmp_mag = {}
+    it_mag = 0
+    for line in datfile:
+        if 'NIONS = ' in line:
+            NIONS=int(line.split()[-1])
+        if 'magnetization (x)' in line:
+            Null = datfile.readline()
+            Null = datfile.readline()
+            Null = datfile.readline()
+            tmp_list = []
+            for i in range(int(NIONS)):
+                tmp_list.append(datfile.readline().split()[-1])
+            tmp_mag[it_mag] = tmp_list
+            it_mag +=1
+    datfile.close()
+    tot_mag = tmp_mag[it_mag-1]
+    mag_lines = ''
+    for i in range(len(tot_mag)):
+        mag_lines += str(' 1*'+tot_mag[i])
+    return mag_lines 

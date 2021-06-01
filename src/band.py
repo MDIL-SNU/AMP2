@@ -1,6 +1,6 @@
 ###########################################
-### Date: 2018-12-05            ###
-### yybbyb@snu.ac.kr            ###
+### Date: 2020-11-05                    ###
+### mk01071@snu.ac.kr                   ###
 ###########################################
 # This is for drawing band structure and estimating band gap.
 import shutil, os, sys, subprocess, yaml
@@ -10,7 +10,7 @@ from module_band import *
 from module_hse import *
 from input_conf import set_on_off
 from _version import __version__
-code_data = 'Version '+__version__+'. Modified at 2020-05-12'
+code_data = 'Version '+__version__+'. Modified at 2019-12-17'
 
 # Set input
 dir = sys.argv[1]
@@ -133,8 +133,11 @@ else:
         else:
             mag_on = check_magnet(dir+'/relax_'+pot_type,inp_yaml['magnetic_ordering']['minimum_moment'])
         vasprun = make_incar_for_ncl(dir_band,mag_on,kpar,npar,vasp_std,vasp_gam,vasp_ncl)
-        wincar(dir_band+'/INCAR',dir_band+'/INCAR',[['NSW','0'],['LCHARG','.T.'],['ALGO','Normal']],[])
+        wincar(dir_band+'/INCAR',dir_band+'/INCAR',[['NSW','0'],['LCHARG','.T.']],[])
 
+        if os.path.isfile(dir+'/relax_'+pot_type+'/CHGCAR') and os.path.getsize(dir+'/relax_'+pot_type+'/CHGCAR') > 1000: #If electronic convergence in previous step had problem
+            shutil.copyfile(dir+'/relax_'+pot_type+'/CHGCAR',dir_band+'/CHGCAR')
+            wincar(dir_band+'/INCAR',dir_band+'/INCAR',[['ICHARG','1']],[])
         # VASP calculation for CHGCAR
         out = run_vasp(dir_band,nproc,vasprun,mpi)
         if out == 1:  # error in vasp calculation
@@ -206,14 +209,9 @@ with open(dir_band+'/KPOINTS_band','r') as kpt_inp:
 # Drawing band structure (nkpt_for_band is used for hse band structure.)
 plot_band_structure(spin,[x[-1*nkpt_for_band:] for x in Band],fermi,dir_band+'/xtic.dat',dir_band+'/xlabel.dat',[inp_band['y_min'],inp_band['y_max']],dir_band)
 
-if not os.path.isfile(inp_yaml['program']['gnuplot']):
-    make_amp2_log(dir_band,'If you want to draw figure, please check the path of gnuplot.')
 if inp_yaml['calculation']['plot'] == 1:
     os.chdir(dir_band)
-    try:
-        subprocess.call([gnuplot,dir_band+'/band.in'])
-    except:
-        make_amp2_log(dir_band,'Error occured drawing figure. Please check gnuplot.')
+    subprocess.call([gnuplot,dir_band+'/band.in'])
 
 with open(dir_band+'/amp2.log','r') as amp2_log:
     with open(dir+'/amp2.log','a') as amp2_log_tot:

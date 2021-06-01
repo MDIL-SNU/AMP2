@@ -1,14 +1,15 @@
 ####################################
-# date : 2018-12-06                #
+# Date: 2020-11-05                 #
 # Author : feihoon@snu.ac.kr       #
 # Modifier : yybbyb@snu.ac.kr      #
+# Modifier : mk01071@snu.ac.kr     #
 ####################################
 import os, sys, subprocess, yaml
 from module_log import *
 from module_vasprun import *
 from module_converge import *
 from _version import __version__
-code_data = 'Version '+__version__+'. Modified at 2020-05-12'
+code_data = 'Version '+__version__+'. Modified at 2019-12-17'
 
 # Set input
 dir = sys.argv[1]
@@ -98,6 +99,10 @@ while convergence == 1 :
             incar_for_hse(now_path+'/INCAR')
         incar_from_yaml(now_path,inp_conv['incar'])
         wincar(now_path+'/INCAR',now_path+'/INCAR',[['NSW','0'],['LCHARG','F'],['LWAVE','F']],[])
+        #if algo is all in the last step, current step uses ALGO all
+        if os.path.isfile(dir+'/kptest/KP'+str(KPL-1)+"/INCAR") and pygrep('ALGO',dir+'/kptest/KP'+str(KPL-1)+"/INCAR",0,0).split()[2].upper()[0] == "A": 
+            wincar(now_path+'/INCAR',now_path+'/INCAR',[['NSW','0'],["ALGO","All"],['LCHARG','T'],['LWAVE','F']],[])
+            
         out = run_vasp(now_path,nproc,vasprun,mpi)
         if KPL == 1 or KPL == 2:
             if out == 1:  # error in vasp calculation
@@ -118,8 +123,38 @@ while convergence == 1 :
                     out = electronic_step_convergence_check(now_path)
 
             if out == 2:  # electronic step is not converged. (algo = normal)
-                make_amp2_log(dir+'/kptest','The calculation stops but electronic step is not converged, but pass because of too small kpoints.')
-                loopnum = 0
+#                make_amp2_log(dir+'/kptest','The calculation stops but electronic step is not converged, but pass because of too small kpoints.')
+                make_amp2_log(now_path,'We try ALGO All with a better guess on initial charge density.')
+                wincar(now_path+'/INCAR',now_path+'/INCAR',[['ALGO','All'],['NSW','0'],['LCHARG','T'],['LWAVE','F'],['AMIX','#'],['BMIX','#'],['AMIX_MAG','#'],['BMIX_MAG','#']],[])
+                if os.path.isfile(now_path+'/CHGCAR') and os.path.getsize(now_path+'/CHGCAR') > 1000:
+                    wincar(now_path+'/INCAR',now_path+'/INCAR',[['ICHARG','1']],[])
+                out = run_vasp(now_path,nproc,vasprun,mpi)
+                if out == 1: # error in vasp calculation
+                    make_amp2_log(dir+'/kptest','VASP error occurs, but pass because of too small kpoints.')
+                    out = 3
+                    loopnum = 0
+                else:
+                    out = electronic_step_convergence_check_CHGCAR_conv(now_path)
+                count = 0
+                if out == 1:
+                    count = 0; out_c = 1
+                    while count < 3 and out_c != 0:
+                        make_amp2_log(now_path,'The last CHGCAR is used as an initial guess.')
+                        out = run_vasp(now_path,nproc,vasprun,mpi)
+                        count = count+1 
+                        if out == 1:  # error in vasp calculation
+                            make_amp2_log(dir+'/kptest','VASP error occurs, but pass because of too small kpoints.')
+                            out = 3
+                            loopnum = 0
+                            break
+                        out_c = electronic_step_convergence_check_CHGCAR_conv(now_path)
+                if count==3 and out_c == 1:
+                    make_amp2_log(dir+'/kptest','The calculation stops but electronic step is not converged, but pass because of too small kpoints.')
+                    out = 3
+                    loopnum = 0
+                    continue
+                write_conv_result(now_path,kplog)
+                
             elif out < 2:
                 write_conv_result(now_path,kplog)
 
@@ -137,9 +172,33 @@ while convergence == 1 :
                 out = electronic_step_convergence_check(now_path)
 
             if out == 2:  # electronic step is not converged. (algo = normal)
-                make_amp2_log(dir+'/kptest','The calculation stops but electronic step is not converged.')
-                print(0)
-                sys.exit()
+                make_amp2_log(now_path,'We try ALGO All with a better guess on initial charge density.')
+                wincar(now_path+'/INCAR',now_path+'/INCAR',[['ALGO','All'],['NSW','0'],['LCHARG','T'],['LWAVE','F'],['AMIX','#'],['BMIX','#'],['AMIX_MAG','#'],['BMIX_MAG','#']],[])
+                if os.path.isfile(now_path+'/CHGCAR') and os.path.getsize(now_path+'/CHGCAR') > 1000:
+                    wincar(now_path+'/INCAR',now_path+'/INCAR',[['ICHARG','1']],[])
+                out = run_vasp(now_path,nproc,vasprun,mpi)
+                if out == 1: # error in vasp calculation
+                    print(0)
+                    sys.exit()
+                else:
+                    out = electronic_step_convergence_check_CHGCAR_conv(now_path)
+                count = 0
+                if out == 1:
+                    count = 0; out_c = 1
+                    while count < 3 and out_c != 0:
+                        make_amp2_log(now_path,'The last CHGCAR is used as an initial guess.')
+                        out = run_vasp(now_path,nproc,vasprun,mpi)
+                        count = count+1 
+                        if out == 1:  # error in vasp calculation
+                            print(0)
+                            sys.exit() 
+                        out_c = electronic_step_convergence_check_CHGCAR_conv(now_path)
+                if count==3 and out_c == 1:
+                    make_amp2_log(target,'It is not converged.')
+                    print(0)
+                    sys.exit()
+                os.remove(now_path+'/CHGCAR')
+                os.remove(now_path+'/CHG') 
             # electronic step is converged.
             write_conv_result(now_path,kplog)
 
@@ -159,16 +218,13 @@ with open(kplog,'a') as result:
     result.write("Converged KPL: "+str(KPL-3)+'\n')
     subprocess.call(['cp',dir+'/kptest/KP'+str(KPL-3)+'/KPOINTS',dir+'/kptest/KPOINTS_converged'])
     subprocess.call(['cp',dir+'/kptest/KPOINTS_converged',dir+'/INPUT0/KPOINTS'])
+if pygrep('ALGO',dir+'/kptest/KP'+str(KPL-3)+"/INCAR",0,0).split()[2].upper()[0] == "A": 
+    wincar(dir+'/INPUT0/INCAR',dir+'/INPUT0/INCAR',[["ALGO","All"]],[])
 
 make_conv_dat(dir+'/kptest','kpoint')
-if not os.path.isfile(inp_yaml['program']['gnuplot']):
-    make_amp2_log(dir+'/kptest','If you want to draw figure, please check the path of gnuplot.')
 if inp_yaml['calculation']['plot'] == 1:
     os.chdir(dir+'/kptest')
-    try:
-        subprocess.call([gnuplot,dir+'/kptest/conv_plot.in'])
-    except:
-        make_amp2_log(dir+'/kptest','Error occured drawing figure. Please check gnuplot.')
+    subprocess.call([gnuplot,dir+'/kptest/conv_plot.in'])
 
 with open(dir+'/kptest/amp2.log','r') as amp2_log:
     with open(dir+'/amp2.log','a') as amp2_log_tot:

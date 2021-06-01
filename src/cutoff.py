@@ -1,15 +1,16 @@
 ####################################
-# date : 2018-12-06                #
+# date : 2020-11-05                #
 # Author : feihoon@snu.ac.kr       #
 # Modifier : yybbyb@snu.ac.kr      #
+# Modifier : mk01071@snu.ac.kr     #
 ####################################
-import os, sys, subprocess, yaml
+import os, sys, subprocess, yaml, shutil
 from module_log import *
 from module_vasprun import *
 from module_converge import *
 import math
 from _version import __version__
-code_data = 'Version '+__version__+'. Modified at 2020-05-12'
+code_data = 'Version '+__version__+'. Modified at 2019-12-17'
 
 # Set input
 dir = sys.argv[1]
@@ -105,6 +106,8 @@ while convergence == 1 :
 			incar_for_hse(now_path+'/INCAR')
 		incar_from_yaml(now_path,inp_conv['incar'])
 		wincar(now_path+'/INCAR',now_path+'/INCAR',[['ENCUT',str(ENCUT)],['NSW','0'],['LWAVE','F'],['LCHARG','F']],[])
+		if pygrep('ALGO',dir+'/cutoff/EN'+str(ENCUT)+"/INCAR",0,0).split()[2].upper()[0] == "A" or (ENCUT-ENSTEP>=EN_recommend and os.path.isfile(dir+'/cutoff/EN'+str(ENCUT-ENSTEP)+"/INCAR") and pygrep('ALGO',dir+'/cutoff/EN'+str(ENCUT-ENSTEP)+"/INCAR",0,0).split()[2].upper()[0] == "A"): 
+			wincar(now_path+'/INCAR',now_path+'/INCAR',[['NSW','0'],["ALGO","All"],['LCHARG','T'],['LWAVE','F']],[])
 		# Running vasp
 		out = run_vasp(now_path,nproc,vasprun,mpi)
 		if ENCUT < EN_recommend:
@@ -146,9 +149,32 @@ while convergence == 1 :
 				out = electronic_step_convergence_check(now_path)
 
 			if out == 2:  # electronic step is not converged. (algo = normal)
-				make_amp2_log(dir+'/cutoff','The calculation stops but electronic step is not converged.')
-				print(0)
-				sys.exit()
+#				make_amp2_log(now_path,'We change ALGO normal to All.')
+#				wincar(now_path+'/INCAR',now_path+'/INCAR',[['ALGO','All'],['NSW','0'],['LCHARG','T'],['LWAVE','F'],['AMIX','#'],['BMIX','#'],['AMIX_MAG','#'],['BMIX_MAG','#']],[])
+				make_amp2_log(now_path,'We try ALGO All with a better guess on initial charge density.')
+				wincar(now_path+'/INCAR',now_path+'/INCAR',[['ALGO','All'],['NSW','0'],['LCHARG','T'],['LWAVE','F'],['AMIX','#'],['BMIX','#'],['AMIX_MAG','#'],['BMIX_MAG','#']],[])
+				if os.path.isfile(now_path+'/CHGCAR') and os.path.getsize(now_path+'/CHGCAR') > 1000:
+					wincar(now_path+'/INCAR',now_path+'/INCAR',[['ICHARG','1']],[])
+				out = run_vasp(now_path,nproc,vasprun,mpi)
+				if out == 1: # error in vasp calculation
+					print(0)
+					sys.exit()
+				else:
+					out = electronic_step_convergence_check_CHGCAR_conv(now_path)
+				count = 0
+				if out == 1:
+					count = 0; out_c = 1
+					while count < 3 and out_c != 0:
+						out = run_vasp(now_path,nproc,vasprun,mpi)
+						count = count+1 
+						if out == 1:  # error in vasp calculation
+							print(0)
+							sys.exit() 
+						out_c = electronic_step_convergence_check_CHGCAR_conv(now_path)
+				if count==3 and out_c == 1:
+					make_amp2_log(target,'It is not converged.')
+					print(0)
+					sys.exit() 
 			write_conv_result(now_path,enlog)
 
 	# electronic step is converged.
@@ -158,6 +184,12 @@ while convergence == 1 :
 	os.chdir('../')
 
 make_amp2_log(dir+'/cutoff','cut off energy test is done')
+#cp converged CHGCAR to INPUT0 
+if os.path.isfile(dir+'/cutoff/EN'+str(ENCUT-3*ENSTEP)+'/CHGCAR') and os.path.getsize(dir+'/cutoff/EN'+str(ENCUT-3*ENSTEP)+'/CHGCAR') > 1000:
+	shutil.copyfile(dir+'/cutoff/EN'+str(ENCUT-3*ENSTEP)+'/CHGCAR',dir+'/INPUT0/CHGCAR_conv')
+if  pygrep('ALGO',dir+'/cutoff/EN'+str(ENCUT-3*ENSTEP)+"/INCAR",0,0).split()[2].upper()[0] == "A":
+	wincar(dir+'/INPUT0/INCAR',dir+'/INPUT0/INCAR',["ALGO","All"],[])
+
 
 with open(enlog,'a') as result:
 	result.write("\nConvergence criterion: E/atom < "+str(ENCONV)+" eV\n")
@@ -169,14 +201,9 @@ with open(enlog,'a') as result:
 	wincar(dir+'/INPUT0/INCAR',dir+'/INPUT0/INCAR',[['ENCUT',str(ENCUT-3*ENSTEP)]],[])
 
 make_conv_dat(dir+'/cutoff','cutoff')
-if not os.path.isfile(inp_yaml['program']['gnuplot']):
-    make_amp2_log(dir+'/cutoff','If you want to draw figure, please check the path of gnuplot.')
 if inp_yaml['calculation']['plot'] == 1:
 	os.chdir(dir+'/cutoff')
-	try:
-		subprocess.call([gnuplot,dir+'/cutoff/conv_plot.in'])
-	except:
-		make_amp2_log(dir+'/cutoff','Error occured drawing figure. Please check gnuplot.')
+	subprocess.call([gnuplot,dir+'/cutoff/conv_plot.in'])
 
 with open(dir+'/cutoff/amp2.log','r') as amp2_log:
 	with open(dir+'/amp2.log','a') as amp2_log_tot:

@@ -1,6 +1,6 @@
 ###########################################
-### Date: 2018-12-06			###
-### yybbyb@snu.ac.kr			###
+### Date: 2020-11-05	         		###
+### mk01071@snu.ac.kr	        		###
 ###########################################
 import shutil, os, sys, subprocess, yaml
 from module_log import *
@@ -72,7 +72,11 @@ if run_cont == 0:
 	make_amp2_log(dir_relax,'New calculation')
 	copy_input(dir+'/INPUT0',dir_relax,POT)
 	nsw = set_nsw(dir_relax+'/POSCAR',dir_relax+'/INCAR')
-	wincar(dir_relax+'/INCAR',dir_relax+'/INCAR',[['LCHARG','.F.']],[])
+	if os.path.isfile(dir+'/INPUT0/CHGCAR_conv'):
+		shutil.copyfile(dir+'/INPUT0/CHGCAR_conv',dir_relax+'/CHGCAR')
+		wincar(dir_relax+'/INCAR',dir_relax+'/INCAR',[['LCHARG','.T.'],['ICHARG','1']],[])
+	else:
+		wincar(dir_relax+'/INCAR',dir_relax+'/INCAR',[['LCHARG','.F.']],[])
 	converge_condition = set_ediffg(dir_relax+'/POSCAR',inp_rlx['force'],inp_rlx['pressure'],inp_rlx['energy'])
 	if not converge_condition == 0:
 		wincar(dir_relax+'/INCAR',dir_relax+'/INCAR',[['EDIFFG',str(converge_condition)]],[])
