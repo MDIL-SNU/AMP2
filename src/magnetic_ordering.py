@@ -13,7 +13,7 @@ from module_amp2_input import *
 from module_relax import *
 from input_conf import set_on_off
 from _version import __version__
-code_data = 'Version '+__version__+'. Modified at 2019-12-17'
+code_data = 'Version '+__version__+'. Modified at 2020-11-05'
 
 # Set input
 dir = sys.argv[1]

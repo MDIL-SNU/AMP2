@@ -9,7 +9,7 @@ from module_log import *
 from module_vasprun import *
 from module_converge import *
 from _version import __version__
-code_data = 'Version '+__version__+'. Modified at 2019-12-17'
+code_data = 'Version '+__version__+'. Modified at 2020-11-05'
 
 # Set input
 dir = sys.argv[1]
@@ -222,9 +222,14 @@ if pygrep('ALGO',dir+'/kptest/KP'+str(KPL-3)+"/INCAR",0,0).split()[2].upper()[0]
     wincar(dir+'/INPUT0/INCAR',dir+'/INPUT0/INCAR',[["ALGO","All"]],[])
 
 make_conv_dat(dir+'/kptest','kpoint')
+if not os.path.isfile(inp_yaml['program']['gnuplot']):
+    make_amp2_log(dir+'/kptest','If you want to draw figure, please check the path of gnuplot.')
 if inp_yaml['calculation']['plot'] == 1:
     os.chdir(dir+'/kptest')
-    subprocess.call([gnuplot,dir+'/kptest/conv_plot.in'])
+    try:
+        subprocess.call([gnuplot,dir+'/kptest/conv_plot.in'])
+    except:
+        make_amp2_log(dir+'/kptest','Error occured drawing figure. Please check gnuplot.')
 
 with open(dir+'/kptest/amp2.log','r') as amp2_log:
     with open(dir+'/amp2.log','a') as amp2_log_tot:

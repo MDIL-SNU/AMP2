@@ -10,7 +10,7 @@ from module_band import *
 from module_hse import *
 from input_conf import set_on_off
 from _version import __version__
-code_data = 'Version '+__version__+'. Modified at 2019-12-17'
+code_data = 'Version '+__version__+'. Modified at 2020-11-05'
 
 # Set input
 dir = sys.argv[1]
@@ -209,9 +209,14 @@ with open(dir_band+'/KPOINTS_band','r') as kpt_inp:
 # Drawing band structure (nkpt_for_band is used for hse band structure.)
 plot_band_structure(spin,[x[-1*nkpt_for_band:] for x in Band],fermi,dir_band+'/xtic.dat',dir_band+'/xlabel.dat',[inp_band['y_min'],inp_band['y_max']],dir_band)
 
+if not os.path.isfile(inp_yaml['program']['gnuplot']):
+    make_amp2_log(dir_band,'If you want to draw figure, please check the path of gnuplot.')
 if inp_yaml['calculation']['plot'] == 1:
     os.chdir(dir_band)
-    subprocess.call([gnuplot,dir_band+'/band.in'])
+    try:
+        subprocess.call([gnuplot,dir_band+'/band.in'])
+    except:
+        make_amp2_log(dir_band,'Error occured drawing figure. Please check gnuplot.')
 
 with open(dir_band+'/amp2.log','r') as amp2_log:
     with open(dir+'/amp2.log','a') as amp2_log_tot:
