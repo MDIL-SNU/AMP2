@@ -1,6 +1,6 @@
 ###########################################
-### Date: 2018-12-05            ###
-### yybbyb@snu.ac.kr            ###
+### Date: 2020-11-05                    ###
+### mk01071@snu.ac.kr                   ###
 ###########################################
 # This is for drawing band structure and estimating band gap.
 import shutil, os, sys, subprocess, yaml
@@ -10,7 +10,7 @@ from module_band import *
 from module_hse import *
 from input_conf import set_on_off
 from _version import __version__
-code_data = 'Version '+__version__+'. Modified at 2020-05-12'
+code_data = 'Version '+__version__+'. Modified at 2020-11-05'
 
 # Set input
 dir = sys.argv[1]
@@ -133,8 +133,11 @@ else:
         else:
             mag_on = check_magnet(dir+'/relax_'+pot_type,inp_yaml['magnetic_ordering']['minimum_moment'])
         vasprun = make_incar_for_ncl(dir_band,mag_on,kpar,npar,vasp_std,vasp_gam,vasp_ncl)
-        wincar(dir_band+'/INCAR',dir_band+'/INCAR',[['NSW','0'],['LCHARG','.T.'],['ALGO','Normal']],[])
+        wincar(dir_band+'/INCAR',dir_band+'/INCAR',[['NSW','0'],['LCHARG','.T.']],[])
 
+        if os.path.isfile(dir+'/relax_'+pot_type+'/CHGCAR') and os.path.getsize(dir+'/relax_'+pot_type+'/CHGCAR') > 1000: #If electronic convergence in previous step had problem
+            shutil.copyfile(dir+'/relax_'+pot_type+'/CHGCAR',dir_band+'/CHGCAR')
+            wincar(dir_band+'/INCAR',dir_band+'/INCAR',[['ICHARG','1']],[])
         # VASP calculation for CHGCAR
         out = run_vasp(dir_band,nproc,vasprun,mpi)
         if out == 1:  # error in vasp calculation

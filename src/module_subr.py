@@ -3,6 +3,7 @@ import numpy as np
 import math
 from itertools import product
 from itertools import combinations
+from module_vector import dir_to_cart
 
 # This function is for calculate dot product of two vector
 def dotproduct(v1, v2):
@@ -248,5 +249,59 @@ def set_atom(prim_at, M):
 #    print sup_at_fin
     return sup_at_fin
 
+def mkPairlist(atom_pos, axis, mag_true, cutoff):
+    list_pair = []
+    mag_atom_pos = []
+    for i in range(len(atom_pos)):
+        if mag_true[i] == 1:
+            mag_atom_pos.append(atom_pos[i])
+    for i in range(len(mag_atom_pos)):
+        for j in range(len(mag_atom_pos)):
+            tmp_dist = calcDistwithPBC(axis, mag_atom_pos[i][0:3], mag_atom_pos[j][0:3], cutoff)
+            for dist in tmp_dist:
+                list_pair.append([i,j,str(dist)])
+    return list_pair
 
+def calcDistwithPBC(lparam, ptA, ptB, cutoff):
+        dist = []
+        vecAB = np.array(ptA) - np.array(ptB)
+        for i in [-2,-1,0,1,2]:
+                for j in [-2,-1,0,1,2]:
+                        for k in [-2,-1,0,1,2]:
+                                vec_cur = np.copy(vecAB)
+                                vec_cur = vec_cur + np.dot(np.array([i,j,k]), np.array(lparam))
+                                dist_cur = round(np.linalg.norm(vec_cur), 2)
+
+                                if  dist_cur < cutoff and dist_cur > 0.1:
+                                        dist.append(dist_cur)
+
+        return dist
+
+def check_pair(basis_mat,at_prim,mag_atom_list):
+    tmp = []
+    for i in range(len(basis_mat)):
+        at_tmp = set_atom(at_prim, basis_mat[i][0])
+        axis = basis_mat[i][1]
+        atom_pos_cart = []
+        for j in range(len(at_tmp)):
+            atom_pos_cart.append(dir_to_cart(at_tmp[j][0:3],axis)+at_tmp[j][3:])
+        mag_true = []
+        mag_sum = 0
+        for j in range(len(at_tmp)):
+            if at_tmp[j][3] in mag_atom_list:
+                mag_true.append(1)
+                mag_sum = mag_sum+1
+            else:
+                mag_true.append(0)
+        info_pair = mkPairlist(atom_pos_cart,axis,mag_true, 5.0)
+        overlap_pair = []
+        for k in range(len(info_pair)):
+            for j in range(len(info_pair)):
+                a,b,l_a = info_pair[k][1],info_pair[k][0],info_pair[k][2]
+                c,d,l_c = info_pair[j][1],info_pair[j][0],info_pair[j][2]
+                if int(a) == int(c) and int(b) == int(d) and float(l_a) != float(l_c):
+                    overlap_pair.append(info_pair[k])
+        if len(overlap_pair) == 0 :
+            tmp.append(basis_mat[i])
+    return tmp
 

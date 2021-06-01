@@ -1,6 +1,6 @@
 ####################################
-# Modifier : yybbyb@snu.ac.kr      #
-# data : 2018-12-05                #
+# Date : 2020-11-05                #
+# mk01071@snu.ac.kr                #
 ####################################
 # This is for drawing density of states.
 import shutil, os, sys, subprocess, yaml
@@ -9,7 +9,7 @@ from module_vasprun import *
 from module_dos import *
 from input_conf import set_on_off
 from _version import __version__
-code_data = 'Version '+__version__+'. Modified at 2020-05-12'
+code_data = 'Version '+__version__+'. Modified at 2020-11-05'
 
 # Set input
 dir = sys.argv[1]
@@ -176,7 +176,7 @@ else:
 			sys.exit() 
 		make_amp2_log(dir_dos,'CHGCAR file is generated successfully.')
 
-	wincar(dir_dos+'/INCAR',dir_dos+'/INCAR',[['NEDOS','3001'],['ISMEAR','-5'],['SIGMA','0.1']],[])
+	wincar(dir_dos+'/INCAR',dir_dos+'/INCAR',[['NEDOS','3001'],['ISMEAR','-5'],['SIGMA','0.1'],["ALGO","Normal"]],[])
 
 	incar_from_yaml(dir_dos,inp_dos['incar'])
 
@@ -189,7 +189,7 @@ else:
 	while 1:
 		make_multiple_kpts(dir+'/kptest/kpoint.log',dir_dos+'/KPOINTS',dir_dos+'/POSCAR',inp_dos['kp_multiplier'],sym,gam_option)
 
-		wincar(dir_dos+'/INCAR',dir_dos+'/INCAR',[['NSW','0'],['ISTART','1'],['ICHARG','11'],['LCHARG','.F.']],[])
+		wincar(dir_dos+'/INCAR',dir_dos+'/INCAR',[['NSW','0'],['ICHARG','11'],['LCHARG','.F.']],[])
 		if no_rlx == 1:
 			mag_on = 2
 		else:

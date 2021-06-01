@@ -1,6 +1,6 @@
 ####################################
-# date : 2019-04-08				#
-# Author : yybbyb@snu.ac.kr		#
+# date : 2020-11-05	     		   #
+# Author : kstgood333@snu.ac.kr	   #
 ####################################
 # This is for identifying the most stable magnetic spin ordering.
 
@@ -13,7 +13,7 @@ from module_amp2_input import *
 from module_relax import *
 from input_conf import set_on_off
 from _version import __version__
-code_data = 'Version '+__version__+'. Modified at 2019-12-17'
+code_data = 'Version '+__version__+'. Modified at 2020-11-05'
 
 # Set input
 dir = sys.argv[1]
@@ -36,6 +36,12 @@ inp_af = inp_yaml['magnetic_ordering']
 inp_rlx = inp_yaml['relaxation']
 cutoff_length = inp_af['cutoff_for_parameter']
 pot_type = inp_af['potential_type']
+#mag_ver = inp_af['ising_model']
+#if mag_ver == 'Modified':
+#    MAG_V = '1'
+#else:
+#    MAG_V = '0'
+MAG_V = 1
 if pot_type == 'LDA':
 	POT = 'LDA'
 else:
@@ -119,17 +125,38 @@ else:
 
 
 # Make supercell 
-if not os.path.isfile(target+'/POSCAR_param'):
-	min_cell_length = cutoff_length*2
-	while 1:
-		try:
-			out = int(subprocess.check_output([pypath,src_path+'/mk_supercell.py',inp_pos,dir+'/INPUT0/KPOINTS',str(min_cell_length),target+'/POSCAR_param'],universal_newlines=True).split()[0])
-		except:
-			out = 1
-		if out == 0:
-			break
-		else:
-			min_cell_length = min_cell_length + 2
+if MAG_V == '1':
+	if not os.path.isfile(target+'/POSCAR_param'):
+		with open(target+'/tmp_mag_list.dat','w') as tml:
+			tml.write(' '.join(mag_atom_list))
+		len_iter = 0.0
+		while 1:
+			try:
+				out = int(subprocess.check_output([pypath,src_path+'/mk_supercell_modi.py',inp_pos,target+'/POSCAR_param',str(len_iter)],universal_newlines=True).split()[0])
+			except:
+				out = 1
+			if out == 0 and len_iter < 10:
+				break
+			if out == 1 and len_iter < 10:
+				len_iter += 0.5
+			if len_iter >= 10:
+				make_amp2_log(target,'fail to find minimum supercell.')
+				print(1)
+				sys.exit()
+		os.remove(target+'/tmp_mag_list.dat')
+		mk_kpoints_modi(dir) 
+else:
+	if not os.path.isfile(target+'/POSCAR_param'):
+		min_cell_length = cutoff_length*2
+		while 1:
+			try:
+				out = int(subprocess.check_output([pypath,src_path+'/mk_supercell.py',inp_pos,dir+'/INPUT0/KPOINTS',str(min_cell_length),target+'/POSCAR_param'],universal_newlines=True).split()[0])
+			except:
+				out = 1
+			if out == 0:
+				break
+			else:
+				min_cell_length = min_cell_length + 2
 
 # Check whether the genetic alrogirhm starts or not
 [axis_param,pos_param] = read_poscar(target+'/POSCAR_param')
@@ -162,8 +189,11 @@ for i in range(len(tot_mag_list)):
 		os.chdir(targ_dir)
 		copy_input_no_kp(dir+'/INPUT0',targ_dir,POT)
 		subprocess.call(['cp',target+'/POSCAR_param',targ_dir+'/POSCAR'])
-		subprocess.call(['cp',src_path+'/KPOINTS_gamma',targ_dir+'/KPOINTS'])
-		wincar(targ_dir+'/INCAR',targ_dir+'/INCAR',[['LCHARG','F'],['LWAVE','F'],['ALGO','Normal'],['NELM',max_nelm]],[])
+		if MAG_V == '1':
+			subprocess.call(['cp',dir+'/INPUT0/KPOINTS_modi',targ_dir+'/KPOINTS'])
+		else:
+			subprocess.call(['cp',src_path+'/KPOINTS_gamma',targ_dir+'/KPOINTS'])
+		wincar(targ_dir+'/INCAR',targ_dir+'/INCAR',[['LCHARG','F'],['LWAVE','F'],['ALGO','All'],['NELM',max_nelm]],[])
 		if pot_type == 'HSE':
 			incar_for_hse(targ_dir+'/INCAR')
 			wincar(targ_dir+'/INCAR',targ_dir+'/INCAR',[['ALGO','All']],[])
@@ -177,7 +207,7 @@ for i in range(len(tot_mag_list)):
 			vasprun = vasp_std
 
 		# VASP calculation for CHGCAR
-		wincar(targ_dir+'/INCAR',targ_dir+'/INCAR',[['NSW','0'],['ISYM','0'],['NELM','50'],['LCHARG','T']],[])
+		wincar(targ_dir+'/INCAR',targ_dir+'/INCAR',[['NSW','0'],['ISYM','0'],['NELM','100'],['LCHARG','T']],[])
 		out = run_vasp(targ_dir,nproc,vasprun,mpi)
 		
 		if out == 1:  # error in vasp calculation
@@ -204,6 +234,9 @@ for i in range(len(tot_mag_list)):
 		os.remove(targ_dir+'/CHGCAR')
 		os.remove(targ_dir+'/CHG')
 
+		final_mag = mk_mag_list_modi(targ_dir)
+		with open(targ_dir+'/mag','w') as magf:
+			magf.write(final_mag+'\n')
 		energy = pygrep('free  ','OUTCAR',0,0).splitlines()[-1].split()[4]
 		with open(targ_dir+'/energy','w') as enef:
 			enef.write('Spin_'+str(i)+'\t'+energy+'\n')
@@ -212,14 +245,24 @@ for i in range(len(tot_mag_list)):
 		with open(target+'/energy','w') as enef:
 			with open(targ_dir+'/energy','r') as ener:
 				enef.write(ener.read())
+		with open(target+'/mag','w') as magf:
+			with open(targ_dir+'/mag','r') as magr:
+				magf.write(magr.read())
 	else:
 		with open(target+'/energy','a') as enef:
 			with open(targ_dir+'/energy','r') as ener:
 				enef.write(ener.read())
-
-JJ = calc_ising_param(sole_list,pair_list,target+'/energy')
-write_ising_param(JJ,target)
-write_inp_for_GA(mag_atom_list,inp_af,target)
+		with open(target+'/mag','a') as magf:
+			with open(targ_dir+'/mag','r') as magr:
+				magf.write(magr.read())
+if MAG_V == '1':
+    JJ = calc_ising_param_modi(mag_atom_list,target)
+    write_ising_param_modi(JJ,target)
+    write_inp_for_GA(mag_atom_list,inp_af,target)
+else:
+    JJ = calc_ising_param(sole_list,pair_list,target+'/energy')
+    write_ising_param(JJ,target)
+    write_inp_for_GA(mag_atom_list,inp_af,target)
 
 ### genetic algorithm in supercell
 supercell_list = set_supercell_list(inp_pos,mag_atom_list)
@@ -258,7 +301,7 @@ for cell in supercell_list:
 make_amp2_log(target,'Smallest cell is in GA_'+''.join([str(x) for x in optimized_supercell])+'.')
 ground_path = target+'/GA_'+''.join([str(x) for x in optimized_supercell])
 os.chdir(ground_path)
-POSCARs = glob.glob(ground_path+'/POSCAR_spin*')
+POSCARs = sorted(glob.glob(ground_path+'/POSCAR_spin*'))
 pos_atom_num = []
 for i in range(len(POSCARs)):
 	if not os.path.isdir(ground_path+'/Stable'+str(i)):

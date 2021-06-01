@@ -11,7 +11,7 @@ from module_log import *
 from module_band import check_half_metal
 from input_conf import set_on_off
 from _version import __version__
-code_data = 'Version '+__version__+'. Modified at 2020-05-12'
+code_data = 'Version '+__version__+'. Modified at 2020-01-15'
 
 # input from shell
 inp_file = sys.argv[1]
@@ -99,6 +99,9 @@ with open(target+'/INPUT0/U_note','w') as out:
 	out.write(' ')
 # Modify INCAR
 make_incar(target+'/INPUT0/POSCAR',target,src_path,inp_yaml['cif2vasp']['max_nelm'])
+
+if os.path.isfile(target+'/INPUT0/CHGCAR_conv'): #Calculation with U would not have convergence problem
+	os.remove(target+'/INPUT0/CHGCAR_conv')
 
 calc_out = 0
 

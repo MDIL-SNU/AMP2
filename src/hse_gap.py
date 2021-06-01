@@ -1,6 +1,7 @@
 ###########################################
-### Date: 2018-12-05			###
+### Date: 2020-11-05			###
 ### yybbyb@snu.ac.kr			###
+### mk01071@snu.ac.kr			###
 ###########################################
 # This is for estimating band gap with PBE@HSE scheme.
 import shutil, os, sys, subprocess, yaml
@@ -12,7 +13,7 @@ from module_hse import *
 from input_conf import set_on_off
 from module_relax import *
 from _version import __version__
-code_data = 'Version '+__version__+'. Modified at 2020-05-12'
+code_data = 'Version '+__version__+'. Modified at 2020-11-05'
 
 # Set input
 dir = sys.argv[1]

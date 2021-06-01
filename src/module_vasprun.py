@@ -156,7 +156,7 @@ def electronic_step_convergence_check(target):
 	if elec_step == int(pygrep('NELM',target+'/OUTCAR',0,0).split(';')[0].split()[2]):
 		make_amp2_log(target,'Electronic step is not converged.')
 		algo = pygrep('ALGO',target+'/INCAR',0,0).split()[2]
-		if algo == 'Normal' or algo == 'All':
+		if algo == 'Normal':
 			make_amp2_log(target,'Current ALGO is '+algo+' but it is not converged.')
 			if spin == '2':
 				if pygrep('BMIX_MAG',target+'/OUTCAR',0,0).split()[-1] == '1.00':
@@ -165,6 +165,17 @@ def electronic_step_convergence_check(target):
 					return 1
 				else:
 					make_amp2_log(target,'We changed mixing parameters but it is not converged.')
+					return 2
+			else:
+				return 2
+		if  algo == 'All':
+			make_amp2_log(target,'Current ALGO is '+algo+' but it is not converged.')
+			if spin == '2':
+				if "F" in pygrep('LCHARG',target+'/OUTCAR',0,0).split("=")[1].split()[0].upper():
+					make_amp2_log(target,'CHGCAR is saved to be used as a better initial guess')
+					wincar(target+'/INCAR',target+'/INCAR',[['LCHARG','T']],[])
+					return 1
+				else:
 					return 2
 			else:
 				return 2
@@ -195,7 +206,22 @@ def electronic_step_convergence_check_CHGCAR(target):
 		return 1
 	else:
 		return 0
-
+# check electronic step convergence for CHGCAR_conv
+def electronic_step_convergence_check_CHGCAR_conv(target):
+	# 0: well converged, 1: can try to read CHGCAR
+	with open(target+'/OSZICAR','r') as inp:
+		fr_log = inp.readlines()[1:]
+	spin = pygrep('ISPIN',target+'/OUTCAR',0,0).split()[2]
+	elec_step = 0
+	for ll in fr_log:
+		if ll.split()[0] == '1':
+			break
+		elec_step = elec_step+1
+	if elec_step == int(pygrep('NELM',target+'/OUTCAR',0,0).split(';')[0].split()[2]):
+		wincar(target+'/INCAR',target+'/INCAR',[['NSW','0'],['NELM','100'],['LCHARG','T'],['ICHARG','1']],[])
+		return 1
+	else:
+		return 0
 # check magnetism from relaxation
 def check_magnet(dir_in,min_mom):
 	nion = int(pygrep('NION',dir_in+'/OUTCAR',0,0).split()[-1])
