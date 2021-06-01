@@ -1,6 +1,6 @@
 ####################################
 # Modifier : yybbyb@snu.ac.kr      #
-# data : 2019-08-08                #
+# data : 2021-06-01                #
 ####################################
 # This is a package of modules for generating input files for VASP from structure file.
 import os, sys, yaml, shutil, glob, math, subprocess
@@ -127,13 +127,18 @@ def make_poscar_from_cif(cif,target):
 
 		### read symmetry information
 		# from ICSD cif
-		if "_symmetry_equiv_pos_as_xyz" in line :
+		if  "_symmetry_equiv_pos_as_xyz" in line or "_space_group_symop_operation_xyz" in line :
 			sym = []
 			while True :
 				tmp = f.readline()
 				tmp = tmp.replace('\n','').replace('\r','')
-				if not "'" in tmp:
+				if "loop_" in tmp:
 					line=tmp
+					break
+				elif not len(tmp.split()) > 0:
+					continue
+				elif not "'" in tmp:
+					continue
 					break
 				tmp = tmp.split("'")[1]
 				tmp = tmp.replace(" ","")
