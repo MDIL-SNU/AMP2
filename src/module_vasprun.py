@@ -202,7 +202,7 @@ def electronic_step_convergence_check_CHGCAR(target):
 			break
 		elec_step = elec_step+1
 	if elec_step == int(pygrep('NELM',target+'/OUTCAR',0,0).split(';')[0].split()[2]):
-		wincar(target+'/INCAR',target+'/INCAR',[['NSW','0'],['ISYM','0'],['NELM','50'],['LCHARG','T'],['ICHARG','1']],[])
+		wincar(target+'/INCAR',target+'/INCAR',[['NSW','0'],['ISYM','0'],['NELM','100'],['LCHARG','T'],['ICHARG','1']],[])
 		return 1
 	else:
 		return 0
