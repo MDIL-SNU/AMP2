@@ -188,7 +188,7 @@ make_amp2_log(dir+'/cutoff','cut off energy test is done')
 if os.path.isfile(dir+'/cutoff/EN'+str(ENCUT-3*ENSTEP)+'/CHGCAR') and os.path.getsize(dir+'/cutoff/EN'+str(ENCUT-3*ENSTEP)+'/CHGCAR') > 1000:
 	shutil.copyfile(dir+'/cutoff/EN'+str(ENCUT-3*ENSTEP)+'/CHGCAR',dir+'/INPUT0/CHGCAR_conv')
 if  pygrep('ALGO',dir+'/cutoff/EN'+str(ENCUT-3*ENSTEP)+"/INCAR",0,0).split()[2].upper()[0] == "A":
-	wincar(dir+'/INPUT0/INCAR',dir+'/INPUT0/INCAR',["ALGO","All"],[])
+	wincar(dir+'/INPUT0/INCAR',dir+'/INPUT0/INCAR',[["ALGO","All"]],[])
 
 
 with open(enlog,'a') as result:
