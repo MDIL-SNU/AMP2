@@ -567,7 +567,9 @@ def read_cif_position(line,inform):
 		if '(' in tmp[inform[1+i]] :
 			tmp[inform[1+i]] = tmp[inform[1+i]][:tmp[inform[1+i]].index('(')]
 		if tmp[inform[1+i]] == '.':
-			tmp[inform[1+i]] = '0.0'
+			tmp[inform[1+i]] = '0'+tmp[inform[1+i]]
+		if tmp[inform[1+i]][0] == '-' and tmp[inform[1+i]][1] == '.':
+			tmp[inform[1+i]] = '-0'+tmp[inform[1+i]][1:]
 		pos.append(float(tmp[inform[1+i]]))
 
 	if '(' in tmp[inform[4]] :
