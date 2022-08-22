@@ -41,7 +41,7 @@ pot_type = inp_af['potential_type']
 #    MAG_V = '1'
 #else:
 #    MAG_V = '0'
-MAG_V = 1
+MAG_V = '1'
 if pot_type == 'LDA':
 	POT = 'LDA'
 else:
