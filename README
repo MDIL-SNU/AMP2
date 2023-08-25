@@ -156,3 +156,7 @@ sh run.sh
 
 The shell script file can be easily integrated with 
 job scheduler program such as portable batch system (PBS).
+
+
+Installation, manual, and full details: https://amp2.readthedocs.io
+
